@@ -37,7 +37,7 @@ literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1
      
 \sloppy
 
-\title{siC: Uma linguagem baseada em C incluindo pilha, lista e fila como tipos primitivos}
+\title{siC: Uma linguagem baseada em C incluindo pilha e fila como tipos primitivos}
 
 \author{Gabriella de Oliveira Esteves, 110118995}
 
@@ -50,7 +50,7 @@ literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1
 %------------------------------------------------
 \section{Objetivo}
 
-Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Structures in C, baseada na linguagem C. O siC acrescenta três estruturas de dados, lista, pilha e fila, como tipos de dados primitivos e, para manipulá-las, adiciona certas operações próprias para tal.
+Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Structures in C, baseada na linguagem C. O siC acrescenta três estruturas de dados, pilha e fila, como tipos de dados primitivos e, para manipulá-las, adiciona certas operações próprias para tal.
 
 %------------------------------------------------
 \section{Introdução}
@@ -74,65 +74,148 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 
 \indent O foco do projeto será nas fase 1, 2, 3 e 4, porém a princípio serão apresentadas apenas a descrição da linguagem siC, bem como uma breve descrição de sua semântica.
 
-\indent Dois grandes motivos sustentam a escolha do tema deste projeto. Primeiro, uma vez que as estruturas de dados pilha, fila e lista fazem parte dos tipos primitivos de uma linguagem, haverá menos manipulação de ponteiros na mesma, portanto erros envolvendo-os são menos prováveis de ocorrer. Segundo, a linguagem siC é mais alto-nível que C devido à abstração das estruturas de dados báscias, e, de maneira geral, pode ser mais \textit{user-friendly}. Nesse sentido, o usuário (da linguagem) leigo deverá entender como cada estrutura funciona, bem como suas vantagens/desvantagens e usabilidade; porém a implementação de cada uma estará a cargo da própria siC.
+\indent Dois grandes motivos sustentam a escolha do tema deste projeto. Primeiro, uma vez que as estruturas de dados pilha e fila fazem parte dos tipos primitivos de uma linguagem, haverá menos manipulação de ponteiros na mesma, portanto erros envolvendo-os são menos prováveis de ocorrer. Segundo, a linguagem siC é mais alto-nível que C devido à abstração das estruturas de dados báscias, e, de maneira geral, pode ser mais \textit{user-friendly}. Nesse sentido, o usuário (da linguagem) leigo deverá entender como cada estrutura funciona, bem como suas vantagens/desvantagens e usabilidade; porém a implementação de cada uma estará a cargo da própria siC.
 
 
 \section{Gramática}
 
-\indent A seguir será apresentada a gramática da linguagem siC, que é unicamente baseada em C \cite{yacc}.
+\indent A seguir será apresentada a gramática da linguagem siC, que é unicamente baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagen são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers} e a única diferença entre este e \textit{identifier\_new} é que o segundo tem acesso ao topo da pilha ou início da fila caso estes sejam os tipos do \textit{identifier}. Segue abaixo a gramática proposta.
 
-\vspace{2mm}
+\vspace{1mm}
 \begin{alltt}
 
+% token: WHILE, IF, ELSE
+% token: TOP, FIRST
 
-basic\_expression
+function
+    : type identifier\_char '(' argument ')' statement
+    ;
+	
+identifier
+    : identifier\_char
+    | identifier\_digit
+    ;
+    
+identifier\_char
+    : identifier\_char
+    | 'a' | 'b' | 'c' | \dots | 'z'
+    ;
+    
+identifier\_digit
+    : identifier\_digit
+    | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |'8' | '9'
+    ;
+	
+identifier\_new
+    : identifier
+    | \textbf{identifier '.' TOP}
+    | \textbf{identifier '.' FIRST}
+    ;	
+	
+type
+    : simple\_type
+    | \textbf{stack\_type}
+    | \textbf{queue\_type}
+    ;
+    
+simple\_type
+    : void
+    | bool
+    | int
+    | char
+    ;
+    
+\end{alltt}
+\indent 
+\indent Existem dois novos tipos de dados, \textit{stack} e \textit{queue}, que serão compostas por tipos simples de dados apenas (ou seja, não será possível criar uma variável do tipo pilha onde seus elementos também são pilhas). Caso a variável identificada pelo token IDENTIFIER seja do tipo pilha, ela poderá obter o topo através do comando "identifier.TOP". Caso seja fila, poderá obter o primeiro elemento com "identifier.FIRST".
+\begin{alltt}    
+    
+\textbf{
+stack\_type
+    : stack '<' simple\_type '>'
+    ;
+
+queue\_type
+    : queue '<' simple\_type '>'
+    ;
+}
+
+argument
+    : type identifier
+    | type identifier ',' type identifier
+    ;
+
+statement
+    : basic\_expressions
+    ;
+
+\end{alltt}
+\indent 
+\indent A seguir serão descritas quatro estruturas básicas da linguagem siC: comando com repetição, condicional, expressões matemáticas e expressões com pilhas e filas. A última contempla as operações de adicionar elemento no topo da pilha ou no fim da fila, "+", e remover do topo ou do início da fila, "-", onde o valor do elemento retirado é armazenado no último operando da expressão.
+\begin{alltt}
+
+basic\_expressions
     : while\_expression
     | if\_expression
-    | add\_expression
-    | subtract\_expression
-    | multiply\_expression
-    ;
-		
+    | math\_expression
+    | \textbf{identifier\_new\_expression}
+    ;	
 		
 while\_expression
-    :
-    |
+    : WHILE '(' compare\_expression ')' statement
     ;
-
 
 if\_expression
-    :
-    |
+    : IF '(' compare\_expression ')' statement
+    | IF '(' compare\_expression ')' statement ELSE statement
     ;
     
-    
-add\_expression
-    :
-    |
+compare\_expression
+    : compared\_identifier compare\_assignment compared\_identifier
     ;
     
-    
-subtract\_expression
-    :
-    |
+compared\_identifier
+    : identifier\_new
+    | '(' compare\_expression ')'
     ;
     
-    
-multiply\_expression
-    :
-    |
+compare\_assignment
+    : '=='
+    | '!='
+    | '<='
+    | '>='
+    ;
+
+math\_expression
+    : identifier '=' factor
+    ;
+
+factor
+    : identifier\_new
+    | '(' number\_expression ')' 
     ;
     
-        
-assignment\_operator	
-    : '='
-    | '+='
-    | '-='
-    | '*='
+term
+    : term '*' factor
+    | term '/' factor
+    | factor
     ;
+
+number\_expression
+    : number\_expression '+' term
+    | number\_expression '-' term
+    | term
+    ;
+    
+\textbf{
+identifier\_new\_expression
+    : identifier '=' identifier '+' identifier\_new
+    | identifier '=' identifier '-' identifier\_new
+    ;
+}
 			
 \end{alltt}
-\vspace{2mm}
+\vspace{4mm}
 
 %\section{Analisador Léxico}
 

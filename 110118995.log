@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.10)  16 AUG 2016 23:48
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.10)  17 AUG 2016 01:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -564,32 +564,52 @@ LaTeX Font Info:    Try loading font information for OT1+pcr on input line 85.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 4492) in paragraph at lines 118--119
+) [2]
+Overfull \hbox (19.60846pt too wide) in paragraph at lines 106--106
+[]    \OT1/pcr/m/n/12 | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |'8' | '9
+'[] 
+ []
+
+LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 111.
+[3]
+Overfull \hbox (2.32848pt too wide) in paragraph at lines 170--170
+[]    \OT1/pcr/m/n/12 | IF '(' compare[]expression ')' statement ELSE statement
+[] 
+ []
+
+
+Overfull \hbox (25.36848pt too wide) in paragraph at lines 174--174
+[]    \OT1/pcr/m/n/12 : compared[]identifier compare[]assignment compared[]iden
+tifier[] 
+ []
+
+[4]
+Underfull \hbox (badness 4492) in paragraph at lines 241--242
 []\OT1/ptm/m/n/12 ANSI C Yacc gram-mar, $\OT1/pcr/m/n/12 http : / / www . quut 
 . com / c / ANSI-[]C-[]grammar-[]y .
  []
 
-[2] (./110118995.aux) ) 
+[5] (./110118995.aux) ) 
 Here is how much of TeX's memory you used:
- 5318 strings out of 493304
- 76664 string characters out of 6139870
- 166389 words of memory out of 5000000
- 8675 multiletter control sequences out of 15000+600000
- 18897 words of font info for 41 fonts, out of 8000000 for 9000
+ 5333 strings out of 493304
+ 76857 string characters out of 6139870
+ 167389 words of memory out of 5000000
+ 8688 multiletter control sequences out of 15000+600000
+ 19412 words of font info for 43 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 43i,10n,49p,715b,272s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,10n,49p,708b,272s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.e
 nc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a
-.pfb>
-Output written on 110118995.pdf (2 pages, 118624 bytes).
+/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8
+a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on 110118995.pdf (5 pages, 141039 bytes).
 PDF statistics:
- 39 PDF objects out of 1000 (max. 8388607)
- 26 compressed objects within 1 object stream
+ 52 PDF objects out of 1000 (max. 8388607)
+ 35 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
