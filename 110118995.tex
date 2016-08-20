@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
 \usepackage{float}
 \usepackage{sbc-template}
 \usepackage{graphicx,url}
@@ -72,150 +73,117 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 	\item[7] \textbf{Gerador de Código:} Converte o código intermediário no código-alvo, 	buscando atribuir os registradores às variáveis da maneira ótima.
 \end{itemize}
 
-\indent O foco do projeto será nas fase 1, 2, 3 e 4, porém a princípio serão apresentadas apenas a descrição da linguagem siC, bem como uma breve descrição de sua semântica.
+\indent O foco do projeto será nas fase 1, 2, 3 e 4, porém a princípio serão apresentadas apenas a descrição da linguagem siC, bem como uma breve descrição de sua semântica. Como pilha e fila são duas das estruturas de dados mais básicas, é possível dizer que siC se destina a inúmeras áreas de Ciência da Computação, como sistemas operacionais (onde a fila é usada para organizar prioridades dos processos, por exemplo), compiladores (onde a pilha é usada para ordenar a execução dos métodos/funções), etc.
 
-\indent Dois grandes motivos sustentam a escolha do tema deste projeto. Primeiro, uma vez que as estruturas de dados pilha e fila fazem parte dos tipos primitivos de uma linguagem, haverá menos manipulação de ponteiros na mesma, portanto erros envolvendo-os são menos prováveis de ocorrer. Segundo, a linguagem siC é mais alto-nível que C devido à abstração das estruturas de dados báscias, e, de maneira geral, pode ser mais \textit{user-friendly}. Nesse sentido, o usuário (da linguagem) leigo deverá entender como cada estrutura funciona, bem como suas vantagens/desvantagens e usabilidade; porém a implementação de cada uma estará a cargo da própria siC.
-
+\indent Dois grandes motivos sustentam a escolha do tema deste projeto. Primeiro, uma vez que as estruturas de dados pilha e fila fazem parte dos tipos primitivos de uma linguagem, haverá menos manipulação de ponteiros na mesma, portanto erros envolvendo-os são menos prováveis de ocorrer. Segundo, a linguagem siC é mais alto-nível que C devido à abstração das estruturas de dados báscias, e, de maneira geral, pode ser mais \textit{user-friendly}. Nesse sentido, o usuário (da linguagem) leigo deverá entender como cada estrutura funciona, bem como suas vantagens/desvantagens e usabilidade; porém a implementação de cada uma estará a cargo da própria siC. 
 
 \section{Gramática}
 
-\indent A seguir será apresentada a gramática da linguagem siC, que é unicamente baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagen são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers} e a única diferença entre este e \textit{identifier\_new} é que o segundo tem acesso ao topo da pilha ou início da fila caso estes sejam os tipos do \textit{identifier}. Segue abaixo a gramática proposta.
+\indent A seguir será apresentada a gramática da linguagem siC, baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagen são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers}, que por sua vez é uma expressão regular, e a única diferença entre este e \textit{identifier\_struct} é que o segundo tem acesso ao topo da pilha ou início da fila caso estes sejam os tipos do \textit{identifier}. Segue abaixo a gramática proposta, em que a variável inicial é \textit{function}.
 
-\vspace{1mm}
-\begin{alltt}
+\begin{alltt}{\footnotesize
 
-% token: WHILE, IF, ELSE
-% token: TOP, FIRST
+token: WHILE, IF, ELSE, RETURN, STACK, TOP, QUEUE, FIRST, VOID, BOOL, INT, CHAR
 
 function
-    : type identifier\_char '(' argument ')' statement
-    ;
-	
+   \(\to\) type identifier `(' argument `)' `\{' statement `RETURN' identifier `;' `\}'
+    | type identifier `(' `)' `\{' statement `\}'
+    
 identifier
-    : identifier\_char
-    | identifier\_digit
-    ;
+   \(\to\) letra(letra | digito)*
     
-identifier\_char
-    : identifier\_char
-    | 'a' | 'b' | 'c' | \dots | 'z'
-    ;
+letra
+   \(\to\) `a' | `b' | \dots | `z'
     
-identifier\_digit
-    : identifier\_digit
-    | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |'8' | '9'
-    ;
+digito
+   \(\to\) `0' | `1' | \dots | `9'
 	
-identifier\_new
-    : identifier
-    | \textbf{identifier '.' TOP}
-    | \textbf{identifier '.' FIRST}
-    ;	
+identifier\_struct
+   \(\to\) identifier
+    | \textbf{identifier `.' TOP}
+    | \textbf{identifier `.' FIRST}	
 	
-type
-    : simple\_type
-    | \textbf{stack\_type}
-    | \textbf{queue\_type}
-    ;
+type\_struct
+   \(\to\) type\_simple
+    | \textbf{type\_stack}
+    | \textbf{type\_queue}
     
-simple\_type
-    : void
-    | bool
-    | int
-    | char
-    ;
-    
-\end{alltt}
-\indent 
-\indent Existem dois novos tipos de dados, \textit{stack} e \textit{queue}, que serão compostas por tipos simples de dados apenas (ou seja, não será possível criar uma variável do tipo pilha onde seus elementos também são pilhas). Caso a variável identificada pelo token IDENTIFIER seja do tipo pilha, ela poderá obter o topo através do comando "identifier.TOP". Caso seja fila, poderá obter o primeiro elemento com "identifier.FIRST".
-\begin{alltt}    
-    
-\textbf{
-stack\_type
-    : stack '<' simple\_type '>'
-    ;
+type\_simple
+   \(\to\) VOID
+    | BOOL
+    | INT
+    | CHAR
+   
+}\end{alltt}
+\indent Existem dois novos tipos de dados, \textit{STACK} e \textit{QUEUE}, que serão compostas por tipos simples de dados apenas (ou seja, não será possível criar uma variável do tipo pilha onde seus elementos também são pilhas). Caso a variável seja do tipo pilha, ela poderá obter o topo através do comando "identifier.TOP". Caso seja fila, poderá obter o primeiro elemento com "identifier.FIRST".
 
-queue\_type
-    : queue '<' simple\_type '>'
-    ;
+\begin{alltt}{\footnotesize      
+\textbf{
+type\_stack
+   \(\to\) STACK `<' type\_simple `>'
+
+type\_queue
+   \(\to\) QUEUE `<' type\_simple `>'
 }
 
 argument
-    : type identifier
-    | type identifier ',' type identifier
-    ;
+   \(\to\) type\_struct identifier
+    | type\_struct identifier `,' type\_struct identifier
 
-statement
-    : basic\_expressions
-    ;
-
-\end{alltt}
-\indent 
+}\end{alltt}
 \indent A seguir serão descritas quatro estruturas básicas da linguagem siC: comando com repetição, condicional, expressões matemáticas e expressões com pilhas e filas. A última contempla as operações de adicionar elemento no topo da pilha ou no fim da fila, "+", e remover do topo ou do início da fila, "-", onde o valor do elemento retirado é armazenado no último operando da expressão.
-\begin{alltt}
 
-basic\_expressions
-    : while\_expression
+\begin{alltt}{\footnotesize
+statement
+   \(\to\) declare\_identifier
+    | while\_expression
     | if\_expression
     | math\_expression
-    | \textbf{identifier\_new\_expression}
-    ;	
+    | \textbf{identifier\_struct\_expression}
+    | \(\varepsilon\)
+		
+declare\_identifier
+   \(\to\) argument ';' 
 		
 while\_expression
-    : WHILE '(' compare\_expression ')' statement
-    ;
+   \(\to\) WHILE `(' compare\_expression `)' `\{' statement `\}'
 
 if\_expression
-    : IF '(' compare\_expression ')' statement
-    | IF '(' compare\_expression ')' statement ELSE statement
-    ;
+   \(\to\) IF `(' compare\_expression `)' `\{' statement `\}'
+    | IF `(' compare\_expression `)' `\{' statement `\}' ELSE `\{' statement `\}'
     
 compare\_expression
-    : compared\_identifier compare\_assignment compared\_identifier
-    ;
-    
-compared\_identifier
-    : identifier\_new
-    | '(' compare\_expression ')'
-    ;
+   \(\to\) identifier\_struct compare\_assignment identifier\_struct
     
 compare\_assignment
-    : '=='
-    | '!='
-    | '<='
-    | '>='
-    ;
+   \(\to\) `=='
+    | `!='
+    | `<='
+    | `>='
 
 math\_expression
-    : identifier '=' factor
-    ;
+   \(\to\) identifier `=' factor `;'
 
 factor
-    : identifier\_new
-    | '(' number\_expression ')' 
-    ;
+   \(\to\) identifier\_struct
+    | `(' number\_expression `)' 
+
+number\_expressions
+   \(\to\) number\_expression `+' term
+    | number\_expression `-' term
+    | term
     
 term
-    : term '*' factor
-    | term '/' factor
+   \(\to\) term `*' factor
+    | term `/' factor
     | factor
-    ;
-
-number\_expression
-    : number\_expression '+' term
-    | number\_expression '-' term
-    | term
-    ;
     
 \textbf{
-identifier\_new\_expression
-    : identifier '=' identifier '+' identifier\_new
-    | identifier '=' identifier '-' identifier\_new
-    ;
-}
-			
-\end{alltt}
-\vspace{4mm}
+identifier\_struct\_expression
+   \(\to\) identifier `=' identifier `+' identifier `;'
+    | identifier `=' identifier `-' identifier `;'
+}		
+}\end{alltt}
 
 %\section{Analisador Léxico}
 
@@ -225,7 +193,39 @@ identifier\_new\_expression
 
 %\subsection{Tabela de símbolos}
 
-%\section{Analisador Semântico}
+\section{Analisador Semântico}
+
+\indent A análise semântica utiliza da árvore sintática para checar a consistência da linguagem. Uma de suas obrigações mais importantes é a checagem de tipo. No caso do siC, existem várias restrições a serem consideradas:
+\begin{itemize}
+    \item Para adicionar um elemento A em um identificador do tipo struct B, a atribuição deve ser do tipo B = B + A, onde A deverá ter tipo compatível com o de B;
+    \item Para remover o topo/início de um identificador do tipo struct B, a atribuição deve ser do tipo B = B - A, onde A deverá ter tipo compatível com o de B;
+    \item Nenhuma operação matemática (\textit{math\_expression}) pode conter um identificador do tipo pilha ou fila, apenas o topo ou início dos mesmos.
+\end{itemize}
+
+
+\indent Um exemplo de código em siC é aprensentado a seguir. O programa adiciona trê elementos numa pilha de inteiros e depois eles são somandos um a um e armazenados na variável \textit{sum}. Ao final, a variável \textit{lixo}, recém retirada do topo da pilha, é adicionada à \textit{sum}. Nesse sentido, o resultado final de sum deve ser 7. \\
+
+\begin{lstlisting}[language=C]
+VOID main () {
+    STACK<INT> s;
+    INT sum, INT lixo;
+
+    s = s + 0;
+    s = s + 1;
+    s = s + 2;
+    s = s + 3;    
+    sum = 0;
+    
+    WHILE (s.TOP != 0) {    
+        sum = (sum + s.TOP);
+        s = s - lixo;
+    }
+    sum = sum + lixo;
+
+    RETURN 0;
+}
+
+\end{lstlisting}
 
 %\section{Geração de código intermediário}
 

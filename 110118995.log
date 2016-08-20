@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.10)  17 AUG 2016 01:52
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.10)  20 AUG 2016 19:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -23,6 +23,13 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count87
@@ -422,21 +429,21 @@ File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 ) (./110118995.aux)
 \openout1 = `110118995.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
-LaTeX Font Info:    ... okay on input line 46.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 46.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
-File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 47.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -532,84 +539,103 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \c@lstlisting=\count108
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <16> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 48.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 48.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <16> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 49.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 49.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 48.
+(Font)              <12> on input line 49.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 48.
+(Font)              <8> on input line 49.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 48.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <13> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 51.
+(Font)              <6> on input line 49.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <13> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 52.
 
 <compilador.png, id=1, 489.83pt x 664.4825pt>
 File: compilador.png Graphic file (type png)
  <use compilador.png>
-Package pdftex.def Info: compilador.png used on input line 62.
+Package pdftex.def Info: compilador.png used on input line 63.
 (pdftex.def)             Requested size: 213.39568pt x 289.48354pt.
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 63.
+LaTeX Font Info:    Try loading font information for T1+phv on input line 64.
 
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1phv.fd
-File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd
+File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
 )
-LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <10> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 63.
+LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <10> not available
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 64.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./compilador.png>]
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 85.
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 84.
 
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-) [2]
-Overfull \hbox (19.60846pt too wide) in paragraph at lines 106--106
-[]    \OT1/pcr/m/n/12 | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |'8' | '9
-'[] 
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
+)
+Overfull \hbox (47.20865pt too wide) in paragraph at lines 86--86
+[]\T1/pcr/m/n/10 token: WHILE, IF, ELSE, RETURN, STACK, TOP, QUEUE, FIRST, VOID
+, BOOL, INT, CHAR[] 
  []
 
-LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
-(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 111.
-[3]
-Overfull \hbox (2.32848pt too wide) in paragraph at lines 170--170
-[]    \OT1/pcr/m/n/12 | IF '(' compare[]expression ')' statement ELSE statement
-[] 
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 89.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 89.
+
+Overfull \hbox (51.20866pt too wide) in paragraph at lines 89--89
+[]   $\OMS/cmsy/m/n/10 !$ \T1/pcr/m/n/10 type identifier `(' argument `)' `{' s
+tatement `RETURN' identifier `;' `}'[] 
  []
 
+[2]
+LaTeX Font Info:    Font shape `T1/pcr/bx/n' in size <10> not available
+(Font)              Font shape `T1/pcr/b/n' tried instead on input line 103.
+ [3]
+Overfull \hbox (29.20865pt too wide) in paragraph at lines 153--153
+[]    \T1/pcr/m/n/10 | IF `(' compare_expression `)' `{' statement `}' ELSE `{'
+ statement `}'[] 
+ []
 
-Overfull \hbox (25.36848pt too wide) in paragraph at lines 174--174
-[]    \OT1/pcr/m/n/12 : compared[]identifier compare[]assignment compared[]iden
-tifier[] 
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 200.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 200.
+
+Underfull \hbox (badness 10000) in paragraph at lines 206--207
+
  []
 
 [4]
 Underfull \hbox (badness 4492) in paragraph at lines 241--242
-[]\OT1/ptm/m/n/12 ANSI C Yacc gram-mar, $\OT1/pcr/m/n/12 http : / / www . quut 
-. com / c / ANSI-[]C-[]grammar-[]y .
+[]\T1/ptm/m/n/12 ANSI C Yacc gram-mar, $\T1/pcr/m/n/12 http : / / www . quut . 
+com / c / ANSI-[]C-[]grammar-[]y .
  []
 
 [5] (./110118995.aux) ) 
 Here is how much of TeX's memory you used:
- 5333 strings out of 493304
- 76857 string characters out of 6139870
- 167389 words of memory out of 5000000
- 8688 multiletter control sequences out of 15000+600000
- 19412 words of font info for 43 fonts, out of 8000000 for 9000
+ 5895 strings out of 493304
+ 81283 string characters out of 6139870
+ 204460 words of memory out of 5000000
+ 9239 multiletter control sequences out of 15000+600000
+ 35194 words of font info for 48 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 43i,10n,49p,708b,272s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,8n,49p,708b,1204s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.e
-nc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8
-a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on 110118995.pdf (5 pages, 141039 bytes).
+nc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/ut
+mb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on 110118995.pdf (5 pages, 159980 bytes).
 PDF statistics:
- 52 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
+ 60 PDF objects out of 1000 (max. 8388607)
+ 41 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
