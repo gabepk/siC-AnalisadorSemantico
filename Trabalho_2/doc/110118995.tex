@@ -86,11 +86,14 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 \begin{itemize}
 	\item Será implementado apenas a fila como tipo primitivo. Se fosse mantida a primeira proposta de incluir também o tipo pilha, talvez não seria possível terminar o projeto no prazo previsto;
 	\item O tipo booleano deixará de existir em siC, porém o tipo float será incluído;
-	\item Agora, além da variável "argument", também existe a variável "arguments", que permite a definição de um ou mais argumentos em uma função.
-	A assinatura da função
+	\item Agora, além da variável \textit{argument}, também existe a \textit{arguments}, que permite a definição de zero ou mais argumentos em uma função;
+	\item Na primeira versão da gramática o \textit{statement} estava envolvido entre chaves no IF e no WHILE, enquanto nesta versão as chaves não são mais obrigatórias, porém a regra \textit{statement $\rightarrow$ \{ statement \}} foi adicionada para criação de blocos;
+	\item Expressões matemáticas são agora da forma \textit{identifier $\rightarrow$ number\_expression} ao invés de \textit{identifier $\rightarrow$ factor} para maior legibilidade;
+	\item As aspas que delimitavam os símbolos como chaves e parênteses foram retiradas para aumentar também a legibilidade;
+	\item Foram adicionados as operações de comparação \textit{<} e \textit{>}.
 \end{itemize}
 
-Segue abaixo a gramática proposta, em que a variável inicial é \textit{function}.
+Segue abaixo a gramática proposta cuja variável inicial é \textit{function}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
 \begin{alltt}{\footnotesize
 
 token: WHILE, IF, ELSE, RETURN 
