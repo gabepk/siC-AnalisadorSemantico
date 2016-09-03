@@ -88,9 +88,11 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 	\item O tipo booleano deixará de existir em siC, porém o tipo float será incluído;
 	\item Agora, além da variável \textit{argument}, também existe a \textit{arguments}, que permite a definição de zero ou mais argumentos em uma função;
 	\item Na primeira versão da gramática o \textit{statement} estava envolvido entre chaves no IF e no WHILE, enquanto nesta versão as chaves não são mais obrigatórias, porém a regra \textit{statement $\rightarrow$ \{ statement \}} foi adicionada para criação de blocos;
-	\item Expressões matemáticas são agora da forma \textit{identifier $\rightarrow$ number\_expression} ao invés de \textit{identifier $\rightarrow$ factor} para maior legibilidade;
+	\item Expressões matemáticas são agora da forma \textit{identifier $\rightarrow$ assignment\_expression} ao invés de \textit{identifier $\rightarrow$ factor} para maior legibilidade;
 	\item As aspas que delimitavam os símbolos como chaves e parênteses foram retiradas para aumentar também a legibilidade;
-	\item Foram adicionados as operações de comparação \textit{<} e \textit{>}.
+	\item Foram adicionados as operações de comparação \textit{<} e \textit{>};
+	\item O símbolo \$ foi adicionado na variável \textit{letra}, pois em C ele pode compor um identificador;
+	\item A variavel \textit{caractere} foi adicionada para representar o valor de um char, que só poderá ser ou uma letra ou um dígito.
 \end{itemize}
 
 Segue abaixo a gramática proposta cuja variável inicial é \textit{function}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
@@ -104,10 +106,13 @@ function
     
 identifier
    \(\to\) letra(letra | digito)*
+   
+{\color{red}caractere
+   \(\to\) letra | digito}
     
 letra
-   \(\to\) a | b | \dots | z | A | B | \dots | Z
-    
+   \(\to\) a | b | \dots | z | A | B | \dots | Z | \$
+   
 digito
    \(\to\) 0 | 1 | \dots | 9
 	
@@ -150,7 +155,7 @@ statement
     | IF ( compare\_expression ) {\color{red}statement}
     | IF ( compare\_expression ) {\color{red}statement} ELSE {\color{red}statement}
     | WHILE ( compare\_expression ) {\color{red}statement}
-    | identifier = {\color{red}number\_expression} ;
+    | identifier = {\color{red}assignment\_expression} ;
     | \textbf{identifier\_struct\_expression}
     | \{ statements \}
     
@@ -160,9 +165,9 @@ compare\_expression
 compare\_assignment
    \(\to\) == | != | <= | >= | {\color{red}<} | {\color{red}>}
 
-number\_expressions
-   \(\to\) number\_expression + term
-    | number\_expression - term
+assignment\_expressions
+   \(\to\) assignment\_expression + term
+    | assignment\_expression - term
     | term
     
 term
@@ -172,7 +177,8 @@ term
     
 factor
    \(\to\) identifier\_struct
-    | ( number\_expression )
+    | {\color{red}' caractere '}
+    | ( assignment\_expression )
     
 \textbf{
 identifier\_struct\_expression
