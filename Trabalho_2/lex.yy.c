@@ -526,14 +526,10 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "110118995.lex"
 #line 2 "110118995.lex"
-#include <math.h>
 #include <stdio.h>
-#include <limits.h>
-#include <float.h>
-
 int lines = 1;
-int errors = 0, warnings = 0;
-#line 537 "lex.yy.c"
+int errors = 0;
+#line 533 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -747,10 +743,10 @@ YY_DECL
 		}
 
 	{
-#line 17 "110118995.lex"
+#line 13 "110118995.lex"
 
 
-#line 754 "lex.yy.c"
+#line 750 "lex.yy.c"
 
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
@@ -810,135 +806,135 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 19 "110118995.lex"
+#line 15 "110118995.lex"
 ++lines;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "110118995.lex"
+#line 16 "110118995.lex"
 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 21 "110118995.lex"
+#line 17 "110118995.lex"
 printf("Comentario na linha %d\n", lines);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "110118995.lex"
+#line 19 "110118995.lex"
 {++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "110118995.lex"
+#line 20 "110118995.lex"
 {++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "110118995.lex"
+#line 21 "110118995.lex"
 printf("Float number: %s\n", yytext);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 26 "110118995.lex"
+#line 22 "110118995.lex"
 printf("Integer number: %s\n", yytext);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "110118995.lex"
+#line 24 "110118995.lex"
 printf("Char value: %s\n", yytext);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 29 "110118995.lex"
+#line 25 "110118995.lex"
 {++errors;printf("\tERROR on line %d : Empty character constant \"%s\" \n", lines, yytext);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "110118995.lex"
+#line 27 "110118995.lex"
 printf("Comparison: %s\n", yytext);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 32 "110118995.lex"
+#line 28 "110118995.lex"
 printf("Mark: %s\n", yytext);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 33 "110118995.lex"
+#line 29 "110118995.lex"
 printf("Operator: %s\n", yytext);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 34 "110118995.lex"
+#line 30 "110118995.lex"
 printf("Assignment: %s\n", yytext);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 36 "110118995.lex"
+#line 32 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 37 "110118995.lex"
+#line 33 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 38 "110118995.lex"
+#line 34 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 39 "110118995.lex"
+#line 35 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 40 "110118995.lex"
+#line 36 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 41 "110118995.lex"
+#line 37 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 42 "110118995.lex"
+#line 38 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 43 "110118995.lex"
+#line 39 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 44 "110118995.lex"
+#line 40 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 45 "110118995.lex"
+#line 41 "110118995.lex"
 printf("Keyword: %s\n", yytext);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 47 "110118995.lex"
+#line 43 "110118995.lex"
 printf("Identifier: %s\n", yytext);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 48 "110118995.lex"
+#line 44 "110118995.lex"
 {++errors;printf("\tERROR on line %d : Unknown token '%s' \n", lines, yytext);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 50 "110118995.lex"
+#line 46 "110118995.lex"
 ECHO;
 	YY_BREAK
-#line 942 "lex.yy.c"
+#line 938 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1933,7 +1929,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 49 "110118995.lex"
+#line 45 "110118995.lex"
 
 
 int main (int argc, char **argv) {
@@ -1943,6 +1939,6 @@ int main (int argc, char **argv) {
     else
         yyin = stdin;
     yylex();
-    printf("\nErrors: %d, Warnings: %d\n\n", errors, warnings);
+    printf("\nErrors: %d\n\n", errors);
     return 0;
 }

@@ -17,5 +17,5 @@ void condicao(char l, char y) {
 int main()
 {
     condicao('x', 'y');
-    return 0;
+    returni 0;
 }

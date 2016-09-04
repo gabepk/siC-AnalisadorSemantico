@@ -1,11 +1,7 @@
 %{
-#include <math.h>
 #include <stdio.h>
-#include <limits.h>
-#include <float.h>
-
 int lines = 1;
-int errors = 0, warnings = 0;
+int errors = 0;
 %} 
 digito [0-9]
 letra [a-zA-Z$]
@@ -55,6 +51,6 @@ int main (int argc, char **argv) {
     else
         yyin = stdin;
     yylex();
-    printf("\nErrors: %d, Warnings: %d\n\n", errors, warnings);
+    printf("\nErrors: %d\n\n", errors);
     return 0;
 }
