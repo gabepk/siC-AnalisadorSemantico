@@ -187,7 +187,95 @@ identifier\_struct\_expression
 }		
 }\end{alltt}
 
-%\section{Analisador Léxico}
+\section{Analisador Léxico}
+
+\indent 
+
+\subsection{FLEX: The Fast Lexical Analyzer}
+
+\indent
+
+\subsection{Arquivo lex}
+
+
+
+
+\begin{center}
+ \begin{tabular}{| c | r  c |} 
+  \hline
+   & Nome & Definição \\
+  \hline  \hline
+  1 & digito & [0-9] \\
+  \hline
+  2 & letra & [a-zA-Z\$] \\
+  \hline
+  3 & comparison & == | != | <= | >= | < | > \\
+  \hline
+  4 & mark & . | ; | , | ' | \{ | \} | ( | ) \\
+  \hline
+  5 & operator & + | - | * | / \\
+  \hline
+  6 & id & [a-zA-Z\$][a-zA-Z\$0-9]* \\
+  \hline
+\end{tabular}
+\end{center}
+ 
+
+
+\begin{center}
+ \begin{tabular}{|c | c  l |} 
+ \hline
+   & Token & Ação Semântica \\ [0.5ex] 
+ \hline \hline
+ 1 & $\backslash$n	& Identifica uma quebra de linha e incrementa \\&& variável \textit{lines} para contagem de linhas \\ 
+ \hline
+ 2 & [ $\backslash$t]+ 	& Identifica um ou mais espaço ou tabulação\\
+ \hline
+ 3 & "//"[$\wedge\backslash$n]* & Ignora tudo a frente do comentário de \\&& uma linha "//" até a quebra de linha \\
+ \hline
+ 4 & {digito}+"."{digito}* & Identifica números float\\
+ \hline
+ 5 & {digito}+ & Identifica números inteiros\\
+ \hline
+ 6 & "'"(\{letra\}|\{digito\})"'" & Identifica valor para uma variável do \\&& tipo char, que pode ser uma letra ou dígito\\
+ \hline
+ 7 & \{comparison\} & Identifica símbolos de comparação \\&& entre dois elementos \\
+ \hline
+ 8 & \{mark\} & Identifica pontuação e delimitadores de \\&& blocos e valores de char\\
+ \hline
+ 9 & \{operator\} & Identifica operadores matemáticos \\
+ \hline
+ 10 & (?i:"VOID")& Identifica palavra chave tipo void \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 11 & (?i:"FLOAT")& Identifica palavra chave tipo float \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 12 & (?i:"INT")& Identifica palavra chave tipo inteiro \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 13 & (?i:"CHAR") & Identifica palavra chave tipo char \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 14 & (?i:"QUEUE")& Identifica palavra chave tipo fila \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 15 & (?i:"FIRST")& Identifica palavra chave que representa \\&&  primeiro elemento da fila com as letras em \\&& caixa-alta e caixa-alta  \\
+ \hline
+ 16 & (?i:"IF")& Identifica palavra chave condicional if \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 17 & (?i:"ELSE")& Identifica palavra chave condicional else \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 18 & (?i:"WHILE")& Identifica palavra chave do laço while \\&& com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 19 & (?i:"RETURN")& Identifica palavra chave return, de retorno \\&& de função, com as letras em caixa-alta e caixa-alta \\
+ \hline
+ 20 & \{id\} & Reconhece um identificador cuja regra é: \\&& não é permitido conter símbolos além de \$, letras e \\&& dígitos e não é permitido começar a palara com dígito \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Erros Léxicos}
+
+{digito}+{letra}+
+{digito}+"."{letra}+
+"''"
+.
 
 %\section{Analisador Sintático}
 
@@ -199,11 +287,10 @@ identifier\_struct\_expression
 
 \indent A análise semântica utiliza da árvore sintática para checar a consistência da linguagem. Uma de suas obrigações mais importantes é a checagem de tipo. No caso do siC, existem várias restrições a serem consideradas:
 \begin{itemize}
-    \item Para adicionar um elemento A em um identificador do tipo struct B, a atribuição deve ser do tipo B = B + A, onde A deverá ter tipo compatível com o de B;
-    \item Para remover o topo/início de um identificador do tipo struct B, a atribuição deve ser do tipo B = B - A, onde A deverá ter tipo compatível com o de B;
-    \item Nenhuma operação matemática (\textit{math\_expression}) pode conter um identificador do tipo pilha ou fila, apenas o topo ou início dos mesmos.
+    \item Para adicionar um elemento A de tipo simples (char, int ou float) no fim da fila de um elemento struct B, a atribuição deve ser do tipo B = B + A, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
+    \item Para remover um elemento A de tipo simples (char, int ou float) do início da fila de um elemento struct B, a atribuição deve ser do tipo B = B - A, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
+    \item Nenhuma operação matemática (\textit{assignment\_expression}) pode conter um identificador B do tipo fila, apenas seu início, ou seja, B.FIRST.
 \end{itemize}
-
 
 \indent Um exemplo de código em siC é aprensentado a seguir. O programa adiciona três elementos numa fila de inteiros e depois eles são somados um a um e armazenados na variável \textit{sum}. Ao final, a variável \textit{lixo}, recém retirada da fila, é adicionada à \textit{sum}. Nesse sentido, o resultado final de sum deve ser 7. \\
 

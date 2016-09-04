@@ -9,12 +9,16 @@ int errors = 0, warnings = 0;
 %} 
 digito [0-9]
 letra [a-zA-Z$]
+comparison (==|!=|<=|>=|<|>)
+mark ("."|";"|","|"'"|"{"|"}"|"("|")")
+operator ("+"|"-"|"*"|"/")
 id [a-zA-Z$][a-zA-Z$0-9]*
 
 %% // Inicio das Regras Lexicas
 
 \n 	++lines;
 [ \t]+
+"//"[^\n]*	printf("Comentario na linha %d\n", lines);
 
 {digito}+{letra}+		{++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{letra}+		{++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
@@ -24,25 +28,10 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 "'"({letra}|{digito})"'"	printf("Char value: %s\n", yytext);
 "''"				{++errors;printf("\tERROR on line %d : Empty character constant \"%s\" \n", lines, yytext);}
 
-"("	printf("Open parenthesis: %s\n", yytext);
-")"	printf("Close  parenthesis: %s\n", yytext);
-"{"	printf("Open braces: %s\n", yytext);
-"}"	printf("Close braces: %s\n", yytext);
-"=="	printf("Equal: %s\n", yytext);
-"!="	printf("Different: %s\n", yytext);
-"<="	printf("Less or equal than: %s\n", yytext);
-">="	printf("Greater or equal than: %s\n", yytext);
-"<"	printf("Less than: %s\n", yytext);
-">"	printf("Greater than: %s\n", yytext);
-"="	printf("Assignment: %s\n", yytext);
-"."	printf("Dot: %s\n", yytext);
-";"	printf("Semicolon: %s\n", yytext);
-","	printf("Comma: %s\n", yytext);
-"'"	printf("Single quotes: %s\n", yytext);
-"+"	printf("Addition: %s\n", yytext);
-"-"	printf("Subtraction: %s\n", yytext);
-"*"	printf("Multiplication: %s\n", yytext);
-"/"	printf("Division: %s\n", yytext);
+{comparison} 	printf("Comparison: %s\n", yytext);
+{mark}		printf("Mark: %s\n", yytext);
+{operator}	printf("Operator: %s\n", yytext);
+"="		printf("Assignment: %s\n", yytext);
 
 (?i:"VOID")	printf("Keyword: %s\n", yytext);
 (?i:"FLOAT")	printf("Keyword: %s\n", yytext);
