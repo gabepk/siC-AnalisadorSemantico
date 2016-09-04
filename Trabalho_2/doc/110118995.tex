@@ -232,9 +232,24 @@ identifier\_struct\_expression
 
 \indent A ordem em que as regras estão é imporetante para o funcionamento correto do programa, pois se existir mais de uma correspondência de \textit{pattern} para um elemento, ele será identificado pela regra que aparecer primeiro. Neste projeto, as regras das keywords deve vir antes das regras dos identificadores, pois assim, se a seguinte entrada \textit{int x = 2;} for lida, por exemplo, o elemento \textit{int} será reconhecido como identificador e também tipo inteiro, porém a regra de keyword deverá identificá-lo.
 
-\indent Foram reconhecidos quatro erros léxicos em siC. Caso exista um elemento que comece com dígitos e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo inteiro (regra 4). Caso exista um elemento que comece com dígitos, tenha depois um ponto, e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo float (regra 5). Caso exista na entrada duas aspas simples, uma seguida da outra, o programa entende que entre eles deveria existir algum caractere que seria o valor que algum char, portanto o usuário será informado de que a constante de caractere está vazia (regra 9). Por fim, caso exista algum elemento não identificado na entrada, o usuário será informado (regra 24).
+\indent Os patterns contidos entre chaves foram definidos na seção de descrição. Em relação aos demais, segue abaixo a descrição de algumas expressões regulares. 
 
-\indent
+\begin{itemize}
+  \item[[$\wedge\backslash$n]] : Reconhece tudo exceto espaço e quebra de linha (Exemplo: regra 3);
+  \item[\{digito\}] : Reconhece apenas um dígito (Exemplo: regra 8);
+  \item[\{digito\}*] : Reconhece zero ou mais dígitos (Exemplo: regra 6);
+  \item[\{digito\}+] : Reconhece um ou mais dígitos (Exemplo: regra 5);
+  \item[``abc''] : Reconhece a sequência de caracteres "abc" (Exemplo: regra 9);
+  \item[``a'' $\vert$ ``b''] : Reconhece o caractere "a" ou o "b" (Exemplo: regra 8);
+  \item[(?i:"AB")] : Reconhece as sequências "AB", "Ab", "aB", "ab" (Exemplo: regra 13);
+  \item[.] : Reconhee qualquer elemento (Exemplo: regra 24).
+\end{itemize}
+
+\indent A terceira parte do código lex é composta por código em C, que define como será lida a entrada (por arquivo ou pela entrada padrão) e define também as ações tomadas por cada \textit{pattern}.
+
+\subsection{Erros Léxicos}
+
+\indent Foram reconhecidos quatro erros léxicos em siC. Caso exista um elemento que comece com dígitos e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo inteiro (regra 4). Caso exista um elemento que comece com dígitos, tenha depois um ponto, e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo float (regra 5). Caso exista na entrada duas aspas simples, uma seguida da outra, o programa entende que entre eles deveria existir algum caractere que seria o valor que algum char, portanto o usuário será informado de que a constante de caractere está vazia (regra 9). Por fim, caso exista algum elemento não identificado na entrada, o usuário será informado (regra 24).
 
 \begin{table}
  \centering
@@ -246,7 +261,7 @@ identifier\_struct\_expression
  \hline
  2 & [ $\backslash$t]+ 	& Identifica um ou mais espaço ou tabulação\\
  \hline
- 3 & "//"[$\wedge\backslash$n]* & Ignora tudo a frente do comentário de \\&& uma linha "//" até a quebra de linha \\
+ 3 & "//"[$\wedge\backslash$n]* & Ignora tudo a frente do comentário de \\&& uma linha "//" exceto quebra de linha \\
  \hline
  4 & \{digito\}+\{letra\}+ & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Sufixo inválido no número inteiro} \\
  \hline
@@ -294,13 +309,6 @@ identifier\_struct\_expression
 \caption{Tabela de regras}
 \label{TabelaRegras}
 \end{table}
-
-\subsection{Erros Léxicos}
-
-{digito}+{letra}+
-{digito}+"."{letra}+
-"''"
-.
 
 %\section{Analisador Sintático}
 
