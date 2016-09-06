@@ -66,7 +66,7 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 
 \begin{itemize}
 	\item[1] \textbf{Analisador Léxico:} Lê o código fonte e atribui significado à cada sequência de caracteres, agora chamados lexemas. Cada lexema é mapeado para um token, que por sua vez é um par de nome (símbolo abstrato) e atributo (ponteiro para tabela de símbolos);
-	\item[2] \textbf{Analisador Sintático:} Constrói uma representação gramátical dos tokens em forma de árvore;
+	\item[2] \textbf{Analisador Sintático:} Constrói uma representação gramatical dos tokens em forma de árvore;
 	\item[3] \textbf{Analisador Semântico:} Utiliza a árvore sintática juntamente com a tabela de símbolos para verificar se a consistência semântica é mantida de acordo com a definição da linguagem.
 	\item[4] \textbf{Gerador de Código Intermediário:} Converte árvore sintática anotada em código intermediário, com linguagem parecida com assembly e que possui apenas três operadores por linha de código. Nesse sentido, quebra-se estruturas complexas em estruturas mais simples, nesta fase.
 	\item[5, 6] \textbf{Otimizador de Código Independente/Dependente de Máquina:} Procura aprimorar o código intermediário com o objetivo de melhorar o código-alvo de alguma forma: o deixando mais rápido, mais curto, consumindo menos energia, etc.
@@ -79,9 +79,9 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 
 \section{Gramática}
 
-\indent A seguir será apresentada a gramática da linguagem siC, baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagen são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers}, que por sua vez é uma expressão regular, e a única diferença entre este e \textit{identifier\_struct} é que o segundo tem acesso ao início da fila caso este seja o tipo do \textit{identifier}. 
+\indent A seguir será apresentada a gramática da linguagem siC, baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagem são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers}, que por sua vez é uma expressão regular, e a única diferença entre este e \textit{identifier\_struct} é que o segundo tem acesso ao início da fila caso este seja o tipo do \textit{identifier}. 
 
-\indent Algumas alterações e correções foram feitas na gramática:
+\indent Antes de apresentá-la, segue abaixo algumas alterações e correções da versão passada deste arquivo:
 
 \begin{itemize}
 	\item Será implementado apenas a fila como tipo primitivo. Se fosse mantida a primeira proposta de incluir também o tipo pilha, talvez não seria possível terminar o projeto no prazo previsto;
@@ -92,14 +92,13 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 	\item As aspas que delimitavam os símbolos como chaves e parênteses foram retiradas para aumentar também a legibilidade;
 	\item Foram adicionados as operações de comparação \textit{<} e \textit{>};
 	\item O símbolo \$ foi adicionado na variável \textit{letra}, pois em C ele pode compor um identificador;
-	\item A variavel \textit{caractere} foi adicionada para representar o valor de um char, que só poderá ser ou uma letra ou um dígito;
+	\item A variável \textit{caractere} foi adicionada para representar o valor de um char, que só poderá ser ou uma letra ou um dígito;
 	\item A variável inicial será agora \textit{program}, que possibilitará a criação de uma ou mais funções no código fonte;
 	\item Como existe agora chamada de função, foi criado mais um \textit{statement} para tal, \textit{identifier(identifiers);}, que exigiu a criação da nova variável \textit{identifiers} para a passagem de parâmetros O retorno das funções pode ser atribuído para uma variável, portanto também foi criada a regra \textit{identifier = identifier(identifiers);}.
 \end{itemize}
 
 Segue abaixo a gramática proposta cuja variável inicial é \textit{program}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
 \begin{alltt}{\footnotesize
-
 token: WHILE, IF, ELSE, RETURN 
 token: QUEUE, FIRST, VOID, {\color{red}FLOAT}, INT, CHAR
 
@@ -214,6 +213,68 @@ identifier\_struct\_expression
 
 \indent Neste projeto foram utilizadas duas variáveis globais muito úteis: \textit{yytext} e \textit{yyin}. A primeira contém o lexema que foi reconhecido como \textit{token}. Esta variável é modificada sempre que um novo lexema é identificado no código fonte. A segunda define como a entrada será lida, que pode ser tanto pela entrada padrão quanto por arquivo.
 
+
+
+\begin{table}
+ \centering
+ \begin{tabular}{|c || c  l |} 
+ \hline
+   & \textit{Pattern} & Ação \\ [0.5ex] 
+ \hline \hline
+ 1 & $\backslash$n	& Identifica uma quebra de linha e incrementa \\&& variável \textit{lines} para contagem de linhas \\ 
+ \hline
+ 2 & [ $\backslash$t]+ 	& Identifica um ou mais espaço ou tabulação\\
+ \hline
+ 3 & "//"[$\wedge\backslash$n]* & Ignora tudo a frente do comentário de \\&& uma linha "//" exceto quebra de linha \\
+ \hline
+ 4 & \{digito\}+\{letra\}+\{digito\}* & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Sufixo inválido no número inteiro} \\
+ \hline
+ 5 & {\footnotesize \{digito\}+"."\{digito\}*\{letra\}+\{digito\}*} & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Sufixo inválido no número float} \\
+ \hline
+ 6 & \{digito\}+"."\{digito\}* & Identifica números float\\
+ \hline
+ 7 & \{digito\}+ & Identifica números inteiros\\
+ \hline
+ 8 & "'"(\{letra\}|\{digito\})"'" & Identifica valor para uma variável do \\&& tipo char, que pode ser uma letra ou dígito\\
+ \hline
+ 9 & "''" & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Constante de caractere vazia} \\
+ \hline 
+ 10 & \{comparison\} & Identifica símbolos de comparação \\&& entre dois elementos \\
+ \hline
+ 11 & \{mark\} & Identifica pontuação e delimitadores de \\&& blocos e valores de char\\
+ \hline
+ 12 & \{operator\} & Identifica operadores matemáticos \\
+ \hline
+ 13 & (?i:"VOID")& Identifica palavra chave tipo void \\&& com as letras em caixa-alta ou caixa-alta. \\
+ \hline
+ 14 & (?i:"FLOAT")& Identifica palavra chave tipo float \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 15 & (?i:"INT")& Identifica palavra chave tipo inteiro \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 16 & (?i:"CHAR") & Identifica palavra chave tipo char \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 17 & (?i:"QUEUE")& Identifica palavra chave tipo fila \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 18 & (?i:"FIRST")& Identifica palavra chave que representa \\&&  primeiro elemento da fila com as letras em \\&& caixa-alta ou caixa-alta  \\
+ \hline
+ 19 & (?i:"IF")& Identifica palavra chave condicional if \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 20 & (?i:"ELSE")& Identifica palavra chave condicional else \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 21 & (?i:"WHILE")& Identifica palavra chave do laço while \\&& com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 22 & (?i:"RETURN")& Identifica palavra chave return, de retorno de \\&& função, com as letras em caixa-alta ou caixa-alta \\
+ \hline
+ 23 & \{id\} & Reconhece um identificador cuja regra é: não é \\&& permitido conter símbolos além de \$, letras e  dígitos \\&& e não é permitido começar a palara com dígito \\
+ \hline
+ 24 & . & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}\textit{Token} desconhecido} \\
+ \hline
+\end{tabular}
+\caption{Tabela de regras}
+\label{TabelaRegras}
+\end{table}
+
+
 \subsection{Arquivo lex}
 
 \indent O código fonte de extensão .lex é composto por três partes: definições, regras e código em C do usuário. Na seção de definições é onde são declarados nomes para certas expressões regulares, para facilitar a escrita das regras na próxima seção. Neste projeto foram feitas seis definições, apresentadas na Tabela \ref{TabelaDef}. A primeira representa um dígito apenas, de 0 à 9. A segunda é uma letra maiúscula ou minúscula e o símbolo \$, que em C pode compor o nome de um identificador. A terceira representa os símbolos de comparação entre dois números elementos (que serão do tipo char, inteiro e float). A quarta representa delimitadores do código siC, para finalizar um comanto, definir um escopo, etc. A quinta definição apresenta as quatro operações matemáticas básicas. A sexta e última apresenta uma expressão regular que especifica o formato de um identificador: ele deve começar com uma letra ou \$ e pode terminar com letras, \$s ou dígitos.
@@ -243,89 +304,40 @@ identifier\_struct\_expression
  
 \indent A segunda parte do código lex é composto pelas regras que são um par de \textit{pattern} e ação que devem estar na mesma linha. A Tabela \ref{TabelaRegras} apresenta cada regra utilizada no projeto. No código fonte, todos os elementos da entrada que são identificados são imprimidos, exceto quebra de linha, espaços, tabulações e comentários, que são ignorados. Existem três variáveis contadoras que são utilizadas nas ações: \textit{lines}, que começa com um e é incrementada sempre que uma quebra de linha é reconhecida, e \textit{errors}, que começa com zero e é incrementada sempre que um erro léxico é encontrado. Ao longo da execução são imprimidos as descrições dos erros léxicos na tela e, ao final, o número total de erros.
 
-\indent A ordem em que as regras estão é imporetante para o funcionamento correto do programa, pois se existir mais de uma correspondência de \textit{pattern} para um elemento, ele será identificado pela regra que aparecer primeiro. Neste projeto, as regras das keywords deve vir antes das regras dos identificadores, pois assim, se a seguinte entrada \textit{int x = 2;} for lida, por exemplo, o elemento \textit{int} será reconhecido como identificador e também tipo inteiro, porém a regra de keyword deverá identificá-lo.
+\indent A ordem em que as regras estão é importante para o funcionamento correto do programa, pois se existir mais de uma correspondência de \textit{pattern} para um elemento, ele será identificado pela regra que aparecer primeiro. Neste projeto, as regras das keywords deve vir antes das regras dos identificadores, pois assim, se a seguinte entrada \textit{int x = 2;} for lida, por exemplo, o elemento \textit{int} será reconhecido como identificador e também tipo inteiro, porém a regra de keyword deverá identificá-lo.
 
-\indent Os patterns contidos entre chaves foram definidos na seção de descrição. Em relação aos demais, segue abaixo a descrição de algumas expressões regulares. 
+\indent Os \textit{patterns} contidos entre chaves foram definidos na seção de descrição. Em relação aos demais, segue abaixo a descrição de algumas expressões regulares. 
 
 \begin{itemize}
-  \item[[$\wedge\backslash$n]] : Reconhece tudo exceto espaço e quebra de linha (Exemplo: regra 3);
+  \item[ [$\wedge\backslash$n] ] : Reconhece tudo exceto espaço e quebra de linha (Exemplo: regra 3);
   \item[\{digito\}] : Reconhece apenas um dígito (Exemplo: regra 8);
   \item[\{digito\}*] : Reconhece zero ou mais dígitos (Exemplo: regra 6);
   \item[\{digito\}+] : Reconhece um ou mais dígitos (Exemplo: regra 5);
   \item[``abc''] : Reconhece a sequência de caracteres "abc" (Exemplo: regra 9);
   \item[``a'' $\vert$ ``b''] : Reconhece o caractere "a" ou o "b" (Exemplo: regra 8);
   \item[(?i:"AB")] : Reconhece as sequências "AB", "Ab", "aB", "ab" (Exemplo: regra 13);
-  \item[.] : Reconhee qualquer elemento (Exemplo: regra 24).
+  \item[.] : Reconhece qualquer elemento (Exemplo: regra 24).
 \end{itemize}
 
 \indent A terceira parte do código lex é composta por código em C, que define como será lida a entrada (por arquivo ou pela entrada padrão) e define também as ações tomadas por cada \textit{pattern}.
-
-\begin{table}
- \centering
- \begin{tabular}{|c || c  l |} 
- \hline
-   & \textit{Pattern} & Ação \\ [0.5ex] 
- \hline \hline
- 1 & $\backslash$n	& Identifica uma quebra de linha e incrementa \\&& variável \textit{lines} para contagem de linhas \\ 
- \hline
- 2 & [ $\backslash$t]+ 	& Identifica um ou mais espaço ou tabulação\\
- \hline
- 3 & "//"[$\wedge\backslash$n]* & Ignora tudo a frente do comentário de \\&& uma linha "//" exceto quebra de linha \\
- \hline
- 4 & \{digito\}+\{letra\}+\{digito\}* & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Sufixo inválido no número inteiro} \\
- \hline
- 5 & \{digito\}+"."\{digito\}*\{letra\}+\{digito\}* & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Sufixo inválido no número float} \\
- \hline
- 6 & \{digito\}+"."\{digito\}* & Identifica números float\\
- \hline
- 7 & \{digito\}+ & Identifica números inteiros\\
- \hline
- 8 & "'"(\{letra\}|\{digito\})"'" & Identifica valor para uma variável do \\&& tipo char, que pode ser uma letra ou dígito\\
- \hline
- 9 & "''" & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}Constante de caractere vazia} \\
- \hline 
- 10 & \{comparison\} & Identifica símbolos de comparação \\&& entre dois elementos \\
- \hline
- 11 & \{mark\} & Identifica pontuação e delimitadores de \\&& blocos e valores de char\\
- \hline
- 12 & \{operator\} & Identifica operadores matemáticos \\
- \hline
- 13 & (?i:"VOID")& Identifica palavra chave tipo void \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 14 & (?i:"FLOAT")& Identifica palavra chave tipo float \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 15 & (?i:"INT")& Identifica palavra chave tipo inteiro \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 16 & (?i:"CHAR") & Identifica palavra chave tipo char \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 17 & (?i:"QUEUE")& Identifica palavra chave tipo fila \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 18 & (?i:"FIRST")& Identifica palavra chave que representa \\&&  primeiro elemento da fila com as letras em \\&& caixa-alta ou caixa-alta  \\
- \hline
- 19 & (?i:"IF")& Identifica palavra chave condicional if \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 20 & (?i:"ELSE")& Identifica palavra chave condicional else \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 21 & (?i:"WHILE")& Identifica palavra chave do laço while \\&& com as letras em caixa-alta ou caixa-alta \\
- \hline
- 22 & (?i:"RETURN")& Identifica palavra chave return, de retorno \\&& de função, com as letras em caixa-alta ou caixa-alta \\
- \hline
- 23 & \{id\} & Reconhece um identificador cuja regra é: \\&& não é permitido conter símbolos além de \$, letras e \\&& dígitos e não é permitido começar a palara com dígito \\
- \hline
- 24 & . & {\color{red}Gera o erro identificado na linha \textit{lines}:} \\&& {\color{red}\textit{Token} desconhecido} \\
- \hline
-\end{tabular}
-\caption{Tabela de regras}
-\label{TabelaRegras}
-\end{table}
 
 \subsection{Erros Léxicos}
 
 \indent Foram reconhecidos quatro erros léxicos em siC. Caso exista um elemento que comece com dígitos e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo inteiro (regra 4). Caso exista um elemento que comece com dígitos, tenha depois um ponto, e termine com letras, o usuário será informado de que o sufixo de letras é inválido para um tipo float (regra 5). Caso exista na entrada duas aspas simples, uma seguida da outra, o programa entende que entre eles deveria existir algum caractere que seria o valor que algum char, portanto o usuário será informado de que a constante de caractere está vazia (regra 9). Por fim, caso exista algum elemento não identificado na entrada, o usuário será informado (regra 24).
 
-\subsection{Arquivos de Teste}
+\indent Para testar o código foram criados dois arquivos de extensão .sic, um de acordo com as normas especificadas neste projeto (teste\_correto.sic), outro com todos os quatro tipos de erros léxicos (teste\_errado.sic). Cinco erros léxicos são reportados neste último arquivo:
 
-\indent Para testar o código foram criados dois arquivos de extensão .sic, um de acordo com as normas especificadas neste projeto (teste\_correto.sic), outro com todos os quatro tipos de erros léxicos (teste\_errado.sic).
+\begin{itemize}
+  \item[1] \textbf{ERROR on line 4 : Invalid suffix on integer ``0i0''} \\ Erro de variável começando começando com dígito, ou número inteiro contendo algum caractere;
+  \item[2] \textbf{ERROR on line 9 : Invalid suffix on floating ``0.0a0''} \\ Erro de número float contendo algum caractere;
+  \item[3] \textbf{ERROR on line 16 : Unknown token '!'} \\  Erro de caractere desconhecido;
+  \item[4] \textbf{ERROR on line 17 : Empty character constant `` `' ''} \\ Nesta linha ocorreu a inserção de um caractere vazio na pilha q;
+  \item[5] \textbf{ERROR on line 21 : Unknown token '@'} \\ Outro erro de caractere desconhecido.
+\end{itemize}
+
+\subsection{Dificuldades enfrentadas}
+
+\indent Nesta fase do projeto, as principais dificuldades foram construir as expressões regulares que formam os \textit{patterns}, bem como ordená-las de forma que o analisador respeite as regras de precedência de reconhecimento dos padrões. Além disso, foi um desafio procurar por erros léxicos, uma vez que os principais e mais conhecidos são sintáticos.
 
 %\section{Analisador Sintático}
 

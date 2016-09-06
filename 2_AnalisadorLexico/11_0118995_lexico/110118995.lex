@@ -16,8 +16,8 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 [ \t]+
 "//"[^\n]*	printf("Comentario na linha %d\n", lines);
 
-{digito}+{letra}+		{++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
-{digito}+"."{letra}+		{++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
+{digito}+{letra}+{digito}*		{++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
+{digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}* 		printf("Float number: %s\n", yytext);
 {digito}+			printf("Integer number: %s\n", yytext);
 
