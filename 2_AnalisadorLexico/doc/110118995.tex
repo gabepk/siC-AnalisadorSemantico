@@ -156,6 +156,44 @@ argument
 \indent A seguir serão descritas quatro estruturas básicas da linguagem siC: comando com repetição, condicional, expressões matemáticas e expressões com pilhas e filas. A última contempla as operações de adicionar elemento no topo da pilha ou no fim da fila, "+", e remover do topo ou do início da fila, "-", onde o valor do elemento retirado é armazenado no último operando da expressão.
 \begin{alltt}{\footnotesize
 
+
+% ==================================
+% ==================================
+% ================================== 
+REPENSAR \\ REPENSAR \\ REPENSAR \\ REPENSAR \\
+% ==================================
+% ==================================
+% ==================================
+
+matched_statements
+   \(\to\) matched_statements matched_statement
+   | \(\varepsilon\)
+
+statement
+   \(\to\) matched_statement
+    | open_statement
+
+matched_statement
+   \(\to\) IF ( compare\_expression ) matched_statement ELSE matched_statement
+    | {\color{red}identifier ( identifiers ) ;}
+    | {\color{red}identifier = identifier ( identifiers ) ;}
+    | WHILE ( compare\_expression ) {\color{red}matched_statement}
+    | identifier = {\color{red}assignment\_expression} ;
+    | \textbf{identifier\_struct\_expression}
+    | \{ matched_statements \}
+   
+open_statement
+   \(\to\) IF ( compare\_expression ) statement
+    | IF ( compare\_expression ) matched_statement ELSE open_statement
+   
+% ==================================
+% ==================================
+% ==================================
+REPENSAR \\ REPENSAR \\ REPENSAR \\ REPENSAR \\
+% ==================================
+% ==================================
+% ==================================
+
 statements
    \(\to\) statements statement
    | \(\varepsilon\)
