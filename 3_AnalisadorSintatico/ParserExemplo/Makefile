@@ -6,7 +6,7 @@ CC	= gcc
 CFLAGS	= -g -Wall
 
 Parser:		$(OBJS)
-		$(CC) $(CFLAGS) -o Parser $(OBJS) -lfl
+		$(CC) $(CFLAGS) $(OBJS) -o Parser -lfl
 
 Parser.lex.o:	Parser.lex.c
 		$(CC) $(CFLAGS) -c Parser.lex.c -o Parser.lex.o

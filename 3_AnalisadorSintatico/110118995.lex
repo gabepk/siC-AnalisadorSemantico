@@ -1,9 +1,14 @@
 %{
 #include <stdio.h>
-#include "bison.h"
+#include "110118995.tab.h"
 int lines = 1;
 int errors = 0;
 %} 
+
+%option nounput
+%option noinput
+%option yylineno
+
 digito [0-9]
 letra [a-zA-Z$]
 id [a-zA-Z$][a-zA-Z$0-9]*
@@ -16,10 +21,17 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 
 {digito}+{letra}+{digito}*		{++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
-{digito}+"."{digito}* 		printf("Float number: %s\n", yytext);
-{digito}+			printf("Integer number: %s\n", yytext);
 
-"'"({letra}|{digito})"'"	printf("Char value: %s\n", yytext);
+{digito}+"."{digito}* 		{   yylval.f = atof(yytext);
+                                    return(NUM_FLOAT);
+                                }
+{digito}+			{   yylval.i = atoi(yytext);
+                                    return(NUM_INT);
+                                }
+"'"({letra}|{digito})"'"	{   yylval.c = yytext[0];
+                                    return(CARACTERE);
+                                }
+                                
 "''"				{++errors;printf("\tERROR on line %d : Empty character constant \"%s\" \n", lines, yytext);}
 
 
@@ -57,11 +69,16 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 (?i:"WHILE")	return(WHILE);
 (?i:"RETURN")	return(RETURN);
 
-{id}	printf("Identifier: %s\n", yytext);
+{id}	{
+            yylval.str = malloc(strlen(yytext)); // Aloca espaço para string do tamanho de yytext
+            strncpy(yylval.str, yytext, strlen(yytext)); // Copia yytext para yylval.s
+            return(IDENTIFIER); // Diz pro bison que o valor lido é IDENTIFIER
+        }
+        
 .	{++errors;printf("\tERROR on line %d : Unknown token '%s' \n", lines, yytext);}
 
 %% 
-int main (int argc, char **argv) {
+/*int main (int argc, char **argv) {
     ++argv, --argc;   
     if (argc > 0)
         yyin = fopen(argv[0], "r");
@@ -70,4 +87,4 @@ int main (int argc, char **argv) {
     yylex();
     printf("\nErrors: %d\n\n", errors);
     return 0;
-}
+}*/
