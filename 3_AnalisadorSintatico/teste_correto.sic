@@ -4,7 +4,7 @@ int main () {
     int i;
     int j;
     int k;
-    i = 10;
+    i = '1';
     j = 1;
     k = 0;
     
@@ -14,7 +14,7 @@ int main () {
     
     // Aqui, o valor de i será igual ao número de elementos da pilha "q"
     while (i > 0) {
-	q = q + 'i';
+	i = a + 1.2;
 	i = i - 1;
     }
     

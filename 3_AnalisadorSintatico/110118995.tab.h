@@ -86,11 +86,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 22 "110118995.y" /* yacc.c:1909  */
+#line 7 "110118995.y" /* yacc.c:1909  */
 
     int i;
     float f;
-    char c;
+    char *c;
     char *str;
 
 #line 97 "110118995.tab.h" /* yacc.c:1909  */

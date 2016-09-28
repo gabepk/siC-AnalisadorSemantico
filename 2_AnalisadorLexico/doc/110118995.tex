@@ -98,6 +98,12 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 \end{itemize}
 
 Segue abaixo a gramática proposta cuja variável inicial é \textit{program}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
+
+
+% ==================================
+% ============== MUDANÇAS NOVAS (SINTATICO): argument -> arguments (EM FUNCTION)
+% ============== MUDANÇAS NOVAS (SINTATICO):
+
 \begin{alltt}{\footnotesize
 token: WHILE, IF, ELSE, RETURN 
 token: QUEUE, FIRST, VOID, {\color{red}FLOAT}, INT, CHAR
@@ -107,7 +113,7 @@ token: QUEUE, FIRST, VOID, {\color{red}FLOAT}, INT, CHAR
    | function}
 
 function
-   \(\to\) {\color{red}argument} ( arguments ) \{ statement RETURN identifier ; \}
+   \(\to\) {\color{red}argument} ( arguments ) \{ statements RETURN identifier ; \}
     
 {\color{red}identifiers
    \(\to\) identifiers, identifier

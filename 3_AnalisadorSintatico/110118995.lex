@@ -19,17 +19,20 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 [ \t]+
 "//"[^\n]*	printf("Comentario na linha %d\n", lines);
 
-{digito}+{letra}+{digito}*		{++errors;printf("\tERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
-{digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\tERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
+{digito}+{letra}+{digito}*		{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
+{digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 
+"'"({letra}|{digito})"'"	{   yylval.c = yytext;
+                                    //printf("\tCARACTERE %s\n", yytext);
+                                    return(CARACTERE);
+                                }
 {digito}+"."{digito}* 		{   yylval.f = atof(yytext);
+                                    //printf("\tNUM_FLOAT %f\n", atof(yytext));
                                     return(NUM_FLOAT);
                                 }
 {digito}+			{   yylval.i = atoi(yytext);
+                                    //printf("\tNUM_INT %d\n", atoi(yytext));
                                     return(NUM_INT);
-                                }
-"'"({letra}|{digito})"'"	{   yylval.c = yytext[0];
-                                    return(CARACTERE);
                                 }
                                 
 "''"				{++errors;printf("\tERROR on line %d : Empty character constant \"%s\" \n", lines, yytext);}
@@ -70,12 +73,13 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 (?i:"RETURN")	return(RETURN);
 
 {id}	{
+            //printf("\tIDENTIFIER %s\n", yytext);
             yylval.str = malloc(strlen(yytext)); // Aloca espaço para string do tamanho de yytext
             strncpy(yylval.str, yytext, strlen(yytext)); // Copia yytext para yylval.s
             return(IDENTIFIER); // Diz pro bison que o valor lido é IDENTIFIER
         }
         
-.	{++errors;printf("\tERROR on line %d : Unknown token '%s' \n", lines, yytext);}
+.	{++errors;printf("\t(lex) ERROR on line %d : Unknown token '%s' \n", lines, yytext);}
 
 %% 
 /*int main (int argc, char **argv) {
