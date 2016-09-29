@@ -1,12 +1,4 @@
-Terminais sem uso na gramática
-
-   QUOTE
-
-
-Estado 47 conflitos: 2 de deslocamento/redução
-Estado 92 conflitos: 9 de deslocamento/redução
-Estado 93 conflitos: 10 de deslocamento/redução
-Estado 99 conflitos: 9 de deslocamento/redução
+Estado 95 conflitos: 1 de deslocamento/redução
 
 
 Gramática
@@ -50,35 +42,37 @@ Gramática
    25 statement: argument SEMICOLON
    26          | IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON
    27          | IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON
-   28          | IF OPEN_PARENT compare_expression CLOSE_PARENT statements
-   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT statements ELSE statements
-   30          | WHILE OPEN_PARENT compare_expression CLOSE_PARENT statements
+   28          | IF OPEN_PARENT compare_expression CLOSE_PARENT block
+   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT block ELSE block
+   30          | WHILE OPEN_PARENT compare_expression CLOSE_PARENT block
    31          | IDENTIFIER ASSIGN assignment_expression SEMICOLON
-   32          | identifier_struct_expression
-   33          | OPEN_BRACES statements CLOSE_BRACES
+   32          | identifier_struct_expression SEMICOLON
 
-   34 compare_expression: value compare_assignment value
+   33 block: statement
+   34      | OPEN_BRACES statements CLOSE_BRACES
 
-   35 compare_assignment: EQ
-   36                   | NEQ
-   37                   | LEQ
-   38                   | GEQ
-   39                   | LT
-   40                   | GT
+   35 compare_expression: value compare_assignment value
 
-   41 assignment_expression: assignment_expression PLUS term
-   42                      | assignment_expression MINUS term
-   43                      | term
+   36 compare_assignment: EQ
+   37                   | NEQ
+   38                   | LEQ
+   39                   | GEQ
+   40                   | LT
+   41                   | GT
 
-   44 term: term MULT factor
-   45     | term DIV factor
-   46     | factor
+   42 assignment_expression: assignment_expression PLUS term
+   43                      | assignment_expression MINUS term
+   44                      | term
 
-   47 factor: value
-   48       | OPEN_PARENT assignment_expression CLOSE_PARENT
+   45 term: term MULT factor
+   46     | term DIV factor
+   47     | factor
 
-   49 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER PLUS value SEMICOLON
-   50                             | IDENTIFIER ASSIGN IDENTIFIER MINUS value SEMICOLON
+   48 factor: value
+   49       | OPEN_PARENT assignment_expression CLOSE_PARENT
+
+   50 identifier_struct_expression: IDENTIFIER DOT SETLAST ARROW value
+   51                             | IDENTIFIER ASSIGN IDENTIFIER DOT RMVFIRST
 
 
 Terminais, com as regras onde eles aparecem
@@ -88,7 +82,7 @@ error (256)
 NUM_INT (258) 7
 NUM_FLOAT (259) 8
 CARACTERE (260) 9
-IDENTIFIER (261) 10 11 22 26 27 31 49 50
+IDENTIFIER (261) 10 11 22 26 27 31 50 51
 WHILE (262) 30
 IF (263) 28 29
 ELSE (264) 29
@@ -99,65 +93,69 @@ VOID (268) 14
 FLOAT (269) 15
 INT (270) 16
 CHAR (271) 17
-DOT (272) 11
-SEMICOLON (273) 3 25 26 27 31 49 50
+DOT (272) 11 50 51
+SEMICOLON (273) 3 25 26 27 31 32
 COMMA (274) 4 19
-QUOTE (275)
-OPEN_BRACES (276) 3 33
-CLOSE_BRACES (277) 3 33
-OPEN_PARENT (278) 3 26 27 28 29 30 48
-CLOSE_PARENT (279) 3 26 27 28 29 30 48
-PLUS (280) 41 49
-MINUS (281) 42 50
-MULT (282) 44
-DIV (283) 45
-EQ (284) 35
-NEQ (285) 36
-LEQ (286) 37
-GEQ (287) 38
-LT (288) 18 39
-GT (289) 18 40
-ASSIGN (290) 27 31 49 50
+OPEN_BRACES (275) 3 34
+CLOSE_BRACES (276) 3 34
+OPEN_PARENT (277) 3 26 27 28 29 30 49
+CLOSE_PARENT (278) 3 26 27 28 29 30 49
+PLUS (279) 42
+MINUS (280) 43
+MULT (281) 45
+DIV (282) 46
+EQ (283) 36
+NEQ (284) 37
+LEQ (285) 38
+GEQ (286) 39
+LT (287) 18 40
+GT (288) 18 41
+ASSIGN (289) 27 31 51
+ARROW (290) 50
+SETLAST (291) 50
+RMVFIRST (292) 51
 
 
 Não terminais com as regras onde eles aparecem
 
-$accept (36)
+$accept (38)
     à esquerda: 0
-program (37)
+program (39)
     à esquerda: 1 2, à direita: 0 1
-function (38)
+function (40)
     à esquerda: 3, à direita: 1 2
-values (39)
+values (41)
     à esquerda: 4 5 6, à direita: 4 26 27
-value (40)
-    à esquerda: 7 8 9 10 11, à direita: 3 4 5 34 47 49 50
-type_struct (41)
+value (42)
+    à esquerda: 7 8 9 10 11, à direita: 3 4 5 35 48 50
+type_struct (43)
     à esquerda: 12 13, à direita: 22
-type_simple (42)
+type_simple (44)
     à esquerda: 14 15 16 17, à direita: 12 18
-type_queue (43)
+type_queue (45)
     à esquerda: 18, à direita: 13
-arguments (44)
+arguments (46)
     à esquerda: 19 20 21, à direita: 3 19
-argument (45)
+argument (47)
     à esquerda: 22, à direita: 3 19 20 25
-statements (46)
-    à esquerda: 23 24, à direita: 3 23 28 29 30 33
-statement (47)
-    à esquerda: 25 26 27 28 29 30 31 32 33, à direita: 23
-compare_expression (48)
-    à esquerda: 34, à direita: 28 29 30
-compare_assignment (49)
-    à esquerda: 35 36 37 38 39 40, à direita: 34
-assignment_expression (50)
-    à esquerda: 41 42 43, à direita: 31 41 42 48
-term (51)
-    à esquerda: 44 45 46, à direita: 41 42 43 44 45
-factor (52)
-    à esquerda: 47 48, à direita: 44 45 46
-identifier_struct_expression (53)
-    à esquerda: 49 50, à direita: 32
+statements (48)
+    à esquerda: 23 24, à direita: 3 23 34
+statement (49)
+    à esquerda: 25 26 27 28 29 30 31 32, à direita: 23 33
+block (50)
+    à esquerda: 33 34, à direita: 28 29 30
+compare_expression (51)
+    à esquerda: 35, à direita: 28 29 30
+compare_assignment (52)
+    à esquerda: 36 37 38 39 40 41, à direita: 35
+assignment_expression (53)
+    à esquerda: 42 43 44, à direita: 31 42 43 49
+term (54)
+    à esquerda: 45 46 47, à direita: 42 43 44 45 46
+factor (55)
+    à esquerda: 48 49, à direita: 45 46 47
+identifier_struct_expression (56)
+    à esquerda: 50 51, à direita: 32
 
 
 Estado 0
@@ -393,23 +391,22 @@ Estado 25
     3 function: argument OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements . RETURN value SEMICOLON CLOSE_BRACES
    23 statements: statements . statement
 
-    IDENTIFIER   deslocar, e ir ao estado 26
-    WHILE        deslocar, e ir ao estado 27
-    IF           deslocar, e ir ao estado 28
-    RETURN       deslocar, e ir ao estado 29
-    QUEUE        deslocar, e ir ao estado 1
-    VOID         deslocar, e ir ao estado 2
-    FLOAT        deslocar, e ir ao estado 3
-    INT          deslocar, e ir ao estado 4
-    CHAR         deslocar, e ir ao estado 5
-    OPEN_BRACES  deslocar, e ir ao estado 30
+    IDENTIFIER  deslocar, e ir ao estado 26
+    WHILE       deslocar, e ir ao estado 27
+    IF          deslocar, e ir ao estado 28
+    RETURN      deslocar, e ir ao estado 29
+    QUEUE       deslocar, e ir ao estado 1
+    VOID        deslocar, e ir ao estado 2
+    FLOAT       deslocar, e ir ao estado 3
+    INT         deslocar, e ir ao estado 4
+    CHAR        deslocar, e ir ao estado 5
 
     type_struct                   ir ao estado 8
     type_simple                   ir ao estado 9
     type_queue                    ir ao estado 10
-    argument                      ir ao estado 31
-    statement                     ir ao estado 32
-    identifier_struct_expression  ir ao estado 33
+    argument                      ir ao estado 30
+    statement                     ir ao estado 31
+    identifier_struct_expression  ir ao estado 32
 
 
 Estado 26
@@ -417,24 +414,25 @@ Estado 26
    26 statement: IDENTIFIER . OPEN_PARENT values CLOSE_PARENT SEMICOLON
    27          | IDENTIFIER . ASSIGN IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON
    31          | IDENTIFIER . ASSIGN assignment_expression SEMICOLON
-   49 identifier_struct_expression: IDENTIFIER . ASSIGN IDENTIFIER PLUS value SEMICOLON
-   50                             | IDENTIFIER . ASSIGN IDENTIFIER MINUS value SEMICOLON
+   50 identifier_struct_expression: IDENTIFIER . DOT SETLAST ARROW value
+   51                             | IDENTIFIER . ASSIGN IDENTIFIER DOT RMVFIRST
 
+    DOT          deslocar, e ir ao estado 33
     OPEN_PARENT  deslocar, e ir ao estado 34
     ASSIGN       deslocar, e ir ao estado 35
 
 
 Estado 27
 
-   30 statement: WHILE . OPEN_PARENT compare_expression CLOSE_PARENT statements
+   30 statement: WHILE . OPEN_PARENT compare_expression CLOSE_PARENT block
 
     OPEN_PARENT  deslocar, e ir ao estado 36
 
 
 Estado 28
 
-   28 statement: IF . OPEN_PARENT compare_expression CLOSE_PARENT statements
-   29          | IF . OPEN_PARENT compare_expression CLOSE_PARENT statements ELSE statements
+   28 statement: IF . OPEN_PARENT compare_expression CLOSE_PARENT block
+   29          | IF . OPEN_PARENT compare_expression CLOSE_PARENT block ELSE block
 
     OPEN_PARENT  deslocar, e ir ao estado 37
 
@@ -453,32 +451,30 @@ Estado 29
 
 Estado 30
 
-   33 statement: OPEN_BRACES . statements CLOSE_BRACES
+   25 statement: argument . SEMICOLON
 
-    $padrão  reduzir usando a regra 24 (statements)
-
-    statements  ir ao estado 43
+    SEMICOLON  deslocar, e ir ao estado 43
 
 
 Estado 31
-
-   25 statement: argument . SEMICOLON
-
-    SEMICOLON  deslocar, e ir ao estado 44
-
-
-Estado 32
 
    23 statements: statements statement .
 
     $padrão  reduzir usando a regra 23 (statements)
 
 
+Estado 32
+
+   32 statement: identifier_struct_expression . SEMICOLON
+
+    SEMICOLON  deslocar, e ir ao estado 44
+
+
 Estado 33
 
-   32 statement: identifier_struct_expression .
+   50 identifier_struct_expression: IDENTIFIER DOT . SETLAST ARROW value
 
-    $padrão  reduzir usando a regra 32 (statement)
+    SETLAST  deslocar, e ir ao estado 45
 
 
 Estado 34
@@ -492,54 +488,53 @@ Estado 34
 
     $padrão  reduzir usando a regra 6 (values)
 
-    values  ir ao estado 45
-    value   ir ao estado 46
+    values  ir ao estado 46
+    value   ir ao estado 47
 
 
 Estado 35
 
    27 statement: IDENTIFIER ASSIGN . IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON
    31          | IDENTIFIER ASSIGN . assignment_expression SEMICOLON
-   49 identifier_struct_expression: IDENTIFIER ASSIGN . IDENTIFIER PLUS value SEMICOLON
-   50                             | IDENTIFIER ASSIGN . IDENTIFIER MINUS value SEMICOLON
+   51 identifier_struct_expression: IDENTIFIER ASSIGN . IDENTIFIER DOT RMVFIRST
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
-    IDENTIFIER   deslocar, e ir ao estado 47
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    IDENTIFIER   deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value                  ir ao estado 49
-    assignment_expression  ir ao estado 50
-    term                   ir ao estado 51
-    factor                 ir ao estado 52
+    value                  ir ao estado 50
+    assignment_expression  ir ao estado 51
+    term                   ir ao estado 52
+    factor                 ir ao estado 53
 
 
 Estado 36
 
-   30 statement: WHILE OPEN_PARENT . compare_expression CLOSE_PARENT statements
+   30 statement: WHILE OPEN_PARENT . compare_expression CLOSE_PARENT block
 
     NUM_INT     deslocar, e ir ao estado 38
     NUM_FLOAT   deslocar, e ir ao estado 39
     CARACTERE   deslocar, e ir ao estado 40
     IDENTIFIER  deslocar, e ir ao estado 41
 
-    value               ir ao estado 53
-    compare_expression  ir ao estado 54
+    value               ir ao estado 54
+    compare_expression  ir ao estado 55
 
 
 Estado 37
 
-   28 statement: IF OPEN_PARENT . compare_expression CLOSE_PARENT statements
-   29          | IF OPEN_PARENT . compare_expression CLOSE_PARENT statements ELSE statements
+   28 statement: IF OPEN_PARENT . compare_expression CLOSE_PARENT block
+   29          | IF OPEN_PARENT . compare_expression CLOSE_PARENT block ELSE block
 
     NUM_INT     deslocar, e ir ao estado 38
     NUM_FLOAT   deslocar, e ir ao estado 39
     CARACTERE   deslocar, e ir ao estado 40
     IDENTIFIER  deslocar, e ir ao estado 41
 
-    value               ir ao estado 53
-    compare_expression  ir ao estado 55
+    value               ir ao estado 54
+    compare_expression  ir ao estado 56
 
 
 Estado 38
@@ -568,7 +563,7 @@ Estado 41
    10 value: IDENTIFIER .
    11      | IDENTIFIER . DOT FIRST
 
-    DOT  deslocar, e ir ao estado 56
+    DOT  deslocar, e ir ao estado 57
 
     $padrão  reduzir usando a regra 10 (value)
 
@@ -577,130 +572,115 @@ Estado 42
 
     3 function: argument OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value . SEMICOLON CLOSE_BRACES
 
-    SEMICOLON  deslocar, e ir ao estado 57
+    SEMICOLON  deslocar, e ir ao estado 58
 
 
 Estado 43
-
-   23 statements: statements . statement
-   33 statement: OPEN_BRACES statements . CLOSE_BRACES
-
-    IDENTIFIER    deslocar, e ir ao estado 26
-    WHILE         deslocar, e ir ao estado 27
-    IF            deslocar, e ir ao estado 28
-    QUEUE         deslocar, e ir ao estado 1
-    VOID          deslocar, e ir ao estado 2
-    FLOAT         deslocar, e ir ao estado 3
-    INT           deslocar, e ir ao estado 4
-    CHAR          deslocar, e ir ao estado 5
-    OPEN_BRACES   deslocar, e ir ao estado 30
-    CLOSE_BRACES  deslocar, e ir ao estado 58
-
-    type_struct                   ir ao estado 8
-    type_simple                   ir ao estado 9
-    type_queue                    ir ao estado 10
-    argument                      ir ao estado 31
-    statement                     ir ao estado 32
-    identifier_struct_expression  ir ao estado 33
-
-
-Estado 44
 
    25 statement: argument SEMICOLON .
 
     $padrão  reduzir usando a regra 25 (statement)
 
 
+Estado 44
+
+   32 statement: identifier_struct_expression SEMICOLON .
+
+    $padrão  reduzir usando a regra 32 (statement)
+
+
 Estado 45
+
+   50 identifier_struct_expression: IDENTIFIER DOT SETLAST . ARROW value
+
+    ARROW  deslocar, e ir ao estado 59
+
+
+Estado 46
 
     4 values: values . COMMA value
    26 statement: IDENTIFIER OPEN_PARENT values . CLOSE_PARENT SEMICOLON
 
-    COMMA         deslocar, e ir ao estado 59
-    CLOSE_PARENT  deslocar, e ir ao estado 60
+    COMMA         deslocar, e ir ao estado 60
+    CLOSE_PARENT  deslocar, e ir ao estado 61
 
 
-Estado 46
+Estado 47
 
     5 values: value .
 
     $padrão  reduzir usando a regra 5 (values)
 
 
-Estado 47
+Estado 48
 
    10 value: IDENTIFIER .
    11      | IDENTIFIER . DOT FIRST
    27 statement: IDENTIFIER ASSIGN IDENTIFIER . OPEN_PARENT values CLOSE_PARENT SEMICOLON
-   49 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER . PLUS value SEMICOLON
-   50                             | IDENTIFIER ASSIGN IDENTIFIER . MINUS value SEMICOLON
+   51 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER . DOT RMVFIRST
 
-    DOT          deslocar, e ir ao estado 56
-    OPEN_PARENT  deslocar, e ir ao estado 61
-    PLUS         deslocar, e ir ao estado 62
-    MINUS        deslocar, e ir ao estado 63
+    DOT          deslocar, e ir ao estado 62
+    OPEN_PARENT  deslocar, e ir ao estado 63
 
-    PLUS      [reduzir usando a regra 10 (value)]
-    MINUS     [reduzir usando a regra 10 (value)]
     $padrão  reduzir usando a regra 10 (value)
 
 
-Estado 48
+Estado 49
 
-   48 factor: OPEN_PARENT . assignment_expression CLOSE_PARENT
+   49 factor: OPEN_PARENT . assignment_expression CLOSE_PARENT
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
     IDENTIFIER   deslocar, e ir ao estado 41
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value                  ir ao estado 49
+    value                  ir ao estado 50
     assignment_expression  ir ao estado 64
-    term                   ir ao estado 51
-    factor                 ir ao estado 52
-
-
-Estado 49
-
-   47 factor: value .
-
-    $padrão  reduzir usando a regra 47 (factor)
+    term                   ir ao estado 52
+    factor                 ir ao estado 53
 
 
 Estado 50
 
+   48 factor: value .
+
+    $padrão  reduzir usando a regra 48 (factor)
+
+
+Estado 51
+
    31 statement: IDENTIFIER ASSIGN assignment_expression . SEMICOLON
-   41 assignment_expression: assignment_expression . PLUS term
-   42                      | assignment_expression . MINUS term
+   42 assignment_expression: assignment_expression . PLUS term
+   43                      | assignment_expression . MINUS term
 
     SEMICOLON  deslocar, e ir ao estado 65
     PLUS       deslocar, e ir ao estado 66
     MINUS      deslocar, e ir ao estado 67
 
 
-Estado 51
+Estado 52
 
-   43 assignment_expression: term .
-   44 term: term . MULT factor
-   45     | term . DIV factor
+   44 assignment_expression: term .
+   45 term: term . MULT factor
+   46     | term . DIV factor
 
     MULT  deslocar, e ir ao estado 68
     DIV   deslocar, e ir ao estado 69
 
-    $padrão  reduzir usando a regra 43 (assignment_expression)
-
-
-Estado 52
-
-   46 term: factor .
-
-    $padrão  reduzir usando a regra 46 (term)
+    $padrão  reduzir usando a regra 44 (assignment_expression)
 
 
 Estado 53
 
-   34 compare_expression: value . compare_assignment value
+   47 term: factor .
+
+    $padrão  reduzir usando a regra 47 (term)
+
+
+Estado 54
+
+   35 compare_expression: value . compare_assignment value
 
     EQ   deslocar, e ir ao estado 70
     NEQ  deslocar, e ir ao estado 71
@@ -712,45 +692,38 @@ Estado 53
     compare_assignment  ir ao estado 76
 
 
-Estado 54
+Estado 55
 
-   30 statement: WHILE OPEN_PARENT compare_expression . CLOSE_PARENT statements
+   30 statement: WHILE OPEN_PARENT compare_expression . CLOSE_PARENT block
 
     CLOSE_PARENT  deslocar, e ir ao estado 77
 
 
-Estado 55
+Estado 56
 
-   28 statement: IF OPEN_PARENT compare_expression . CLOSE_PARENT statements
-   29          | IF OPEN_PARENT compare_expression . CLOSE_PARENT statements ELSE statements
+   28 statement: IF OPEN_PARENT compare_expression . CLOSE_PARENT block
+   29          | IF OPEN_PARENT compare_expression . CLOSE_PARENT block ELSE block
 
     CLOSE_PARENT  deslocar, e ir ao estado 78
 
 
-Estado 56
+Estado 57
 
    11 value: IDENTIFIER DOT . FIRST
 
     FIRST  deslocar, e ir ao estado 79
 
 
-Estado 57
+Estado 58
 
     3 function: argument OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value SEMICOLON . CLOSE_BRACES
 
     CLOSE_BRACES  deslocar, e ir ao estado 80
 
 
-Estado 58
-
-   33 statement: OPEN_BRACES statements CLOSE_BRACES .
-
-    $padrão  reduzir usando a regra 33 (statement)
-
-
 Estado 59
 
-    4 values: values COMMA . value
+   50 identifier_struct_expression: IDENTIFIER DOT SETLAST ARROW . value
 
     NUM_INT     deslocar, e ir ao estado 38
     NUM_FLOAT   deslocar, e ir ao estado 39
@@ -762,12 +735,33 @@ Estado 59
 
 Estado 60
 
-   26 statement: IDENTIFIER OPEN_PARENT values CLOSE_PARENT . SEMICOLON
+    4 values: values COMMA . value
 
-    SEMICOLON  deslocar, e ir ao estado 82
+    NUM_INT     deslocar, e ir ao estado 38
+    NUM_FLOAT   deslocar, e ir ao estado 39
+    CARACTERE   deslocar, e ir ao estado 40
+    IDENTIFIER  deslocar, e ir ao estado 41
+
+    value  ir ao estado 82
 
 
 Estado 61
+
+   26 statement: IDENTIFIER OPEN_PARENT values CLOSE_PARENT . SEMICOLON
+
+    SEMICOLON  deslocar, e ir ao estado 83
+
+
+Estado 62
+
+   11 value: IDENTIFIER DOT . FIRST
+   51 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER DOT . RMVFIRST
+
+    FIRST     deslocar, e ir ao estado 79
+    RMVFIRST  deslocar, e ir ao estado 84
+
+
+Estado 63
 
    27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT . values CLOSE_PARENT SEMICOLON
 
@@ -778,39 +772,15 @@ Estado 61
 
     $padrão  reduzir usando a regra 6 (values)
 
-    values  ir ao estado 83
-    value   ir ao estado 46
-
-
-Estado 62
-
-   49 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER PLUS . value SEMICOLON
-
-    NUM_INT     deslocar, e ir ao estado 38
-    NUM_FLOAT   deslocar, e ir ao estado 39
-    CARACTERE   deslocar, e ir ao estado 40
-    IDENTIFIER  deslocar, e ir ao estado 41
-
-    value  ir ao estado 84
-
-
-Estado 63
-
-   50 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER MINUS . value SEMICOLON
-
-    NUM_INT     deslocar, e ir ao estado 38
-    NUM_FLOAT   deslocar, e ir ao estado 39
-    CARACTERE   deslocar, e ir ao estado 40
-    IDENTIFIER  deslocar, e ir ao estado 41
-
-    value  ir ao estado 85
+    values  ir ao estado 85
+    value   ir ao estado 47
 
 
 Estado 64
 
-   41 assignment_expression: assignment_expression . PLUS term
-   42                      | assignment_expression . MINUS term
-   48 factor: OPEN_PARENT assignment_expression . CLOSE_PARENT
+   42 assignment_expression: assignment_expression . PLUS term
+   43                      | assignment_expression . MINUS term
+   49 factor: OPEN_PARENT assignment_expression . CLOSE_PARENT
 
     CLOSE_PARENT  deslocar, e ir ao estado 86
     PLUS          deslocar, e ir ao estado 66
@@ -826,107 +796,107 @@ Estado 65
 
 Estado 66
 
-   41 assignment_expression: assignment_expression PLUS . term
+   42 assignment_expression: assignment_expression PLUS . term
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
     IDENTIFIER   deslocar, e ir ao estado 41
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value   ir ao estado 49
+    value   ir ao estado 50
     term    ir ao estado 87
-    factor  ir ao estado 52
+    factor  ir ao estado 53
 
 
 Estado 67
 
-   42 assignment_expression: assignment_expression MINUS . term
+   43 assignment_expression: assignment_expression MINUS . term
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
     IDENTIFIER   deslocar, e ir ao estado 41
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value   ir ao estado 49
+    value   ir ao estado 50
     term    ir ao estado 88
-    factor  ir ao estado 52
+    factor  ir ao estado 53
 
 
 Estado 68
 
-   44 term: term MULT . factor
+   45 term: term MULT . factor
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
     IDENTIFIER   deslocar, e ir ao estado 41
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value   ir ao estado 49
+    value   ir ao estado 50
     factor  ir ao estado 89
 
 
 Estado 69
 
-   45 term: term DIV . factor
+   46 term: term DIV . factor
 
     NUM_INT      deslocar, e ir ao estado 38
     NUM_FLOAT    deslocar, e ir ao estado 39
     CARACTERE    deslocar, e ir ao estado 40
     IDENTIFIER   deslocar, e ir ao estado 41
-    OPEN_PARENT  deslocar, e ir ao estado 48
+    OPEN_PARENT  deslocar, e ir ao estado 49
 
-    value   ir ao estado 49
+    value   ir ao estado 50
     factor  ir ao estado 90
 
 
 Estado 70
 
-   35 compare_assignment: EQ .
-
-    $padrão  reduzir usando a regra 35 (compare_assignment)
-
-
-Estado 71
-
-   36 compare_assignment: NEQ .
+   36 compare_assignment: EQ .
 
     $padrão  reduzir usando a regra 36 (compare_assignment)
 
 
-Estado 72
+Estado 71
 
-   37 compare_assignment: LEQ .
+   37 compare_assignment: NEQ .
 
     $padrão  reduzir usando a regra 37 (compare_assignment)
 
 
-Estado 73
+Estado 72
 
-   38 compare_assignment: GEQ .
+   38 compare_assignment: LEQ .
 
     $padrão  reduzir usando a regra 38 (compare_assignment)
 
 
-Estado 74
+Estado 73
 
-   39 compare_assignment: LT .
+   39 compare_assignment: GEQ .
 
     $padrão  reduzir usando a regra 39 (compare_assignment)
 
 
-Estado 75
+Estado 74
 
-   40 compare_assignment: GT .
+   40 compare_assignment: LT .
 
     $padrão  reduzir usando a regra 40 (compare_assignment)
 
 
+Estado 75
+
+   41 compare_assignment: GT .
+
+    $padrão  reduzir usando a regra 41 (compare_assignment)
+
+
 Estado 76
 
-   34 compare_expression: value compare_assignment . value
+   35 compare_expression: value compare_assignment . value
 
     NUM_INT     deslocar, e ir ao estado 38
     NUM_FLOAT   deslocar, e ir ao estado 39
@@ -938,21 +908,49 @@ Estado 76
 
 Estado 77
 
-   30 statement: WHILE OPEN_PARENT compare_expression CLOSE_PARENT . statements
+   30 statement: WHILE OPEN_PARENT compare_expression CLOSE_PARENT . block
 
-    $padrão  reduzir usando a regra 24 (statements)
+    IDENTIFIER   deslocar, e ir ao estado 26
+    WHILE        deslocar, e ir ao estado 27
+    IF           deslocar, e ir ao estado 28
+    QUEUE        deslocar, e ir ao estado 1
+    VOID         deslocar, e ir ao estado 2
+    FLOAT        deslocar, e ir ao estado 3
+    INT          deslocar, e ir ao estado 4
+    CHAR         deslocar, e ir ao estado 5
+    OPEN_BRACES  deslocar, e ir ao estado 92
 
-    statements  ir ao estado 92
+    type_struct                   ir ao estado 8
+    type_simple                   ir ao estado 9
+    type_queue                    ir ao estado 10
+    argument                      ir ao estado 30
+    statement                     ir ao estado 93
+    block                         ir ao estado 94
+    identifier_struct_expression  ir ao estado 32
 
 
 Estado 78
 
-   28 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT . statements
-   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT . statements ELSE statements
+   28 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT . block
+   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT . block ELSE block
 
-    $padrão  reduzir usando a regra 24 (statements)
+    IDENTIFIER   deslocar, e ir ao estado 26
+    WHILE        deslocar, e ir ao estado 27
+    IF           deslocar, e ir ao estado 28
+    QUEUE        deslocar, e ir ao estado 1
+    VOID         deslocar, e ir ao estado 2
+    FLOAT        deslocar, e ir ao estado 3
+    INT          deslocar, e ir ao estado 4
+    CHAR         deslocar, e ir ao estado 5
+    OPEN_BRACES  deslocar, e ir ao estado 92
 
-    statements  ir ao estado 93
+    type_struct                   ir ao estado 8
+    type_simple                   ir ao estado 9
+    type_queue                    ir ao estado 10
+    argument                      ir ao estado 30
+    statement                     ir ao estado 93
+    block                         ir ao estado 95
+    identifier_struct_expression  ir ao estado 32
 
 
 Estado 79
@@ -971,65 +969,53 @@ Estado 80
 
 Estado 81
 
+   50 identifier_struct_expression: IDENTIFIER DOT SETLAST ARROW value .
+
+    $padrão  reduzir usando a regra 50 (identifier_struct_expression)
+
+
+Estado 82
+
     4 values: values COMMA value .
 
     $padrão  reduzir usando a regra 4 (values)
 
 
-Estado 82
+Estado 83
 
    26 statement: IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON .
 
     $padrão  reduzir usando a regra 26 (statement)
 
 
-Estado 83
-
-    4 values: values . COMMA value
-   27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values . CLOSE_PARENT SEMICOLON
-
-    COMMA         deslocar, e ir ao estado 59
-    CLOSE_PARENT  deslocar, e ir ao estado 94
-
-
 Estado 84
 
-   49 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER PLUS value . SEMICOLON
+   51 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER DOT RMVFIRST .
 
-    SEMICOLON  deslocar, e ir ao estado 95
+    $padrão  reduzir usando a regra 51 (identifier_struct_expression)
 
 
 Estado 85
 
-   50 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER MINUS value . SEMICOLON
+    4 values: values . COMMA value
+   27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values . CLOSE_PARENT SEMICOLON
 
-    SEMICOLON  deslocar, e ir ao estado 96
+    COMMA         deslocar, e ir ao estado 60
+    CLOSE_PARENT  deslocar, e ir ao estado 96
 
 
 Estado 86
 
-   48 factor: OPEN_PARENT assignment_expression CLOSE_PARENT .
+   49 factor: OPEN_PARENT assignment_expression CLOSE_PARENT .
 
-    $padrão  reduzir usando a regra 48 (factor)
+    $padrão  reduzir usando a regra 49 (factor)
 
 
 Estado 87
 
-   41 assignment_expression: assignment_expression PLUS term .
-   44 term: term . MULT factor
-   45     | term . DIV factor
-
-    MULT  deslocar, e ir ao estado 68
-    DIV   deslocar, e ir ao estado 69
-
-    $padrão  reduzir usando a regra 41 (assignment_expression)
-
-
-Estado 88
-
-   42 assignment_expression: assignment_expression MINUS term .
-   44 term: term . MULT factor
-   45     | term . DIV factor
+   42 assignment_expression: assignment_expression PLUS term .
+   45 term: term . MULT factor
+   46     | term . DIV factor
 
     MULT  deslocar, e ir ao estado 68
     DIV   deslocar, e ir ao estado 69
@@ -1037,164 +1023,142 @@ Estado 88
     $padrão  reduzir usando a regra 42 (assignment_expression)
 
 
+Estado 88
+
+   43 assignment_expression: assignment_expression MINUS term .
+   45 term: term . MULT factor
+   46     | term . DIV factor
+
+    MULT  deslocar, e ir ao estado 68
+    DIV   deslocar, e ir ao estado 69
+
+    $padrão  reduzir usando a regra 43 (assignment_expression)
+
+
 Estado 89
 
-   44 term: term MULT factor .
-
-    $padrão  reduzir usando a regra 44 (term)
-
-
-Estado 90
-
-   45 term: term DIV factor .
+   45 term: term MULT factor .
 
     $padrão  reduzir usando a regra 45 (term)
 
 
+Estado 90
+
+   46 term: term DIV factor .
+
+    $padrão  reduzir usando a regra 46 (term)
+
+
 Estado 91
 
-   34 compare_expression: value compare_assignment value .
+   35 compare_expression: value compare_assignment value .
 
-    $padrão  reduzir usando a regra 34 (compare_expression)
+    $padrão  reduzir usando a regra 35 (compare_expression)
 
 
 Estado 92
 
-   23 statements: statements . statement
-   30 statement: WHILE OPEN_PARENT compare_expression CLOSE_PARENT statements .
+   34 block: OPEN_BRACES . statements CLOSE_BRACES
 
-    IDENTIFIER   deslocar, e ir ao estado 26
-    WHILE        deslocar, e ir ao estado 27
-    IF           deslocar, e ir ao estado 28
-    QUEUE        deslocar, e ir ao estado 1
-    VOID         deslocar, e ir ao estado 2
-    FLOAT        deslocar, e ir ao estado 3
-    INT          deslocar, e ir ao estado 4
-    CHAR         deslocar, e ir ao estado 5
-    OPEN_BRACES  deslocar, e ir ao estado 30
+    $padrão  reduzir usando a regra 24 (statements)
 
-    IDENTIFIER   [reduzir usando a regra 30 (statement)]
-    WHILE        [reduzir usando a regra 30 (statement)]
-    IF           [reduzir usando a regra 30 (statement)]
-    QUEUE        [reduzir usando a regra 30 (statement)]
-    VOID         [reduzir usando a regra 30 (statement)]
-    FLOAT        [reduzir usando a regra 30 (statement)]
-    INT          [reduzir usando a regra 30 (statement)]
-    CHAR         [reduzir usando a regra 30 (statement)]
-    OPEN_BRACES  [reduzir usando a regra 30 (statement)]
-    $padrão     reduzir usando a regra 30 (statement)
-
-    type_struct                   ir ao estado 8
-    type_simple                   ir ao estado 9
-    type_queue                    ir ao estado 10
-    argument                      ir ao estado 31
-    statement                     ir ao estado 32
-    identifier_struct_expression  ir ao estado 33
+    statements  ir ao estado 97
 
 
 Estado 93
 
+   33 block: statement .
+
+    $padrão  reduzir usando a regra 33 (block)
+
+
+Estado 94
+
+   30 statement: WHILE OPEN_PARENT compare_expression CLOSE_PARENT block .
+
+    $padrão  reduzir usando a regra 30 (statement)
+
+
+Estado 95
+
+   28 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT block .
+   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT block . ELSE block
+
+    ELSE  deslocar, e ir ao estado 98
+
+    ELSE      [reduzir usando a regra 28 (statement)]
+    $padrão  reduzir usando a regra 28 (statement)
+
+
+Estado 96
+
+   27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values CLOSE_PARENT . SEMICOLON
+
+    SEMICOLON  deslocar, e ir ao estado 99
+
+
+Estado 97
+
    23 statements: statements . statement
-   28 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT statements .
-   29          | IF OPEN_PARENT compare_expression CLOSE_PARENT statements . ELSE statements
+   34 block: OPEN_BRACES statements . CLOSE_BRACES
+
+    IDENTIFIER    deslocar, e ir ao estado 26
+    WHILE         deslocar, e ir ao estado 27
+    IF            deslocar, e ir ao estado 28
+    QUEUE         deslocar, e ir ao estado 1
+    VOID          deslocar, e ir ao estado 2
+    FLOAT         deslocar, e ir ao estado 3
+    INT           deslocar, e ir ao estado 4
+    CHAR          deslocar, e ir ao estado 5
+    CLOSE_BRACES  deslocar, e ir ao estado 100
+
+    type_struct                   ir ao estado 8
+    type_simple                   ir ao estado 9
+    type_queue                    ir ao estado 10
+    argument                      ir ao estado 30
+    statement                     ir ao estado 31
+    identifier_struct_expression  ir ao estado 32
+
+
+Estado 98
+
+   29 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT block ELSE . block
 
     IDENTIFIER   deslocar, e ir ao estado 26
     WHILE        deslocar, e ir ao estado 27
     IF           deslocar, e ir ao estado 28
-    ELSE         deslocar, e ir ao estado 97
     QUEUE        deslocar, e ir ao estado 1
     VOID         deslocar, e ir ao estado 2
     FLOAT        deslocar, e ir ao estado 3
     INT          deslocar, e ir ao estado 4
     CHAR         deslocar, e ir ao estado 5
-    OPEN_BRACES  deslocar, e ir ao estado 30
-
-    IDENTIFIER   [reduzir usando a regra 28 (statement)]
-    WHILE        [reduzir usando a regra 28 (statement)]
-    IF           [reduzir usando a regra 28 (statement)]
-    ELSE         [reduzir usando a regra 28 (statement)]
-    QUEUE        [reduzir usando a regra 28 (statement)]
-    VOID         [reduzir usando a regra 28 (statement)]
-    FLOAT        [reduzir usando a regra 28 (statement)]
-    INT          [reduzir usando a regra 28 (statement)]
-    CHAR         [reduzir usando a regra 28 (statement)]
-    OPEN_BRACES  [reduzir usando a regra 28 (statement)]
-    $padrão     reduzir usando a regra 28 (statement)
+    OPEN_BRACES  deslocar, e ir ao estado 92
 
     type_struct                   ir ao estado 8
     type_simple                   ir ao estado 9
     type_queue                    ir ao estado 10
-    argument                      ir ao estado 31
-    statement                     ir ao estado 32
-    identifier_struct_expression  ir ao estado 33
+    argument                      ir ao estado 30
+    statement                     ir ao estado 93
+    block                         ir ao estado 101
+    identifier_struct_expression  ir ao estado 32
 
 
-Estado 94
-
-   27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values CLOSE_PARENT . SEMICOLON
-
-    SEMICOLON  deslocar, e ir ao estado 98
-
-
-Estado 95
-
-   49 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER PLUS value SEMICOLON .
-
-    $padrão  reduzir usando a regra 49 (identifier_struct_expression)
-
-
-Estado 96
-
-   50 identifier_struct_expression: IDENTIFIER ASSIGN IDENTIFIER MINUS value SEMICOLON .
-
-    $padrão  reduzir usando a regra 50 (identifier_struct_expression)
-
-
-Estado 97
-
-   29 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT statements ELSE . statements
-
-    $padrão  reduzir usando a regra 24 (statements)
-
-    statements  ir ao estado 99
-
-
-Estado 98
+Estado 99
 
    27 statement: IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON .
 
     $padrão  reduzir usando a regra 27 (statement)
 
 
-Estado 99
+Estado 100
 
-   23 statements: statements . statement
-   29 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT statements ELSE statements .
+   34 block: OPEN_BRACES statements CLOSE_BRACES .
 
-    IDENTIFIER   deslocar, e ir ao estado 26
-    WHILE        deslocar, e ir ao estado 27
-    IF           deslocar, e ir ao estado 28
-    QUEUE        deslocar, e ir ao estado 1
-    VOID         deslocar, e ir ao estado 2
-    FLOAT        deslocar, e ir ao estado 3
-    INT          deslocar, e ir ao estado 4
-    CHAR         deslocar, e ir ao estado 5
-    OPEN_BRACES  deslocar, e ir ao estado 30
+    $padrão  reduzir usando a regra 34 (block)
 
-    IDENTIFIER   [reduzir usando a regra 29 (statement)]
-    WHILE        [reduzir usando a regra 29 (statement)]
-    IF           [reduzir usando a regra 29 (statement)]
-    QUEUE        [reduzir usando a regra 29 (statement)]
-    VOID         [reduzir usando a regra 29 (statement)]
-    FLOAT        [reduzir usando a regra 29 (statement)]
-    INT          [reduzir usando a regra 29 (statement)]
-    CHAR         [reduzir usando a regra 29 (statement)]
-    OPEN_BRACES  [reduzir usando a regra 29 (statement)]
-    $padrão     reduzir usando a regra 29 (statement)
 
-    type_struct                   ir ao estado 8
-    type_simple                   ir ao estado 9
-    type_queue                    ir ao estado 10
-    argument                      ir ao estado 31
-    statement                     ir ao estado 32
-    identifier_struct_expression  ir ao estado 33
+Estado 101
+
+   29 statement: IF OPEN_PARENT compare_expression CLOSE_PARENT block ELSE block .
+
+    $padrão  reduzir usando a regra 29 (statement)

@@ -8,18 +8,14 @@ int main () {
     j = 1;
     k = 0;
     
+    e.setlast->x;
+    
     if (i >= j) {
-	k = condicao(i, j);
-    }
+    k = condicao(i, j);}
+    return o;
+} 
     
-    // Aqui, o valor de i será igual ao número de elementos da pilha "q"
-    while (i > 0) {
-	i = a + 1.2;
-	i = i - 1;
-    }
-    
-    return 0;
-}
+
 
 int condicao(int x, int y) {
     int z;
@@ -29,6 +25,6 @@ int condicao(int x, int y) {
     else { // Aqui x == y
         z = 2*x;
     }
-    
+    z = z.rmvfirst;
     return z;
 }

@@ -62,22 +62,24 @@ extern int yydebug;
     DOT = 272,
     SEMICOLON = 273,
     COMMA = 274,
-    QUOTE = 275,
-    OPEN_BRACES = 276,
-    CLOSE_BRACES = 277,
-    OPEN_PARENT = 278,
-    CLOSE_PARENT = 279,
-    PLUS = 280,
-    MINUS = 281,
-    MULT = 282,
-    DIV = 283,
-    EQ = 284,
-    NEQ = 285,
-    LEQ = 286,
-    GEQ = 287,
-    LT = 288,
-    GT = 289,
-    ASSIGN = 290
+    OPEN_BRACES = 275,
+    CLOSE_BRACES = 276,
+    OPEN_PARENT = 277,
+    CLOSE_PARENT = 278,
+    PLUS = 279,
+    MINUS = 280,
+    MULT = 281,
+    DIV = 282,
+    EQ = 283,
+    NEQ = 284,
+    LEQ = 285,
+    GEQ = 286,
+    LT = 287,
+    GT = 288,
+    ASSIGN = 289,
+    ARROW = 290,
+    SETLAST = 291,
+    RMVFIRST = 292
   };
 #endif
 
@@ -93,7 +95,7 @@ union YYSTYPE
     char *c;
     char *str;
 
-#line 97 "110118995.tab.h" /* yacc.c:1909  */
+#line 99 "110118995.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

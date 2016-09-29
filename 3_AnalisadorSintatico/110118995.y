@@ -20,27 +20,24 @@ int yylex(void);
 
 // PRECEDENCIA: http://en.cppreference.com/w/c/language/operator_precedence
 %token WHILE IF ELSE RETURN QUEUE FIRST VOID FLOAT INT CHAR
-%token DOT SEMICOLON COMMA QUOTE 
+%token DOT SEMICOLON COMMA
 %token OPEN_BRACES CLOSE_BRACES OPEN_PARENT CLOSE_PARENT
 %token PLUS MINUS MULT DIV EQ NEQ LEQ GEQ LT GT ASSIGN
+%token ARROW SETLAST RMVFIRST
 %%
 
 program:	program function
 		| function
 		;
-		
+
 function:	argument OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value SEMICOLON CLOSE_BRACES
 		;
-		
-		
-// LEFT RECURSION EM VALUES
 
-                
 values:         values COMMA value
 		| value
 		| %empty
 		;
-		
+
 value:          NUM_INT
                 | NUM_FLOAT
                 | CARACTERE
@@ -51,40 +48,41 @@ value:          NUM_INT
 type_struct:	type_simple
 		| type_queue
 		;
-		
+
 type_simple:	VOID | FLOAT | INT | CHAR
 		;
 
 type_queue:	QUEUE LT type_simple GT
 		;
-		
-// LEFT RECURSION EM ARGUMENTS
-		
+
 arguments:	arguments COMMA argument
 		| argument
 		| %empty
 		;
-		
-argument:	type_struct IDENTIFIER
-		;
 
-// LEFT RECURSION EM STATEMENTS
+argument:	type_struct IDENTIFIER
+                ;
 
 statements:	statements statement
 		| %empty
 		;
 		
-statement:	argument SEMICOLON // int x;
+		
+// Adicão de mais de um "statement" no corpo de IF, IF-ELSE e WHILE geram muitos conflitos
+
+statement:	argument SEMICOLON// int x;
 		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON // x (y, z); Chamada de função sem retorno
 		| IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT  values CLOSE_PARENT SEMICOLON // x = x (y, z); Chamada de função com retorno
-		
                 // https://www.gnu.org/software/bison/manual/html_node/Non-Operators.html#Non-Operators (RESOLVE COM ASSOCIATIVIDADE)
-		| IF OPEN_PARENT  compare_expression CLOSE_PARENT statements // ========================================== CONFLITO SHIFT/REDUCE
-		| IF OPEN_PARENT  compare_expression CLOSE_PARENT statements ELSE statements
-		
-		| WHILE OPEN_PARENT  compare_expression CLOSE_PARENT statements // while (x == y.FIRST) ...
+		| IF OPEN_PARENT  compare_expression CLOSE_PARENT block  // ========================================== CONFLITO SHIFT/REDUCE
+		| IF OPEN_PARENT  compare_expression CLOSE_PARENT block ELSE block
+		| WHILE OPEN_PARENT  compare_expression CLOSE_PARENT block // while (x == y.FIRST) ...
 		| IDENTIFIER ASSIGN assignment_expression SEMICOLON // x = y + z; // Assignment para tipos primitivos
-		| identifier_struct_expression // x = y + z; // Assignment para tipo FILA
+		| identifier_struct_expression SEMICOLON // x = x - z; // Assignment para tipo FILA
+		;
+		
+// Um bloco pode ser apenas um statment ou vários entre chaves. Serve para if, if-else, while
+block:          statement
 		| OPEN_BRACES statements CLOSE_BRACES
 		;
 		
@@ -108,8 +106,8 @@ factor:		value
 		| OPEN_PARENT assignment_expression CLOSE_PARENT
 		;
 		
-identifier_struct_expression:	IDENTIFIER ASSIGN IDENTIFIER PLUS value SEMICOLON // FILA_INT = FILA_INT + value_int (Adiciona no topo da fila)
-				| IDENTIFIER ASSIGN IDENTIFIER MINUS value SEMICOLON // ============================== CONFLITO SHIFT/REDUCE
+identifier_struct_expression:	IDENTIFIER DOT SETLAST ARROW value  //  x.setlast->y (Add fim da fila)
+				| IDENTIFIER ASSIGN IDENTIFIER DOT RMVFIRST // x = y.rmfirst;
 				;
 
 %%

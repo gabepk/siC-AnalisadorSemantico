@@ -48,18 +48,21 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 "."     return(DOT);
 ";"     return(SEMICOLON);
 ","     return(COMMA);
-"'"     return(QUOTE);
 "{"     return(OPEN_BRACES);
 "}"     return(CLOSE_BRACES);
 "("     return(OPEN_PARENT);
 ")"     return(CLOSE_PARENT);
 
 "+"     return(PLUS);
+"->"    return(ARROW);
 "-"     return(MINUS);
 "*"     return(MULT);
 "/"     return(DIV);
 
 "="	return(ASSIGN);
+
+(?i:SETLAST)    return(SETLAST);
+(?i:RMVFIRST)   return(RMVFIRST);
 
 (?i:"VOID")	return(VOID);
 (?i:"FLOAT")	return(FLOAT);
