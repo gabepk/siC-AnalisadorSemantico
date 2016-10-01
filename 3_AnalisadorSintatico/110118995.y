@@ -1,5 +1,10 @@
 %{
+#include "structs.h"
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#define MAXSTR 50
+
 void yyerror(char *s);
 int yylex(void);
 %}
@@ -9,6 +14,7 @@ int yylex(void);
     float f;
     char *c;
     char *str;
+    struct Node *n;
 }
 
 %start program
@@ -19,11 +25,35 @@ int yylex(void);
 %token <str> IDENTIFIER
 
 // PRECEDENCIA: http://en.cppreference.com/w/c/language/operator_precedence
-%token WHILE IF ELSE RETURN QUEUE FIRST VOID FLOAT INT CHAR
-%token DOT SEMICOLON COMMA
-%token OPEN_BRACES CLOSE_BRACES OPEN_PARENT CLOSE_PARENT
-%token PLUS MINUS MULT DIV EQ NEQ LEQ GEQ LT GT ASSIGN
-%token ARROW SETLAST RMVFIRST
+%token <n> WHILE
+%token <n> IF 
+%token <n> ELSE 
+%token <n> RETURN 
+%token <n> QUEUE
+%token <n> FIRST
+%token <n> VOID
+%token <n> FLOAT
+%token <n> INT
+%token <n> CHAR
+%token <n> DOT 
+%token <n> SEMICOLON 
+%token <n> COMMA
+%token OPEN_BRACES
+%token CLOSE_BRACES 
+%token OPEN_PARENT 
+%token CLOSE_PARENT
+%token EQ
+%token NEQ
+%token LEQ
+%token GEQ
+%token LT
+%token GT
+%token ASSIGN
+%token ARROW
+%token SETLAST
+%token RMVFIRST
+%token PLUS MINUS
+%token MULT DIV
 %%
 
 program:	program function
@@ -91,13 +121,23 @@ compare_expression:	value compare_assignment value // x.FIRST == y
 
 compare_assignment:	EQ | NEQ | LEQ | GEQ | LT | GT
 			;
-			
+		
+		
+// PRECEDENCIA de +, -, *, / DEFINIDA COM "%left" não tem parentesis
+
+/*expression:     expression PLUS term
+                | expression MINUS term
+                | expression MULT term
+                | expression DIV term
+                | value
+                | ;*/
+
 assignment_expression:	assignment_expression PLUS term
 			| assignment_expression MINUS term
 			| term
 			;
 			
-term:		term MULT factor
+term:		term MULT factor {  }
 		| term DIV factor
 		| factor
 		;

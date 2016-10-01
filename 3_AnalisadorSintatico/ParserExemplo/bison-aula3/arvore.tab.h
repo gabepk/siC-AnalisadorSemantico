@@ -30,56 +30,42 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_110118995_TAB_H_INCLUDED
-# define YY_YY_110118995_TAB_H_INCLUDED
+#ifndef YY_YY_ARVORE_TAB_H_INCLUDED
+# define YY_YY_ARVORE_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 6 "arvore.y" /* yacc.c:1909  */
+
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct Expression Expression;
+struct Expression {
+	Expression *left;
+	Expression *right;
+	char op;
+	int value;
+};
+
+Expression* new_expr(Expression*, Expression*, char op, int);
+void show_tree(Expression*, int);
+void destroy_tree(Expression*);
+void yyerror (char const *);
+
+#line 62 "arvore.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUM_INT = 258,
-    NUM_FLOAT = 259,
-    CARACTERE = 260,
-    IDENTIFIER = 261,
-    WHILE = 262,
-    IF = 263,
-    ELSE = 264,
-    RETURN = 265,
-    QUEUE = 266,
-    FIRST = 267,
-    VOID = 268,
-    FLOAT = 269,
-    INT = 270,
-    CHAR = 271,
-    DOT = 272,
-    SEMICOLON = 273,
-    COMMA = 274,
-    OPEN_BRACES = 275,
-    CLOSE_BRACES = 276,
-    OPEN_PARENT = 277,
-    CLOSE_PARENT = 278,
-    EQ = 279,
-    NEQ = 280,
-    LEQ = 281,
-    GEQ = 282,
-    LT = 283,
-    GT = 284,
-    ASSIGN = 285,
-    ARROW = 286,
-    SETLAST = 287,
-    RMVFIRST = 288,
-    PLUS = 289,
-    MINUS = 290,
-    MULT = 291,
-    DIV = 292
+    NUM = 258
   };
 #endif
 
@@ -88,15 +74,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "110118995.y" /* yacc.c:1909  */
+#line 24 "arvore.y" /* yacc.c:1909  */
 
-    int i;
-    float f;
-    char *c;
-    char *str;
-    struct Node *n;
+	int num;
+	Expression *expr;
 
-#line 100 "110118995.tab.h" /* yacc.c:1909  */
+#line 83 "arvore.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -105,8 +88,7 @@ typedef union YYSTYPE YYSTYPE;
 #endif
 
 
-extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_110118995_TAB_H_INCLUDED  */
+#endif /* !YY_YY_ARVORE_TAB_H_INCLUDED  */

@@ -1,0 +1,6 @@
+in main () {
+	x = x + x;
+	x = x - x;
+	x = x / x;
+	x = x * x;
+}

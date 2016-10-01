@@ -30,8 +30,8 @@ void yyerror (char const *);
 
 %type <expr> expression
 
-%left '-' '+'
-%left '*' '/'
+%token '-' '+'
+%token '*' '/'
 
 %start input
 
