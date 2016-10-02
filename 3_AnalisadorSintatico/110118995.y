@@ -4,33 +4,33 @@
 
 void yyerror(char *s);
 int yylex(void);
+
 %}
 
 %union {
     int i;
     float f;
-    char *c;
+    char c;
     char *str;
-    program *program;
-    function *func;
-    typeStr *tst;
-    typeSmp *tsp;
-    //typeQueue *tq;
-    arguments *args;
-    statements *stmts;
-    statement *stmt;
-    definition *def;
-    funcCall *fc;
-    values *vals;
-    value *val;
-    ifNoElse *ife;
-    ifWithElse *iwe;
-    whileOp *wh;
-    block *bl;
-    assExpression *assExp;
-    cmpExpression *cmpExp;
-    term *term;
-    factor *factor;
+    union program *program;
+    struct function *func;
+    union typeStr *tst;
+    struct typeSimple *tsp;
+    struct arguments *args;
+    struct statements *stmts;
+    union statement *stmt;
+    struct definition *def;
+    struct funcCall *fc;
+    struct values *vals;
+    union value *val;
+    struct ifNoElse *ife;
+    struct ifWithElse *iwe;
+    struct whileOp *wh;
+    union block *bl;
+    struct assExpression *assExp;
+    struct cmpExpression *cmpExp;
+    struct term *term;
+    union factor *factor;
     //idStructExpression *idsExp;
 }
 
@@ -52,7 +52,6 @@ int yylex(void);
 %type <func> function
 %type <tst> type_struct
 %type <tsp> type_simple
-//%type <tq> expression
 %type <args> arguments
 %type <stmts> statements
 %type <stmt> statement
@@ -87,18 +86,18 @@ value:          NUM_INT { $$ = new_value(1, $1, 0, 0, 0); }
                 ;
 
 type_struct:	type_simple { $$ = new_typeStr(1, $1, 0); }
-		| QUEUE LT type_simple GT { $$ = new_typeStr(2, 0, $3); }
+		| QUEUE LT type_simple GT { $$ = new_typeStr(2, 0, new_typeQueue($3)); }
 		;
 
-type_simple:	VOID 
-                | FLOAT 
-                | INT 
-                | CHAR
+type_simple:	VOID  { $$ = new_typeSimple("void"); }
+                | FLOAT { $$ = new_typeSimple("float"); }
+                | INT { $$ = new_typeSimple("int"); }
+                | CHAR { $$ = new_typeSimple("char"); }
 		;
 		
-arguments:	arguments COMMA type_struct IDENTIFIER { $$ = new_arguments($1, $3, $4); }
-		| type_struct IDENTIFIER { $$ = new_arguments(0, $1, $2); }
-		| %empty { $$ = new_arguments(0, 0, 0); }
+arguments:	arguments COMMA type_struct IDENTIFIER { $$ = new_arguments(1, $1, $3, $4); }
+		| type_struct IDENTIFIER { $$ = new_arguments(2, 0, $1, $2); }
+		| %empty { $$ = new_arguments(3, 0, 0, 0); }
 		;
 
 statements:	statements statement { $$ = new_statements($1, $2); }
@@ -121,7 +120,12 @@ block:          statement { $$ = new_block(1, $1, 0); }
 		| OPEN_BRACES statements CLOSE_BRACES { $$ = new_block(2, 0, $2); }
 		;
 
-compare_assignment:	EQ | NEQ | LEQ | GEQ | LT | GT
+compare_assignment:	EQ { $$ = new_cmpExpression("=="); }
+                        | NEQ { $$ = new_cmpExpression("!="); }
+                        | LEQ { $$ = new_cmpExpression("<="); }
+                        | GEQ { $$ = new_cmpExpression(">="); }
+                        | LT { $$ = new_cmpExpression("<"); }
+                        | GT { $$ = new_cmpExpression(">"); }
                         ;
 
 assignment_expression:	assignment_expression PLUS term { $$ = new_assExpression($1, '+', $3); }

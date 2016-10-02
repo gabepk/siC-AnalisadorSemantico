@@ -40,19 +40,19 @@ typedef union block {
 } block;
 
 typedef struct cmpExpression {
-    char *compare;
+    char *comp;
 } cmpExpression;
 
 typedef struct whileOp {
     union value *value1;
-    char *compare;
+    struct cmpExpression *compare;
     union value *value2;
     union block *whileBlock;
 } whileOp;
 
 typedef struct ifWithElse {
     union value *value1;
-    char *compare;
+    struct cmpExpression *compare;
     union value *value2;
     union block *ifBlock;
     union block *elseBlock;
@@ -60,7 +60,7 @@ typedef struct ifWithElse {
 
 typedef struct ifNoElse {
     union value *value1;
-    char *compare;
+    struct cmpExpression *compare;
     union value *value2;
     union block *ifBlock;
 } ifNoElse;
@@ -75,7 +75,7 @@ typedef union value {
     // FALTA FAZER UMA FILA E BOTAR O TIPO DELA AQUI
 } value;
 
-typedef union values {
+typedef struct values {
     struct values *values;
     union value *value;
 } values;
@@ -83,14 +83,14 @@ typedef union values {
 // --------------------------------
 
 typedef struct funcCall {
-    union values *params;
+    struct values *params;
     char *nomeFunc;
 } funcCall;
 
 typedef struct definition {
     union typeStr *type;
     char *var;
-} funcCall;
+} definition;
 
 typedef union statement {
     struct definition *def;
@@ -111,7 +111,7 @@ typedef struct statements {
 
 typedef struct arguments {
     struct arguments *arguments;
-    struct typeStr *typeArg;
+    union typeStr *typeArg;
     char *argNome;
 } arguments;
 
@@ -130,7 +130,7 @@ typedef union typeStr {
 } typeStr;
 
 typedef struct function {
-    struct typeStr *typeReturn;
+    union typeStr *typeReturn;
     char *nomeFunc;
     struct arguments *args;
     struct statements *stmts;
@@ -138,7 +138,7 @@ typedef struct function {
 } function;
 
 typedef union program {
-    struct program *prog;
+    union program *prog;
     struct function *func;
 } program;
 
@@ -161,9 +161,9 @@ factor *new_factor(int tag, value *value, assExpression *assExp) { // UNION
     return f;
 }
 
-term *new_term(term *term, char op, factor *factor) { // STRUCT
+term *new_term(term *newTerm, char op, factor *factor) { // STRUCT
     term *t = (term*) malloc(sizeof(term));
-    t->term = term;
+    t->term = newTerm;
     t->op = op;
     t->factor = factor;
     return t;
@@ -177,10 +177,10 @@ assExpression *new_assExpression(int tag, assExpression *assExp, char op, term *
     return ae;
 }
 
-cmpExpression *new_cmpExpression(char *compare) { // STRUCT
-    cmpExpression *cmp = (cmpExpression*) malloc(sizeof(cmpExpression));
-    cmp->compare = compare;
-    return cmp;
+cmpExpression *new_cmpExpression(char *cm) { // STRUCT
+    cmpExpression *compare = (cmpExpression*) malloc(sizeof(cmpExpression));
+    compare->comp = cm;
+    return compare;
 }
 
 block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
@@ -190,7 +190,7 @@ block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
     return bl;
 }
 
-whileOp *new_whileOp(value *value1, char *compare, value *value2, block *whileBlock) { // STRUCT
+whileOp *new_whileOp(value *value1, cmpExpression *compare, value *value2, block *whileBlock) { // STRUCT
     whileOp *wh = (whileOp*) malloc(sizeof(whileOp));
     wh->value1 = value1;
     wh->compare = compare;
@@ -199,7 +199,7 @@ whileOp *new_whileOp(value *value1, char *compare, value *value2, block *whileBl
     return wh;
 }
 
-ifWithElse *new_ifWithElse(value *value1, char *compare, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
+ifWithElse *new_ifWithElse(value *value1, cmpExpression *compare, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
     ifWithElse *ifElse = (ifWithElse*) malloc(sizeof(ifWithElse));
     ifElse->value1 = value1;
     ifElse->compare = compare;
@@ -209,7 +209,7 @@ ifWithElse *new_ifWithElse(value *value1, char *compare, value *value2, block *i
     return ifElse;
 }
 
-ifNoElse *new_ifNoElse(value *value1, char *compare, value *value2, block *ifBlock) { // STRUCT 
+ifNoElse *new_ifNoElse(value *value1, cmpExpression *compare, value *value2, block *ifBlock) { // STRUCT 
     ifNoElse *ifNElse = (ifNoElse*) malloc(sizeof(ifNoElse));
     ifNElse->value1 = value1;
     ifNElse->compare = compare;
@@ -227,9 +227,9 @@ value *new_value(int tag, int i, float f, char c, char *s) { // UNION - FALTA TI
     return val;
 }
 
-values *new_values(int tag, values *values, value *value) { // UNION
+values *new_values(int tag, values *newValues, value *value) { // UNION
     values *vals = (values*) malloc(sizeof(values));
-    vals->values = values;
+    vals->values = newValues;
     vals->value = value;
     return vals;
 }
@@ -267,31 +267,31 @@ statements *new_statements(statements *stmts_left, statement *stmt) { // STRUCT
     return stmts;
 }
 
-arguments *new_arguments(int tag, arguments *arguments, typeStr *typeArg, char *argNome) { // UNION
+arguments *new_arguments(int tag, arguments *newArguments, typeStr *typeArg, char *argNome) { // UNION
     arguments *args = (arguments*) malloc(sizeof(arguments));
-    args->arguments = arguments;
+    args->arguments = newArguments;
     args->typeArg = typeArg;
     args->argNome = argNome;
     return args;
 }
 
-typeQueue *new_typeQueue(char *typeS) {
+typeQueue *new_typeQueue(typeSimple *tS) {
     typeQueue *typeQ = (typeQueue*) malloc(sizeof(typeQueue));
-    typeQ->typeS = typeS;
+    typeQ->typeS = tS;
     return typeQ;
 }
 
 typeSimple *new_typeSimple(char *type) {
     typeSimple *typeSmp = (typeSimple*) malloc(sizeof(typeSimple));
-    typeSmp->type = type;
+    typeSmp->typeS = type;
     return typeSmp;
 }
 
-typeStr *new_typeStr(int tag, typeSimple *typeS, typeQueue *typeQ) { // UNION
-    typeStr *typeStr = (typeStr*) malloc(sizeof(typeStr));
-    typeStr->typeS = typeS;
-    typeStr->typeQ = typeQ;
-    return typeStr;
+typeStr *new_typeStr(int tag, typeSimple *tS, typeQueue *tQ) { // UNION
+    typeStr *tStr = (typeStr*) malloc(sizeof(typeStr));
+    tStr->typeS = tS;
+    tStr->typeQ = tQ;
+    return tStr;
 }
 
 function *new_function(typeStr *typeReturn, char *nomeFunc, arguments *args, statements *stmts, value *v) { // STRUCT

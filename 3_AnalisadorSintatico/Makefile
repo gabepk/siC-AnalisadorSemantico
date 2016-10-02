@@ -20,8 +20,8 @@ lex.yy.c:	110118995.lex
 110118995.tab.c:	110118995.y
 			bison -d -v -Wall 110118995.y
 		
-lex.yy.o:		110118995.tab.h
 110118995.tab.o:	structs.h
+lex.yy.o:		110118995.tab.h
 
 clean:
 	rm -f *.o *~ lex.yy.c 110118995.tab.c 110118995.tab.h 110118995.output sic-compiler

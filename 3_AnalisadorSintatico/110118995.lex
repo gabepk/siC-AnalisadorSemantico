@@ -22,7 +22,7 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 {digito}+{letra}+{digito}*		{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 
-"'"({letra}|{digito})"'"	{   yylval.c = yytext;
+"'"({letra}|{digito})"'"	{   yylval.c = yytext[1]; // yytext[0] = ', yytext[1] = char, yytext[2] = '
                                     //printf("\tCARACTERE %s\n", yytext);
                                     return(CARACTERE);
                                 }
