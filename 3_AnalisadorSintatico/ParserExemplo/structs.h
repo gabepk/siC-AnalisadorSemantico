@@ -1,10 +1,6 @@
 #ifndef structs_h
 #define structs_h
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 // ---------------------------------------------------------------
 // ---------------------------- STRUCTS --------------------------
 // ---------------------------------------------------------------
@@ -26,7 +22,7 @@ typedef struct multdivExp {
 } multdivExp;
 
 typedef union term {
-    struct multdivExp *mdExp;
+    union multdivExp *mdExp;
     union factor *factor;
 } term;
 
@@ -43,8 +39,8 @@ typedef union assExpression {
 // --------------------------------
 
 typedef union block {
-    union statement *stmt;
-    struct statements *stmts;
+    union statement *stm;
+    struct statements *stms;
 } block;
 
 typedef struct whileOp {
@@ -82,7 +78,7 @@ typedef struct valsVal {
 } valsVal;
 
 typedef union values {
-    struct valsVal *valsVal;
+    union valsVal *valsVal;
     union value *value;
 } values;
 
@@ -103,8 +99,8 @@ typedef union statement {
 } statement;
 
 typedef struct statements {
-    struct statements *stmts;
-    union statement *stmt;
+    struct statements *stms;
+    union statement *stm;
 } statements;
 
 // --------------------------------
@@ -129,7 +125,7 @@ typedef struct progFunc {
 typedef struct function {
     char *typeReturn;
     union arguments *args;
-    struct statements *stmts;
+    struct statements *stms;
     union value *v;
 } function;
 
@@ -144,164 +140,162 @@ typedef union program {
 
 idStructExpression *new_idStructExpression() { // STRUCT
     idStructExpression *idStrExp = (idStructExpression*) malloc(sizeof(idStructExpression));
-    
+    value *v = (value*) malloc(sizeof(value));
     
     //idStrExp->v
     return idStrExp;
 }
 
-factor *new_factor(int tag, value *value, assExpression *assExp) { // UNION
+factor *new_factor() { // UNION
     factor *f = (factor*) malloc(sizeof(factor));
-    //if (tag == 1) {
-    f->value = value;
-    f->assExp = assExp;
-    //}
+    // IF
+    assExpression *assExp = (assExpression*) malloc(sizeof(assExpression));
     
+    // ELSE
+    value *v = (value*) malloc(sizeof(value));
     return f;
 }
 
-multdivExp *new_multdivExp(term *term, factor *factor) { // STRUCT
+multdivExp *new_multdivExp() { // STRUCT
     multdivExp *mdExp = (multdivExp*) malloc(sizeof(multdivExp));
-    mdExp->term = term;
-    mdExp->factor = factor;
+    term *t = (term*) malloc(sizeof(term));
+    factor *f = (factor*) malloc(sizeof(factor));
     return mdExp;
 }
 
-term *new_term(int tag, multdivExp *mdExp, factor *factor) { // UNION
+term *new_term() { // UNION
     term *t = (term*) malloc(sizeof(term));
-    t->mdExp = mdExp;
-    t->factor = factor;
+    // IF
+    multdivExp *mdExp = (multdivExp*) malloc(sizeof(multdivExp));
+    // ELSE
+    factor *f = (factor*) malloc(sizeof(factor));
     return t;
 }
 
-plusminusExp *new_plusminusExp(assExpression *assExp, term *term) { // STRUCT
+plusminusExp *new_plusminusExp() { // STRUCT
     plusminusExp *pmExp = (plusminusExp*) malloc(sizeof(plusminusExp));
-    pmExp->assExp = assExp;
-    pmExp->term = term;
+    assExpression *assExp = (assExpression*) malloc(sizeof(assExpression));
+    term *t = (term*) malloc(sizeof(term));
     return pmExp;
 }
 
-assExpression *new_assExpression(int tag, plusminusExp *pmExp, term *term) { // UNION
+assExpression *new_assExpression() { // UNION
     assExpression *p = (assExpression*) malloc(sizeof(assExpression));
-    p->pmExp = pmExp;
-    p->term = term;
+    // IF
+    plusminusExp *pmExp = (plusminusExp*) malloc(sizeof(plusminusExp));
+    // ELSE
+    term *t = (term*) malloc(sizeof(term));
     return p;
 }
 
-block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
+block *new_block() { // UNION
     block *bl = (block*) malloc(sizeof(block));
-    bl->stmt = stmt;
-    bl->stmts = stmts;
+    // IF
+    statement *stmt = (statement*) malloc(sizeof(statement));
+    // ELSE
+    statements *stmts = (statements*) malloc(sizeof(statements));
     return bl;
 }
 
-whileOp *new_whileOp(value *value1, value *value2, block *whileBlock) { // STRUCT
+whileOp *new_whileOp() { // STRUCT
     whileOp *wh = (whileOp*) malloc(sizeof(whileOp));
-    wh->value1 = value1;
-    wh->value2 = value2;
-    wh->whileBlock = whileBlock;
+    value *v1 = (value*) malloc(sizeof(value));
+    value *v2 = (value*) malloc(sizeof(value));
+    block *bl = (block*) malloc(sizeof(block));
     return wh;
 }
 
-ifWithElse *new_ifWithElse(value *value1, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
+ifWithElse *new_ifWithElse() { // STRUCT
     ifWithElse *ifElse = (ifWithElse*) malloc(sizeof(ifWithElse));
-    ifElse->value1 = value1;
-    ifElse->value2 = value2;
-    ifElse->ifBlock = ifBlock;
-    ifElse->elseBlock = elseBlock;
+    value *v1 = (value*) malloc(sizeof(value));
+    value *v2 = (value*) malloc(sizeof(value));
+    block *blIf = (block*) malloc(sizeof(block));
+    block *blElse = (block*) malloc(sizeof(block));
     return ifElse;
 }
 
-ifNoElse *new_ifNoElse(value *value1, value *value2, block *ifBlock) { // STRUCT 
+ifNoElse *new_ifNoElse() { // STRUCT 
     ifNoElse *ifNElse = (ifNoElse*) malloc(sizeof(ifNoElse));
-    ifNElse->value1 = value1;
-    ifNElse->value2 = value2;
-    ifNElse->ifBlock = ifBlock;
+    value *v1 = (value*) malloc(sizeof(value));
+    value *v2 = (value*) malloc(sizeof(value));
+    block *blIf = (block*) malloc(sizeof(block));
     return ifNElse;
 }
 
-value *new_value(int tag, int i, float f, char c, char *s) { // UNION - FALTA TIPO FILA !!!!!!!!
+value *new_value() { // UNION
     value *val = (value*) malloc(sizeof(value));
-    val->i = i;
-    val->f = f;
-    val->c = c;
-    val->s = s;
+    // IF
+    int inteiro;
+    // ELSE IF
+    float real;
+    // ELSE IF
+    char caractere;
+    // ELSE
+    char *str;
     return val;
 }
 
-valsVal *new_valsVal(values *values, value *value) { // STRUCT
+valsVal *new_valsVal() { // STRUCT
     valsVal *vsv = (valsVal*) malloc(sizeof(valsVal));
-    vsv->values = values;
-    vsv->value = value;
+    values *vals = (values*) malloc(sizeof(values));
+    value *val = (value*) malloc(sizeof(value));
     return vsv;
 }
 
-values *new_values(int tag, valsVal *valsVal, value *value) { // UNION
+values *new_values() { // UNION
     values *vals = (values*) malloc(sizeof(values));
-    vals->valsVal = valsVal;
-    vals->value = value;
+    // IF
+    valsVal *vsv = (valsVal*) malloc(sizeof(valsVal));
+    // ELSE
+    value *val = (value*) malloc(sizeof(value));
     return vals;
 }
 
-funcCall *new_funcCall(values *params) { // STRUCT
+funcCall *new_funcCall() { // STRUCT
     funcCall *fC = (funcCall*) malloc(sizeof(funcCall));
-    fC->params = params;
+    values *vals = (values*) malloc(sizeof(values));
     return fC;
 }
 
-statement *new_statement(int tag, char *type, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assExpression *assExp, idStructExpression *idStrExp) { // UNION
-    statement *stmt = (statement*) malloc(sizeof(statement));
-    stmt->type = type;
-    stmt->funcCall = funcCall;
-    stmt->ifNoElse = ifNoElse;
-    stmt->ifWithElse = ifWithElse;
-    stmt->whileOp = whileOp;
-    stmt->assExp = assExp;
-    stmt->idStrExp = idStrExp;
-    return stmt;
+statement *new_statement() {
+    statement *p = (statement*) malloc(sizeof(statement));
+    
+    return p;
 }
 
-statements *new_statements(statements *stmts_left, statement *stmt) { // STRUCT
-    statements *stmts = (statements*) malloc(sizeof(statements));
-    stmts->stmts = stmts_left;
-    stmts->stmt = stmt;
-    return stmts;
+statements *new_statements() {
+    statements *p = (statements*) malloc(sizeof(statements));
+    
+    return p;
 }
 
-argsArg *new_argsArg(arguments *args, char *typeArg) { // STRUCT
-    argsArg *asa = (argsArg*) malloc(sizeof(argsArg));
-    asa->args = args;
-    asa->typeArg = typeArg;
-    return asa;
+argsArg *new_argsArg() {
+    argsArg *p = (argsArg*) malloc(sizeof(argsArg));
+    
+    return p;
 }
 
-arguments *new_arguments(int tag, argsArg *argargs, char *typeArg) { // UNION
-    arguments *args = (arguments*) malloc(sizeof(arguments));
-    args->argargs = argargs;
-    args->typeArg = typeArg;
-    return args;
+arguments *new_arguments() {
+    arguments *p = (arguments*) malloc(sizeof(arguments));
+    
+    return p;
 }
 
-progFunc *new_progFunc(program *prog, function *func) { // STRUCT
-    progFunc *pf = (progFunc*) malloc(sizeof(progFunc));
-    pf->prog = prog;
-    pf->func = func;
-    return pf;
+progFunc *new_progFunc() {
+    progFunc *p = (progFunc*) malloc(sizeof(progFunc));
+    
+    return p;
 }
 
-function *new_function(char *typeReturn, arguments *args, statements *stmts, value *v) { // STRUCT
-    function *func = (function*) malloc(sizeof(function));
-    func->typeReturn = typeReturn;
-    func->args = args;
-    func->stmts = stmts;
-    func->v = v;
-    return func;
+function *new_function() {
+    function *p = (function*) malloc(sizeof(function));
+    
+    return p;
 }
 
-program *new_program(int tag, progFunc *pf, function *func) { // UNION
+program *new_program() {
     program *p = (program*) malloc(sizeof(program));
-    p->pf = pf;
-    p->func = func;
+    
     return p;
 }
 

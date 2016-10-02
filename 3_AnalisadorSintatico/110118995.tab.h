@@ -88,15 +88,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "110118995.y" /* yacc.c:1909  */
+#line 9 "110118995.y" /* yacc.c:1909  */
 
     int i;
     float f;
     char *c;
     char *str;
-    struct Node *n;
 
-#line 100 "110118995.tab.h" /* yacc.c:1909  */
+#line 99 "110118995.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

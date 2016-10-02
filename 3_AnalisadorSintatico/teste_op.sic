@@ -1,6 +1,7 @@
-in main () {
+int main () {
 	x = x + x;
 	x = x - x;
 	x = x / x;
 	x = x * x;
+	return 0;
 }
