@@ -17,27 +17,19 @@ typedef struct idStructExpression {
 
 typedef union factor {
     union value *value;
-    union assExpression *assExp;
+    struct assExpression *assExp;
 } factor;
 
-typedef struct multdivExp {
-    union term *term;
-    union factor *factor;
-} multdivExp;
-
-typedef union term {
-    struct multdivExp *mdExp;
+typedef struct term {
+    struct term *term;
+    char op;
     union factor *factor;
 } term;
 
-typedef struct plusminusExp {
-    union assExpression *assExp;
-    union term *term;
-} plusminusExp;
-
-typedef union assExpression {
-    struct plusminusExp *pmExp;
-    union term *term;
+typedef struct assExpression {
+    struct assExpression *assExp;
+    char op;
+    struct term *term;
 } assExpression;
 
 // --------------------------------
@@ -47,14 +39,20 @@ typedef union block {
     struct statements *stmts;
 } block;
 
+typedef struct cmpExpression {
+    char *compare;
+} cmpExpression;
+
 typedef struct whileOp {
     union value *value1;
+    char *compare;
     union value *value2;
     union block *whileBlock;
 } whileOp;
 
 typedef struct ifWithElse {
     union value *value1;
+    char *compare;
     union value *value2;
     union block *ifBlock;
     union block *elseBlock;
@@ -62,6 +60,7 @@ typedef struct ifWithElse {
 
 typedef struct ifNoElse {
     union value *value1;
+    char *compare;
     union value *value2;
     union block *ifBlock;
 } ifNoElse;
@@ -76,13 +75,8 @@ typedef union value {
     // FALTA FAZER UMA FILA E BOTAR O TIPO DELA AQUI
 } value;
 
-typedef struct valsVal {
-    union values *values;
-    union value *value;
-} valsVal;
-
 typedef union values {
-    struct valsVal *valsVal;
+    struct values *values;
     union value *value;
 } values;
 
@@ -90,15 +84,21 @@ typedef union values {
 
 typedef struct funcCall {
     union values *params;
+    char *nomeFunc;
+} funcCall;
+
+typedef struct definition {
+    union typeStr *type;
+    char *var;
 } funcCall;
 
 typedef union statement {
-    char *type;
+    struct definition *def;
     struct funcCall *funcCall;
     struct ifNoElse *ifNoElse;
     struct ifWithElse *ifWithElse;
     struct whileOp *whileOp;
-    union assExpression *assExp;
+    struct assExpression *assExp;
     struct idStructExpression *idStrExp;
 } statement;
 
@@ -109,32 +109,36 @@ typedef struct statements {
 
 // --------------------------------
 
-typedef struct argsArg {
-    union arguments *args;
-    char *typeArg;
-} argsArg;
-
-typedef union arguments {
-    struct argsArg *argargs;
-    char *typeArg;
+typedef struct arguments {
+    struct arguments *arguments;
+    struct typeStr *typeArg;
+    char *argNome;
 } arguments;
 
-// --------------------------------
+typedef struct typeQueue {
+    struct typeSimple *typeS;
+} typeQueue;
 
-typedef struct progFunc {
-    union program *prog;
-    struct function *func;
-} progFunc;
+typedef struct typeSimple {
+    char *typeS; // void, int, char, float;
+} typeSimple;
+
+
+typedef union typeStr {
+    struct typeSimple *typeS;
+    struct typeQueue *typeQ;    
+} typeStr;
 
 typedef struct function {
-    char *typeReturn;
-    union arguments *args;
+    struct typeStr *typeReturn;
+    char *nomeFunc;
+    struct arguments *args;
     struct statements *stmts;
     union value *v;
 } function;
 
 typedef union program {
-    struct progFunc *pf;
+    struct program *prog;
     struct function *func;
 } program;
 
@@ -152,40 +156,31 @@ idStructExpression *new_idStructExpression() { // STRUCT
 
 factor *new_factor(int tag, value *value, assExpression *assExp) { // UNION
     factor *f = (factor*) malloc(sizeof(factor));
-    //if (tag == 1) {
     f->value = value;
     f->assExp = assExp;
-    //}
-    
     return f;
 }
 
-multdivExp *new_multdivExp(term *term, factor *factor) { // STRUCT
-    multdivExp *mdExp = (multdivExp*) malloc(sizeof(multdivExp));
-    mdExp->term = term;
-    mdExp->factor = factor;
-    return mdExp;
-}
-
-term *new_term(int tag, multdivExp *mdExp, factor *factor) { // UNION
+term *new_term(term *term, char op, factor *factor) { // STRUCT
     term *t = (term*) malloc(sizeof(term));
-    t->mdExp = mdExp;
+    t->term = term;
+    t->op = op;
     t->factor = factor;
     return t;
 }
 
-plusminusExp *new_plusminusExp(assExpression *assExp, term *term) { // STRUCT
-    plusminusExp *pmExp = (plusminusExp*) malloc(sizeof(plusminusExp));
-    pmExp->assExp = assExp;
-    pmExp->term = term;
-    return pmExp;
+assExpression *new_assExpression(int tag, assExpression *assExp, char op, term *term) { // STRUCT
+    assExpression *ae = (assExpression*) malloc(sizeof(assExpression));
+    ae->assExp = assExp;
+    ae->op = op;
+    ae->term = term;
+    return ae;
 }
 
-assExpression *new_assExpression(int tag, plusminusExp *pmExp, term *term) { // UNION
-    assExpression *p = (assExpression*) malloc(sizeof(assExpression));
-    p->pmExp = pmExp;
-    p->term = term;
-    return p;
+cmpExpression *new_cmpExpression(char *compare) { // STRUCT
+    cmpExpression *cmp = (cmpExpression*) malloc(sizeof(cmpExpression));
+    cmp->compare = compare;
+    return cmp;
 }
 
 block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
@@ -195,26 +190,29 @@ block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
     return bl;
 }
 
-whileOp *new_whileOp(value *value1, value *value2, block *whileBlock) { // STRUCT
+whileOp *new_whileOp(value *value1, char *compare, value *value2, block *whileBlock) { // STRUCT
     whileOp *wh = (whileOp*) malloc(sizeof(whileOp));
     wh->value1 = value1;
+    wh->compare = compare;
     wh->value2 = value2;
     wh->whileBlock = whileBlock;
     return wh;
 }
 
-ifWithElse *new_ifWithElse(value *value1, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
+ifWithElse *new_ifWithElse(value *value1, char *compare, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
     ifWithElse *ifElse = (ifWithElse*) malloc(sizeof(ifWithElse));
     ifElse->value1 = value1;
+    ifElse->compare = compare;
     ifElse->value2 = value2;
     ifElse->ifBlock = ifBlock;
     ifElse->elseBlock = elseBlock;
     return ifElse;
 }
 
-ifNoElse *new_ifNoElse(value *value1, value *value2, block *ifBlock) { // STRUCT 
+ifNoElse *new_ifNoElse(value *value1, char *compare, value *value2, block *ifBlock) { // STRUCT 
     ifNoElse *ifNElse = (ifNoElse*) malloc(sizeof(ifNoElse));
     ifNElse->value1 = value1;
+    ifNElse->compare = compare;
     ifNElse->value2 = value2;
     ifNElse->ifBlock = ifBlock;
     return ifNElse;
@@ -229,29 +227,30 @@ value *new_value(int tag, int i, float f, char c, char *s) { // UNION - FALTA TI
     return val;
 }
 
-valsVal *new_valsVal(values *values, value *value) { // STRUCT
-    valsVal *vsv = (valsVal*) malloc(sizeof(valsVal));
-    vsv->values = values;
-    vsv->value = value;
-    return vsv;
-}
-
-values *new_values(int tag, valsVal *valsVal, value *value) { // UNION
+values *new_values(int tag, values *values, value *value) { // UNION
     values *vals = (values*) malloc(sizeof(values));
-    vals->valsVal = valsVal;
+    vals->values = values;
     vals->value = value;
     return vals;
 }
 
-funcCall *new_funcCall(values *params) { // STRUCT
-    funcCall *fC = (funcCall*) malloc(sizeof(funcCall));
-    fC->params = params;
-    return fC;
+funcCall *new_funcCall(char *nomeFunc, values *params) { // STRUCT
+    funcCall *fc = (funcCall*) malloc(sizeof(funcCall));
+    fc->nomeFunc = nomeFunc;
+    fc->params = params;
+    return fc;
 }
 
-statement *new_statement(int tag, char *type, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assExpression *assExp, idStructExpression *idStrExp) { // UNION
+definition *new_definition(typeStr *type, char *var) {
+    definition *def = (definition*) malloc(sizeof(definition));
+    def->type = type;
+    def->var = var;
+    return def;
+}
+
+statement *new_statement(int tag, definition *def, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assExpression *assExp, idStructExpression *idStrExp) { // UNION
     statement *stmt = (statement*) malloc(sizeof(statement));
-    stmt->type = type;
+    stmt->def = def;
     stmt->funcCall = funcCall;
     stmt->ifNoElse = ifNoElse;
     stmt->ifWithElse = ifWithElse;
@@ -268,39 +267,46 @@ statements *new_statements(statements *stmts_left, statement *stmt) { // STRUCT
     return stmts;
 }
 
-argsArg *new_argsArg(arguments *args, char *typeArg) { // STRUCT
-    argsArg *asa = (argsArg*) malloc(sizeof(argsArg));
-    asa->args = args;
-    asa->typeArg = typeArg;
-    return asa;
-}
-
-arguments *new_arguments(int tag, argsArg *argargs, char *typeArg) { // UNION
+arguments *new_arguments(int tag, arguments *arguments, typeStr *typeArg, char *argNome) { // UNION
     arguments *args = (arguments*) malloc(sizeof(arguments));
-    args->argargs = argargs;
+    args->arguments = arguments;
     args->typeArg = typeArg;
+    args->argNome = argNome;
     return args;
 }
 
-progFunc *new_progFunc(program *prog, function *func) { // STRUCT
-    progFunc *pf = (progFunc*) malloc(sizeof(progFunc));
-    pf->prog = prog;
-    pf->func = func;
-    return pf;
+typeQueue *new_typeQueue(char *typeS) {
+    typeQueue *typeQ = (typeQueue*) malloc(sizeof(typeQueue));
+    typeQ->typeS = typeS;
+    return typeQ;
 }
 
-function *new_function(char *typeReturn, arguments *args, statements *stmts, value *v) { // STRUCT
+typeSimple *new_typeSimple(char *type) {
+    typeSimple *typeSmp = (typeSimple*) malloc(sizeof(typeSimple));
+    typeSmp->type = type;
+    return typeSmp;
+}
+
+typeStr *new_typeStr(int tag, typeSimple *typeS, typeQueue *typeQ) { // UNION
+    typeStr *typeStr = (typeStr*) malloc(sizeof(typeStr));
+    typeStr->typeS = typeS;
+    typeStr->typeQ = typeQ;
+    return typeStr;
+}
+
+function *new_function(typeStr *typeReturn, char *nomeFunc, arguments *args, statements *stmts, value *v) { // STRUCT
     function *func = (function*) malloc(sizeof(function));
     func->typeReturn = typeReturn;
+    func->nomeFunc = nomeFunc;
     func->args = args;
     func->stmts = stmts;
     func->v = v;
     return func;
 }
 
-program *new_program(int tag, progFunc *pf, function *func) { // UNION
+program *new_program(int tag, program *prog, function *func) { // UNION
     program *p = (program*) malloc(sizeof(program));
-    p->pf = pf;
+    p->prog = prog;
     p->func = func;
     return p;
 }

@@ -73,13 +73,13 @@ extern int yydebug;
     LT = 283,
     GT = 284,
     ASSIGN = 285,
-    ARROW = 286,
-    SETLAST = 287,
-    RMVFIRST = 288,
-    PLUS = 289,
-    MINUS = 290,
-    MULT = 291,
-    DIV = 292
+    PLUS = 286,
+    MINUS = 287,
+    MULT = 288,
+    DIV = 289,
+    ARROW = 290,
+    SETLAST = 291,
+    RMVFIRST = 292
   };
 #endif
 
@@ -94,8 +94,29 @@ union YYSTYPE
     float f;
     char *c;
     char *str;
+    program *program;
+    function *func;
+    typeStr *tst;
+    typeSmp *tsp;
+    //typeQueue *tq;
+    arguments *args;
+    statements *stmts;
+    statement *stmt;
+    definition *def;
+    funcCall *fc;
+    values *vals;
+    value *val;
+    ifNoElse *ife;
+    ifWithElse *iwe;
+    whileOp *wh;
+    block *bl;
+    assExpression *assExp;
+    cmpExpression *cmpExp;
+    term *term;
+    factor *factor;
+    //idStructExpression *idsExp;
 
-#line 99 "110118995.tab.h" /* yacc.c:1909  */
+#line 120 "110118995.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
