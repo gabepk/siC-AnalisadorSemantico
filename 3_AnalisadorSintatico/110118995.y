@@ -12,25 +12,7 @@ int yylex(void);
     float f;
     char c;
     char *str;
-    union program *program;
-    struct function *func;
-    union typeStr *tst;
-    struct typeSimple *tsp;
-    struct arguments *args;
-    struct statements *stmts;
-    union statement *stmt;
-    struct definition *def;
-    struct funcCall *fc;
-    struct values *vals;
-    union value *val;
-    struct ifNoElse *ife;
-    struct ifWithElse *iwe;
-    struct whileOp *wh;
-    union block *bl;
-    struct assExpression *assExp;
-    struct cmpExpression *cmpExp;
-    struct term *term;
-    union factor *factor;
+    struct elemento *e;
     //idStructExpression *idsExp;
 }
 
@@ -48,104 +30,114 @@ int yylex(void);
 %token EQ NEQ LEQ GEQ LT GT ASSIGN PLUS MINUS MULT DIV
 %token ARROW SETLAST RMVFIRST
 
-%type <program> program
-%type <func> function
-%type <tst> type_struct
-%type <tsp> type_simple
-%type <args> arguments
-%type <stmts> statements
-%type <stmt> statement
-%type <vals> values
-%type <val> value
-%type <bl> block
-%type <assExp> assignment_expression
-%type <cmpExp> compare_assignment
-%type <term> term
-%type <factor> factor
+%type <e> program
+%type <e> function
+%type <e> type_struct
+%type <e> type_simple
+%type <e> arguments
+%type <e> statements
+%type <e> statement
+%type <e> values
+%type <e> value
+%type <e> block
+%type <e> assignment_expression
+%type <e> compare_assignment
+%type <e> term
+%type <e> factor
 //%type <idsExp> identifier_struct_expression
+
+// FOLLOW, LISTA DE FIRSTS, NUM_FIRST, NOME
 
 %%
 
-program:	program function { $$ = new_program(1, $1, $2); }
-		| function { $$ = new_program(2, 0, $1); }
+program:	program function { 
+                            elemento *fL = (elemento*) malloc(FIRST_MAX * sizeof(elemento));;
+                            elemento *prog = (elemento*) malloc(sizeof(elemento));
+                            elemento *func = (elemento*) malloc(sizeof(elemento));
+                            fL[0] = *prog;
+                            fL[1] = *func;
+                            $$ = new_elemento(NULL, &fL, 2, "program"); }
+		| %empty {$$ = NULL; }
 		;
 
-function:	type_struct IDENTIFIER OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value SEMICOLON CLOSE_BRACES { $$ = new_function($1, $2, $4, $7, $9); }
+function:	type_struct IDENTIFIER OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value SEMICOLON CLOSE_BRACES { 
+                       // $$ = new_element("function");
+                        }
 		;
 
-values:         values COMMA value { $$ = new_values(1, $1, $3); }
-		| value { $$ = new_values(2, 0, $1); }
-		| %empty { $$ = new_values(3, 0, 0); }
+values:         values COMMA value {} //$$ = new_element("values"); }
+		| value {} //$$ = new_element("values"); }
+		| %empty { $$ = NULL; }
 		;
 
-value:          NUM_INT { $$ = new_value(1, $1, 0, 0, 0); }
-                | NUM_FLOAT { $$ = new_value(2, 0, $1, 0, 0); }
-                | CARACTERE { $$ = new_value(3, 0, 0, $1, 0); }
-                | IDENTIFIER { $$ = new_value(4, 0, 0, 0, $1); }
+value:          NUM_INT {}// $$ = new_element("value"); }
+                | NUM_FLOAT {}// $$ = new_element("value"); }
+                | CARACTERE {}// $$ = new_element("value"); }
+                | IDENTIFIER {}// $$ = new_element("value"); }
                 //| IDENTIFIER DOT FIRST // FALTA ESSE
                 ;
 
-type_struct:	type_simple { $$ = new_typeStr(1, $1, 0); }
-		| QUEUE LT type_simple GT { $$ = new_typeStr(2, 0, new_typeQueue($3)); }
+type_struct:	type_simple {}// $$ = new_element("type_struct"); }
+		| QUEUE LT type_simple GT {}// $$ = new_element("type_struct"); }
 		;
 
-type_simple:	VOID  { $$ = new_typeSimple("void"); }
-                | FLOAT { $$ = new_typeSimple("float"); }
-                | INT { $$ = new_typeSimple("int"); }
-                | CHAR { $$ = new_typeSimple("char"); }
+type_simple:	VOID  {}// $$ = new_element("type_simple"); }
+                | FLOAT {}// $$ = new_element("type_simple"); }
+                | INT {}// $$ = new_element("type_simple"); }
+                | CHAR {}// $$ = new_element("type_simple"); }
 		;
 		
-arguments:	arguments COMMA type_struct IDENTIFIER { $$ = new_arguments(1, $1, $3, $4); }
-		| type_struct IDENTIFIER { $$ = new_arguments(2, 0, $1, $2); }
-		| %empty { $$ = new_arguments(3, 0, 0, 0); }
+arguments:	arguments COMMA type_struct IDENTIFIER {}// $$ = new_element("arguments"); }
+		| type_struct IDENTIFIER {}// $$ = new_element("arguments"); }
+		| %empty { $$ = NULL; }
 		;
 
-statements:	statements statement { $$ = new_statements($1, $2); }
-		| %empty { $$ = new_statements(0, 0); }
+statements:	statements statement {}// $$ = new_element("statements"); }
+		| %empty { $$ = NULL; }
 		;
 
 // https://www.gnu.org/software/bison/manual/html_node/Non-Operators.html#Non-Operators (RESOLVE COM ASSOCIATIVIDADE)
-statement:	type_struct IDENTIFIER SEMICOLON { 
-                    $$ =  new_statement(1, new_definition($1, $2), 0,0,0,0,0,0); }
-		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON { 
-                    $$ =  new_statement(2, 0,  new_funcCall($1, $3),0,0,0,0,0);}
+statement:	type_struct IDENTIFIER SEMICOLON {} 
+                    //$$ =  new_element("statement"); }
+		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON {} 
+                    //$$ =  new_element("statement");}
 		//| IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT  values CLOSE_PARENT SEMICOLON // FALTA ESSE FUNCALL COM RETORNO
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
-                    $$ = new_statement(3, 0, 0, new_ifNoElse($3, $4, $5, $7), 0, 0, 0, 0); }
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block ELSE block { 
-                    $$ = new_statement(4, 0, 0, 0, new_ifWithElse($3, $4, $5, $7, $9), 0, 0, 0); }
-		| WHILE OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
-                    $$ = new_statement(5, 0, 0, 0, 0, new_whileOp($3, $4, $5, $7), 0, 0); }
-		| IDENTIFIER ASSIGN assignment_expression SEMICOLON { 
-                    $$ = new_statement(6, 0, 0, 0, 0, 0, new_assignment($1, $3), 0); }
-		//| identifier_struct_expression SEMICOLON { $$ = new_statement(7, 0, 0, 0, 0, 0, 0, $1)); }
+		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block { }
+                    //$$ = new_element("statement"); }
+		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block ELSE block { }
+                    //$$ = new_element("statement"); }
+		| WHILE OPEN_PARENT value compare_assignment value CLOSE_PARENT block { }
+                   // $$ = new_element("statement"); }
+		| IDENTIFIER ASSIGN assignment_expression SEMICOLON { }
+                   // $$ = new_element("statement"); }
+		//| identifier_struct_expression SEMICOLON { $$ = new_element("")); }
 		;
 		
 // Um bloco pode ser apenas um statment ou vários entre chaves. Serve para if, if-else, while
-block:          statement { $$ = new_block(1, $1, 0); }
-		| OPEN_BRACES statements CLOSE_BRACES { $$ = new_block(2, 0, $2); }
+block:          statement {}// $$ = new_element("block"); }
+		| OPEN_BRACES statements CLOSE_BRACES {}// $$ = new_element("block"); }
 		;
 
-compare_assignment:	EQ { $$ = new_cmpExpression("=="); }
-                        | NEQ { $$ = new_cmpExpression("!="); }
-                        | LEQ { $$ = new_cmpExpression("<="); }
-                        | GEQ { $$ = new_cmpExpression(">="); }
-                        | LT { $$ = new_cmpExpression("<"); }
-                        | GT { $$ = new_cmpExpression(">"); }
+compare_assignment:	EQ {}// $$ = new_element("compare_assignment"); }
+                        | NEQ {}// $$ = new_element("compare_assignment"); }
+                        | LEQ {}// $$ = new_element("compare_assignment"); }
+                        | GEQ {}// $$ = new_element("compare_assignment"); }
+                        | LT {}// $$ = new_element("compare_assignment"); }
+                        | GT {}// $$ = new_element("compare_assignment"); }
                         ;
 
-assignment_expression:	assignment_expression PLUS term { $$ = new_assExpression($1, '+', $3); }
-			| assignment_expression MINUS term { $$ = new_assExpression($1, '-', $3); }
-			| term { $$ = new_assExpression(0, 0, $1); }
+assignment_expression:	assignment_expression PLUS term {}// $$ = new_element("assignment_expression"); }
+			| assignment_expression MINUS term {}// $$ = new_element("assignment_expression"); }
+			| term {}// $$ = new_element(""); }
 			;
 			
-term:		term MULT factor { $$ = new_term($1, '*', $3); }
-		| term DIV factor { $$ = new_term($1, '/', $3); }
-		| factor { $$ = new_term(0, 0, $1); }
+term:		term MULT factor {}// $$ = new_element("term"); }
+		| term DIV factor {}// $$ = new_element("term"); }
+		| factor {}// $$ = new_element("term"); }
 		;
 		
-factor:		value {$$ = new_factor(1, $1, 0); }
-		| OPEN_PARENT assignment_expression CLOSE_PARENT {$$ = new_factor(2, 0, $2); }
+factor:		value {}//$$ = new_element("factor"); }
+		| OPEN_PARENT assignment_expression CLOSE_PARENT {}//$$ = new_element("factor"); }
 		;
 		
 //identifier_struct_expression:	IDENTIFIER DOT SETLAST ARROW value  //  x.setlast->y (Add fim da fila)
