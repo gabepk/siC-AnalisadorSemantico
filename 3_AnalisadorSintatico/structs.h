@@ -32,6 +32,11 @@ typedef struct assExpression {
     struct term *term;
 } assExpression;
 
+typedef struct assignment {
+    char *var;
+    assExpression *assExp;
+} assignment;
+
 // --------------------------------
 
 typedef union block {
@@ -98,7 +103,7 @@ typedef union statement {
     struct ifNoElse *ifNoElse;
     struct ifWithElse *ifWithElse;
     struct whileOp *whileOp;
-    struct assExpression *assExp;
+    struct assignment *assmnt;
     struct idStructExpression *idStrExp;
 } statement;
 
@@ -169,12 +174,19 @@ term *new_term(term *newTerm, char op, factor *factor) { // STRUCT
     return t;
 }
 
-assExpression *new_assExpression(int tag, assExpression *assExp, char op, term *term) { // STRUCT
+assExpression *new_assExpression (assExpression *assExp, char op, term *term) { // STRUCT
     assExpression *ae = (assExpression*) malloc(sizeof(assExpression));
     ae->assExp = assExp;
     ae->op = op;
     ae->term = term;
     return ae;
+}
+
+assignment *new_assignment (char *var, assExpression *assExp) { // STRUCT
+    assignment *assmnt = (assignment*) malloc(sizeof(assignment));
+    assmnt->var = var;
+    assmnt->assExp = assExp;
+    return assmnt;
 }
 
 cmpExpression *new_cmpExpression(char *cm) { // STRUCT
@@ -248,14 +260,14 @@ definition *new_definition(typeStr *type, char *var) {
     return def;
 }
 
-statement *new_statement(int tag, definition *def, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assExpression *assExp, idStructExpression *idStrExp) { // UNION
+statement *new_statement(int tag, definition *def, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assignment *assmnt, idStructExpression *idStrExp) { // UNION
     statement *stmt = (statement*) malloc(sizeof(statement));
     stmt->def = def;
     stmt->funcCall = funcCall;
     stmt->ifNoElse = ifNoElse;
     stmt->ifWithElse = ifWithElse;
     stmt->whileOp = whileOp;
-    stmt->assExp = assExp;
+    stmt->assmnt = assmnt;
     stmt->idStrExp = idStrExp;
     return stmt;
 }

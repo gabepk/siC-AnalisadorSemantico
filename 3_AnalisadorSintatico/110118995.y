@@ -105,13 +105,19 @@ statements:	statements statement { $$ = new_statements($1, $2); }
 		;
 
 // https://www.gnu.org/software/bison/manual/html_node/Non-Operators.html#Non-Operators (RESOLVE COM ASSOCIATIVIDADE)
-statement:	type_struct IDENTIFIER SEMICOLON { $$ =  new_statement(1, new_definition($1, $2), 0,0,0,0,0,0); }
-		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON { $$ =  new_statement(2, 0,  new_funcCall($1, $3),0,0,0,0,0);}
+statement:	type_struct IDENTIFIER SEMICOLON { 
+                    $$ =  new_statement(1, new_definition($1, $2), 0,0,0,0,0,0); }
+		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON { 
+                    $$ =  new_statement(2, 0,  new_funcCall($1, $3),0,0,0,0,0);}
 		//| IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT  values CLOSE_PARENT SEMICOLON // FALTA ESSE FUNCALL COM RETORNO
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block { $$ = new_statement(3, 0, 0, new_ifNoElse($3, $4, $5, $7), 0, 0, 0, 0); }
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block ELSE block { $$ = new_statement(4, 0, 0, 0, new_ifWithElse($3, $4, $5, $7, $9), 0, 0, 0); }
-		| WHILE OPEN_PARENT value compare_assignment value CLOSE_PARENT block { $$ = new_statement(5, 0, 0, 0, 0, new_whileOp($3, $4, $5, $7), 0, 0); }
-		// | IDENTIFIER ASSIGN assignment_expression SEMICOLON { $$ = new_statement(6, 0, 0, 0, 0, 0, $2, 0)); }
+		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
+                    $$ = new_statement(3, 0, 0, new_ifNoElse($3, $4, $5, $7), 0, 0, 0, 0); }
+		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block ELSE block { 
+                    $$ = new_statement(4, 0, 0, 0, new_ifWithElse($3, $4, $5, $7, $9), 0, 0, 0); }
+		| WHILE OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
+                    $$ = new_statement(5, 0, 0, 0, 0, new_whileOp($3, $4, $5, $7), 0, 0); }
+		| IDENTIFIER ASSIGN assignment_expression SEMICOLON { 
+                    $$ = new_statement(6, 0, 0, 0, 0, 0, new_assignment($1, $3), 0); }
 		//| identifier_struct_expression SEMICOLON { $$ = new_statement(7, 0, 0, 0, 0, 0, 0, $1)); }
 		;
 		
