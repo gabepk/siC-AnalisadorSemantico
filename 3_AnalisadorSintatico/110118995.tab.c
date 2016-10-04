@@ -69,7 +69,9 @@
 void yyerror(char *s);
 int yylex(void);
 
-#line 73 "110118995.tab.c" /* yacc.c:339  */
+int id_corrente = 0;
+
+#line 75 "110118995.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -112,18 +114,18 @@ extern int yydebug;
     FLOAT = 263,
     INT = 264,
     CHAR = 265,
-    WHILE = 266,
-    IF = 267,
-    ELSE = 268,
-    RETURN = 269,
-    QUEUE = 270,
-    FIRST = 271,
-    EQ = 272,
-    NEQ = 273,
-    LEQ = 274,
-    GEQ = 275,
-    LT = 276,
-    GT = 277,
+    EQ = 266,
+    NEQ = 267,
+    LEQ = 268,
+    GEQ = 269,
+    LT = 270,
+    GT = 271,
+    WHILE = 272,
+    IF = 273,
+    ELSE = 274,
+    RETURN = 275,
+    QUEUE = 276,
+    FIRST = 277,
     ARROW = 278,
     SETLAST = 279,
     RMVFIRST = 280
@@ -135,15 +137,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 8 "110118995.y" /* yacc.c:355  */
+#line 10 "110118995.y" /* yacc.c:355  */
 
-    int i;
-    float f;
-    char c;
     char *str;
     struct Variable *v;
 
-#line 147 "110118995.tab.c" /* yacc.c:355  */
+#line 146 "110118995.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -160,7 +159,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 164 "110118995.tab.c" /* yacc.c:358  */
+#line 163 "110118995.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -402,7 +401,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   135
+#define YYLAST   140
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  38
@@ -460,11 +459,11 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    49,    49,    53,    60,    71,    75,    78,    83,    84,
-      85,    86,    87,    92,    93,    98,    99,   100,   101,   104,
-     105,   106,   109,   110,   113,   114,   115,   116,   117,   118,
-     119,   120,   123,   124,   127,   128,   129,   130,   131,   132,
-     135,   136,   137,   140,   141,   142,   145,   146,   149,   150
+       0,    42,    42,    46,    53,    66,    70,    73,    78,    79,
+      80,    81,    82,    87,    90,    97,    98,    99,   100,   105,
+     111,   116,   121,   125,   130,   136,   142,   150,   157,   165,
+     172,   178,   186,   189,   196,   197,   198,   199,   200,   201,
+     206,   211,   216,   223,   227,   231,   238,   241,   249,   250
 };
 #endif
 
@@ -474,8 +473,8 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NUM_INT", "NUM_FLOAT", "CARACTERE",
-  "ID", "VOID", "FLOAT", "INT", "CHAR", "WHILE", "IF", "ELSE", "RETURN",
-  "QUEUE", "FIRST", "EQ", "NEQ", "LEQ", "GEQ", "LT", "GT", "ARROW",
+  "ID", "VOID", "FLOAT", "INT", "CHAR", "EQ", "NEQ", "LEQ", "GEQ", "LT",
+  "GT", "WHILE", "IF", "ELSE", "RETURN", "QUEUE", "FIRST", "ARROW",
   "SETLAST", "RMVFIRST", "'('", "')'", "'{'", "';'", "'}'", "','", "'.'",
   "'='", "'+'", "'-'", "'*'", "'/'", "$accept", "program", "function",
   "valueList", "value", "type_struct", "type_simple", "argList",
@@ -496,10 +495,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -29
+#define YYPACT_NINF -92
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-29)))
+  (!!((Yystate) == (-92)))
 
 #define YYTABLE_NINF -1
 
@@ -510,17 +509,17 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      65,   -29,   -29,   -29,   -29,   -18,    46,   -29,     1,   -29,
-      83,   -29,   -29,    -8,     9,    65,   -29,    20,   -25,   -29,
-      19,    65,   -29,    63,    56,   -29,    55,    57,    87,   104,
-      99,   -29,    85,   104,    91,    18,   104,   104,   -29,   -29,
-     -29,    84,    88,    89,   -29,    51,   -29,    96,    25,    24,
-     -29,    60,    23,   -29,    79,    79,   105,    90,   -29,    93,
-     104,   104,   104,    27,    50,   -29,    24,    24,    24,    24,
-     -29,   -29,   -29,   -29,   -29,   -29,   104,   104,   -29,   -29,
-     -29,   -29,   -29,    75,   -29,   -29,    23,    23,   -29,   -29,
-      97,    98,    94,    30,    30,   -29,   -29,   -29,   -29,   113,
-       5,    30,   -29,   -29
+      78,   -92,   -92,   -92,   -92,    32,    56,   -92,    61,   -92,
+      84,   -92,   -92,    49,    66,    78,   -92,    83,   -25,   -92,
+      67,    78,   -92,   104,    63,   -92,    28,    85,    86,   103,
+     107,   -92,    87,   103,    90,    13,   103,   103,   -92,   -92,
+     -92,    88,    92,    93,   -92,    -7,   -92,    94,    64,    24,
+     -92,     2,    21,   -92,    89,    89,    96,    95,   -92,    97,
+     103,   103,   103,   -18,    11,   -92,    24,    24,    24,    24,
+     -92,   -92,   -92,   -92,   -92,   -92,   103,   103,   -92,   -92,
+     -92,   -92,   -92,    -6,   -92,   -92,    21,    21,   -92,   -92,
+     100,   101,   102,    34,    34,   -92,   -92,   -92,   -92,   105,
+       5,    34,   -92,   -92
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -544,8 +543,8 @@ static const yytype_uint8 yydefact[] =
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -29,   -29,   121,    66,   -28,     4,   119,   -29,    34,   -24,
-     -15,    76,    86,    37,    43,   -29
+     -92,   -92,   109,    57,   -28,    53,   113,   -92,    33,   -24,
+     -91,    75,    91,    12,    29,   -92
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -560,55 +559,57 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      31,    42,    20,    10,     8,    46,    21,    13,    54,    55,
-       8,    26,     1,     2,     3,     4,    27,    28,    15,    17,
-       5,    38,    39,    40,    48,    23,    19,    38,    39,    40,
-      41,    16,    81,    82,    46,   102,    26,     1,     2,     3,
-       4,    27,    28,    78,    49,     5,    11,    22,    90,    91,
-      49,    62,    84,     1,     2,     3,     4,    63,    96,    68,
-      69,     5,    26,     1,     2,     3,     4,    27,    28,    25,
-      29,     5,     1,     2,     3,     4,    31,    85,    59,    99,
-       5,    33,    60,    36,    66,    67,   103,    34,    35,    65,
-       1,     2,     3,     4,    66,    67,    70,    71,    72,    73,
-      74,    75,    92,    86,    87,    43,    60,    38,    39,    40,
-      41,    88,    89,    37,    44,    47,    56,    57,    58,    61,
-      79,    78,    80,    95,    93,    94,   101,    12,    83,    14,
-     100,    77,     0,     0,     0,    64
+      31,    42,    20,    99,    78,    46,    21,    84,    54,    55,
+     103,    26,     1,     2,     3,     4,    38,    39,    40,    48,
+      59,    92,    27,    28,    60,    60,     5,    38,    39,    40,
+      41,    65,    81,    82,    46,   102,    66,    67,    85,    49,
+      26,     1,     2,     3,     4,    66,    67,    10,    90,    91,
+      49,    27,    28,     8,    33,     5,    11,    68,    69,     8,
+      34,    35,    96,     1,     2,     3,     4,    13,    17,    26,
+       1,     2,     3,     4,    23,    15,    31,     5,    86,    87,
+      27,    28,    16,    29,     5,     1,     2,     3,     4,    19,
+      62,     1,     2,     3,     4,    22,    63,    88,    89,     5,
+      70,    71,    72,    73,    74,    75,    38,    39,    40,    41,
+      25,    36,    37,    43,    47,    12,    44,    61,    78,    83,
+      56,    57,    58,    14,   101,    79,    80,    93,    94,   100,
+      77,    95,     0,     0,     0,     0,     0,     0,     0,     0,
+      64
 };
 
 static const yytype_int8 yycheck[] =
 {
-      24,    29,    27,    21,     0,    33,    31,     6,    36,    37,
-       6,     6,     7,     8,     9,    10,    11,    12,    26,    15,
-      15,     3,     4,     5,     6,    21,     6,     3,     4,     5,
-       6,    22,    60,    61,    62,    30,     6,     7,     8,     9,
-      10,    11,    12,    16,    26,    15,     0,    28,    76,    77,
-      26,    26,    25,     7,     8,     9,    10,    32,    28,    36,
-      37,    15,     6,     7,     8,     9,    10,    11,    12,     6,
-      14,    15,     7,     8,     9,    10,   100,    27,    27,    94,
-      15,    26,    31,    26,    34,    35,   101,    32,    33,    29,
-       7,     8,     9,    10,    34,    35,    17,    18,    19,    20,
-      21,    22,    27,    66,    67,     6,    31,     3,     4,     5,
-       6,    68,    69,    26,    29,    24,    32,    29,    29,    23,
-      30,    16,    29,    29,    27,    27,    13,     6,    62,    10,
-      96,    55,    -1,    -1,    -1,    49
+      24,    29,    27,    94,    22,    33,    31,    25,    36,    37,
+     101,     6,     7,     8,     9,    10,     3,     4,     5,     6,
+      27,    27,    17,    18,    31,    31,    21,     3,     4,     5,
+       6,    29,    60,    61,    62,    30,    34,    35,    27,    26,
+       6,     7,     8,     9,    10,    34,    35,    15,    76,    77,
+      26,    17,    18,     0,    26,    21,     0,    36,    37,     6,
+      32,    33,    28,     7,     8,     9,    10,     6,    15,     6,
+       7,     8,     9,    10,    21,    26,   100,    21,    66,    67,
+      17,    18,    16,    20,    21,     7,     8,     9,    10,     6,
+      26,     7,     8,     9,    10,    28,    32,    68,    69,    21,
+      11,    12,    13,    14,    15,    16,     3,     4,     5,     6,
+       6,    26,    26,     6,    24,     6,    29,    23,    22,    62,
+      32,    29,    29,    10,    19,    30,    29,    27,    27,    96,
+      55,    29,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      49
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     7,     8,     9,    10,    15,    39,    40,    43,    44,
-      21,     0,    40,     6,    44,    26,    22,    43,    45,     6,
-      27,    31,    28,    43,    46,     6,     6,    11,    12,    14,
+       0,     7,     8,     9,    10,    21,    39,    40,    43,    44,
+      15,     0,    40,     6,    44,    26,    16,    43,    45,     6,
+      27,    31,    28,    43,    46,     6,     6,    17,    18,    20,
       43,    47,    53,    26,    32,    33,    26,    26,     3,     4,
        5,     6,    42,     6,    29,    41,    42,    24,     6,    26,
       42,    50,    51,    52,    42,    42,    32,    29,    29,    27,
       31,    23,    26,    32,    50,    29,    34,    35,    36,    37,
-      17,    18,    19,    20,    21,    22,    49,    49,    16,    30,
+      11,    12,    13,    14,    15,    16,    49,    49,    22,    30,
       29,    42,    42,    41,    25,    27,    51,    51,    52,    52,
       42,    42,    27,    27,    27,    29,    28,    47,    48,    48,
-      46,    13,    30,    48
+      46,    19,    30,    48
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -1305,71 +1306,377 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 49 "110118995.y" /* yacc.c:1646  */
+#line 42 "110118995.y" /* yacc.c:1646  */
     { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *((yyvsp[-1].v));
                                    varList[1] = *((yyvsp[0].v));
-                                   (yyval.v) = new_variable(1, 1, &varList); }
-#line 1314 "110118995.tab.c" /* yacc.c:1646  */
+                                   (yyval.v) = new_variable(1, 1, &varList, 0); }
+#line 1315 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 53 "110118995.y" /* yacc.c:1646  */
+#line 46 "110118995.y" /* yacc.c:1646  */
     { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *((yyvsp[0].v));
-                                   (yyval.v) = new_variable(1, 2, &varList); }
-#line 1322 "110118995.tab.c" /* yacc.c:1646  */
+                                   (yyval.v) = new_variable(1, 2, &varList, 0); }
+#line 1323 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 60 "110118995.y" /* yacc.c:1646  */
+#line 53 "110118995.y" /* yacc.c:1646  */
     { 
                                    Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
                                    varList[0] = *((yyvsp[-10].v));
                                    varList[1] = *((yyvsp[-7].v));
-                                   varList[3] = *((yyvsp[-4].v));
-                                   varList[4] = *((yyvsp[-2].v));
-                                   (yyval.v) = new_variable(2, 1, &varList); }
-#line 1334 "110118995.tab.c" /* yacc.c:1646  */
+                                   varList[2] = *((yyvsp[-4].v));
+                                   varList[3] = *((yyvsp[-2].v));
+                                   /*varList[4] = *($2);*/
+                                   (yyval.v) = new_variable(2, 1, &varList, 0);
+                                   add_symbol_on_table((yyvsp[-9].str)); }
+#line 1337 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 71 "110118995.y" /* yacc.c:1646  */
+#line 66 "110118995.y" /* yacc.c:1646  */
     { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *((yyvsp[-2].v));
                                    varList[1] = *((yyvsp[0].v));
-                                   (yyval.v) = new_variable(3, 1, &varList); }
-#line 1343 "110118995.tab.c" /* yacc.c:1646  */
+                                   (yyval.v) = new_variable(3, 1, &varList, 0); }
+#line 1346 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 75 "110118995.y" /* yacc.c:1646  */
+#line 70 "110118995.y" /* yacc.c:1646  */
     { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *((yyvsp[0].v));
-                                   (yyval.v) = new_variable(3, 2, &varList); }
-#line 1351 "110118995.tab.c" /* yacc.c:1646  */
+                                   (yyval.v) = new_variable(3, 2, &varList, 0); }
+#line 1354 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 78 "110118995.y" /* yacc.c:1646  */
+#line 73 "110118995.y" /* yacc.c:1646  */
     { (yyval.v) = NULL; }
-#line 1357 "110118995.tab.c" /* yacc.c:1646  */
+#line 1360 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 78 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(4, 1, NULL, (yyvsp[0].str)); }
+#line 1366 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 79 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(4, 2, NULL, (yyvsp[0].str)); }
+#line 1372 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 80 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(4, 3, NULL, (yyvsp[0].str)); }
+#line 1378 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 81 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(4, 3, NULL, (yyvsp[0].str)); add_symbol_on_table((yyvsp[0].str));}
+#line 1384 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 12:
+#line 82 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(4, 4, NULL, (yyvsp[-2].str)); add_symbol_on_table((yyvsp[-2].str)); }
+#line 1390 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 87 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(5, 1, &varList, 0); }
+#line 1398 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 14:
+#line 90 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   (yyval.v) = new_variable(5, 2, &varList, 0); }
+#line 1406 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 97 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(6, 0, NULL, (yyvsp[0].str)); }
+#line 1412 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 98 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(6, 0, NULL, (yyvsp[0].str)); }
+#line 1418 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 99 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(6, 0, NULL, (yyvsp[0].str)); }
+#line 1424 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 100 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(6, 0, NULL, (yyvsp[0].str)); }
+#line 1430 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 105 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-3].v));
+                                   varList[1] = *((yyvsp[-1].v));
+                                   /*varList[2] = *($4);*/
+                                   (yyval.v) = new_variable(7, 1, &varList, 0); 
+                                   add_symbol_on_table((yyvsp[0].str));}
+#line 1441 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 111 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   /*varList[1] = *($2);*/
+                                   (yyval.v) = new_variable(7, 2, &varList, 0);
+                                   add_symbol_on_table((yyvsp[0].str)); }
+#line 1451 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 106 "110118995.y" /* yacc.c:1646  */
+#line 116 "110118995.y" /* yacc.c:1646  */
     { (yyval.v) = NULL; }
-#line 1363 "110118995.tab.c" /* yacc.c:1646  */
+#line 1457 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 121 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   varList[1] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(8, 1, &varList, 0); }
+#line 1466 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 110 "110118995.y" /* yacc.c:1646  */
+#line 125 "110118995.y" /* yacc.c:1646  */
     { (yyval.v) = NULL; }
-#line 1369 "110118995.tab.c" /* yacc.c:1646  */
+#line 1472 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 24:
+#line 131 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-2].v));
+                                   /*varList[1] = *($2);*/
+                                   (yyval.v) = new_variable(9, 1, &varList, 0); 
+                                   add_symbol_on_table((yyvsp[-1].str));}
+#line 1482 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 25:
+#line 137 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);*/
+                                   varList[0] = *((yyvsp[-2].v));
+                                   (yyval.v) = new_variable(9, 2, &varList, 0); 
+                                   add_symbol_on_table((yyvsp[-4].str)); }
+#line 1492 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 26:
+#line 143 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);
+                                   varList[1] = *($3);*/
+                                   varList[0] = *((yyvsp[-2].v));
+                                   (yyval.v) = new_variable(9, 3, &varList, 0); 
+                                   add_symbol_on_table((yyvsp[-6].str));
+                                   add_symbol_on_table((yyvsp[-4].str)); }
+#line 1504 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 27:
+#line 151 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-4].v));
+                                   varList[1] = *((yyvsp[-3].v));
+                                   varList[2] = *((yyvsp[-2].v));
+                                   varList[3] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(9, 4, &varList, 0); }
+#line 1515 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 28:
+#line 158 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (5 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-6].v));
+                                   varList[1] = *((yyvsp[-5].v));
+                                   varList[2] = *((yyvsp[-4].v));
+                                   varList[3] = *((yyvsp[-2].v));
+                                   varList[4] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(9, 5, &varList, 0); }
+#line 1527 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 29:
+#line 166 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-4].v));
+                                   varList[1] = *((yyvsp[-3].v));
+                                   varList[2] = *((yyvsp[-2].v));
+                                   varList[3] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(9, 6, &varList, 0); }
+#line 1538 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 173 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);*/
+                                   varList[1] = *((yyvsp[-1].v));
+                                   (yyval.v) = new_variable(9, 7, &varList, 0); 
+                                   add_symbol_on_table((yyvsp[-3].str));}
+#line 1548 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 179 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   (yyval.v) = new_variable(9, 8, &varList, 0); }
+#line 1556 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 186 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(10, 1, &varList, 0); }
+#line 1564 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 189 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   (yyval.v) = new_variable(10, 2, &varList, 0); }
+#line 1572 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 196 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1578 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 197 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1584 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 198 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1590 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 37:
+#line 199 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1596 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 38:
+#line 200 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1602 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 39:
+#line 201 "110118995.y" /* yacc.c:1646  */
+    { (yyval.v) = new_variable(11, 0, NULL, (yyvsp[0].str)); }
+#line 1608 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 40:
+#line 207 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-2].v));
+                                   varList[1] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(12, 1, &varList, 0); }
+#line 1617 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 41:
+#line 212 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-2].v));
+                                   varList[1] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(12, 2, &varList, 0); }
+#line 1626 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 216 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(12, 3, &varList, 0); }
+#line 1634 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 223 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-2].v));
+                                   varList[1] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(13, 1, &varList, 0); }
+#line 1643 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 227 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-2].v));
+                                   varList[1] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(13, 2, &varList, 0); }
+#line 1652 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 231 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(13, 3, &varList, 0); }
+#line 1660 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 238 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[0].v));
+                                   (yyval.v) = new_variable(14, 1, &varList, 0); }
+#line 1668 "110118995.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 242 "110118995.y" /* yacc.c:1646  */
+    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *((yyvsp[-1].v));
+                                   (yyval.v) = new_variable(14, 2, &varList, 0); }
+#line 1676 "110118995.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1373 "110118995.tab.c" /* yacc.c:1646  */
+#line 1680 "110118995.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1597,7 +1904,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 153 "110118995.y" /* yacc.c:1906  */
+#line 253 "110118995.y" /* yacc.c:1906  */
 
 
 extern int yylineno;
@@ -1607,7 +1914,9 @@ void yyerror(char *s) {
 }
 
 int main(void) {
-  yyparse();
-  return 0;
+    for (int i=0; i<256; i++)
+        tabela_de_simbolos[i] = ".";
+    yyparse();
+    return 0;
 }
 

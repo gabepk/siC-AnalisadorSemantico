@@ -895,187 +895,190 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 25 "110118995.lex"
-{   yylval.c = yytext[1];
+{   yylval.str[0] = yytext[1];
+                                    yylval.str[0] = '\0';
                                     return(CARACTERE);
                                 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 28 "110118995.lex"
-{   yylval.f = atof(yytext);
+#line 29 "110118995.lex"
+{   //yylval.f = atof(yytext);
+                                    yylval.str = yytext;
                                     return(NUM_FLOAT);
                                 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 31 "110118995.lex"
-{   yylval.i = atoi(yytext);
+#line 33 "110118995.lex"
+{   //yylval.i = atoi(yytext);
+                                    yylval.str = yytext;
                                     return(NUM_INT);
                                 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 35 "110118995.lex"
+#line 38 "110118995.lex"
 {++errors;printf("\tERROR on line %d : Empty character constant \"%s\" \n", lines, yytext);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 38 "110118995.lex"
+#line 41 "110118995.lex"
 return(EQ);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 39 "110118995.lex"
+#line 42 "110118995.lex"
 return(NEQ);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 40 "110118995.lex"
+#line 43 "110118995.lex"
 return(LEQ);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "110118995.lex"
+#line 44 "110118995.lex"
 return(GEQ);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "110118995.lex"
+#line 45 "110118995.lex"
 return(LT);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "110118995.lex"
+#line 46 "110118995.lex"
 return(GT);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 45 "110118995.lex"
+#line 48 "110118995.lex"
 return('.');
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 46 "110118995.lex"
+#line 49 "110118995.lex"
 return(';');
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 47 "110118995.lex"
+#line 50 "110118995.lex"
 return(',');
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 48 "110118995.lex"
+#line 51 "110118995.lex"
 return('{');
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 49 "110118995.lex"
+#line 52 "110118995.lex"
 return('}');
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 50 "110118995.lex"
+#line 53 "110118995.lex"
 return('(');
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 51 "110118995.lex"
+#line 54 "110118995.lex"
 return(')');
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 53 "110118995.lex"
+#line 56 "110118995.lex"
 return('+');
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 54 "110118995.lex"
+#line 57 "110118995.lex"
 return('-');
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 55 "110118995.lex"
+#line 58 "110118995.lex"
 return('*');
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 56 "110118995.lex"
+#line 59 "110118995.lex"
 return('/');
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 57 "110118995.lex"
+#line 60 "110118995.lex"
 return('=');
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 59 "110118995.lex"
+#line 62 "110118995.lex"
 return(ARROW);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 61 "110118995.lex"
+#line 64 "110118995.lex"
 return(SETLAST);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 62 "110118995.lex"
+#line 65 "110118995.lex"
 return(RMVFIRST);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 64 "110118995.lex"
+#line 67 "110118995.lex"
 return(QUEUE);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 65 "110118995.lex"
+#line 68 "110118995.lex"
 return(VOID);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 66 "110118995.lex"
+#line 69 "110118995.lex"
 return(FLOAT);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 67 "110118995.lex"
+#line 70 "110118995.lex"
 return(INT);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 68 "110118995.lex"
+#line 71 "110118995.lex"
 return(CHAR);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 69 "110118995.lex"
+#line 72 "110118995.lex"
 return(FIRST);
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 70 "110118995.lex"
+#line 73 "110118995.lex"
 return(IF);
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 71 "110118995.lex"
+#line 74 "110118995.lex"
 return(ELSE);
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 72 "110118995.lex"
+#line 75 "110118995.lex"
 return(WHILE);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 73 "110118995.lex"
+#line 76 "110118995.lex"
 return(RETURN);
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 75 "110118995.lex"
+#line 78 "110118995.lex"
 {
             //printf("\tIDENTIFIER %s\n", yytext);
             yylval.str = malloc(strlen(yytext)); // Aloca espaço para string do tamanho de yytext
@@ -1085,15 +1088,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 82 "110118995.lex"
+#line 85 "110118995.lex"
 {++errors;printf("\t(lex) ERROR on line %d : Unknown token '%s' \n", lines, yytext);}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 84 "110118995.lex"
+#line 87 "110118995.lex"
 ECHO;
 	YY_BREAK
-#line 1097 "lex.yy.c"
+#line 1100 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2065,7 +2068,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 84 "110118995.lex"
+#line 87 "110118995.lex"
 
 
 

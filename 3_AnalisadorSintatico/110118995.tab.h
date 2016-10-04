@@ -53,18 +53,18 @@ extern int yydebug;
     FLOAT = 263,
     INT = 264,
     CHAR = 265,
-    WHILE = 266,
-    IF = 267,
-    ELSE = 268,
-    RETURN = 269,
-    QUEUE = 270,
-    FIRST = 271,
-    EQ = 272,
-    NEQ = 273,
-    LEQ = 274,
-    GEQ = 275,
-    LT = 276,
-    GT = 277,
+    EQ = 266,
+    NEQ = 267,
+    LEQ = 268,
+    GEQ = 269,
+    LT = 270,
+    GT = 271,
+    WHILE = 272,
+    IF = 273,
+    ELSE = 274,
+    RETURN = 275,
+    QUEUE = 276,
+    FIRST = 277,
     ARROW = 278,
     SETLAST = 279,
     RMVFIRST = 280
@@ -76,15 +76,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 8 "110118995.y" /* yacc.c:1909  */
+#line 10 "110118995.y" /* yacc.c:1909  */
 
-    int i;
-    float f;
-    char c;
     char *str;
     struct Variable *v;
 
-#line 88 "110118995.tab.h" /* yacc.c:1909  */
+#line 85 "110118995.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

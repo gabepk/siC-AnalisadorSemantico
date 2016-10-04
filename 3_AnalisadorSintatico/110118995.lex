@@ -22,13 +22,16 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 {digito}+{letra}+{digito}*		{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 
-"'"({letra}|{digito})"'"	{   yylval.c = yytext[1];
+"'"({letra}|{digito})"'"	{   yylval.str[0] = yytext[1];
+                                    yylval.str[0] = '\0';
                                     return(CARACTERE);
                                 }
-{digito}+"."{digito}* 		{   yylval.f = atof(yytext);
+{digito}+"."{digito}* 		{   //yylval.f = atof(yytext);
+                                    yylval.str = yytext;
                                     return(NUM_FLOAT);
                                 }
-{digito}+			{   yylval.i = atoi(yytext);
+{digito}+			{   //yylval.i = atoi(yytext);
+                                    yylval.str = yytext;
                                     return(NUM_INT);
                                 }
                                 

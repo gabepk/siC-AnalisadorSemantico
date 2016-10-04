@@ -2,10 +2,14 @@
 #define structs_h
 
 #define MAX_CHILD_RULES 5
+#define MAX_SIMBOLS 256
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+char *tabela_de_simbolos[MAX_SIMBOLS];
 
 // ----------------------------------------------------------------
 // -------------------- VARIAVEL ESCOLHIDA ------------------------
@@ -17,7 +21,7 @@ typedef struct Variable {
     int variable_tag;
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
-
+/*
 typedef union ChosenVariable {
     union Program *program;         // tag 01  2 rules
     struct Function *function;      // tag 02  1 rule
@@ -39,7 +43,7 @@ typedef union ChosenVariable {
 // ----------------------------------------------------------------
 // -------------------------- VARIAVEIS ---------------------------
 // ----------------------------------------------------------------
-/*
+
 typedef union Program {
     int tag;
 } Program;
@@ -71,7 +75,7 @@ typedef union Factor {} Factor;
 // --------------------------- FUNÇÕES ----------------------------
 // ----------------------------------------------------------------
 
-Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[], void *terminal) {
+Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[], char *terminal) {
     Variable *v = (Variable *) malloc(sizeof(Variable));
     switch (tag_variable) {
             case (1): // Program
@@ -100,22 +104,22 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 }
                 break;
                 
-            case (4): // Value
+            case (4): // Value - FAZER VARIAVEL COM ESSE NOME
                 switch (tag_rule) {
                     case (1): // NUM_INT
-                        printf("%d\n", terminal);
+                        //printf("%s\n", terminal);
                         break;
                     case (2): // NUM_FLOAT
-                        printf("%f\n", terminal);
+                        //printf("%s\n", terminal);
                         break;
                     case (3): // CARACTERE
-                        printf("%c\n", terminal);
+                        //printf("%s\n", terminal);
                         break;
                     case (4): // ID
-                        printf("%s\n", terminal);
+                        //printf("%s\n", terminal);
                         break;
                     case (5): // ID '.' FIRST
-                        printf("%s.FIRST\n", terminal);
+                        //printf("%s.FIRST\n", terminal);
                         break;
                 }
                 break;
@@ -219,5 +223,23 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
     return v;
 }
 
+// ----------------------------------------------------------------
+// -------------------- TABELA DE SIMBOLOS ------------------------
+// ----------------------------------------------------------------
+/**
+ * Procura simbolo na tabela de simbolos, que é um vetor de string.
+ * Se ele está lá, retorna o indice.
+ * Se não esta, adiciona e retorna o indice
+ */
+int add_symbol_on_table (char *s) {
+    int i = 0;
+    while (strcmp(tabela_de_simbolos[i], ".") != 0) {
+        if (strcmp(tabela_de_simbolos[i], s) == 0)
+            return i;
+        i++;
+    }
+    tabela_de_simbolos[i] = s;
+    return i;
+}
 
 #endif /* structs_h */

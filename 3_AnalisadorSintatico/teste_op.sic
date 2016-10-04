@@ -1,7 +1,5 @@
 int main () {
-	x = x + x;
-	x = x - x;
-	x = x / x;
-	x = x * x;
+	A = B + C;
+	D = E * F;
 	return 0;
 }

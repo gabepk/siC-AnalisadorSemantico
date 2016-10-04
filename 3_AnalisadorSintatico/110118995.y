@@ -3,28 +3,21 @@
 #define MAXSTR 50
 void yyerror(char *s);
 int yylex(void);
+
+int id_corrente = 0;
 %}
 
 %union {
-    int i;
-    float f;
-    char c;
     char *str;
     struct Variable *v;
 }
 %start program
 
-%token <i> NUM_INT
-%token <f> NUM_FLOAT
-%token <c> CARACTERE
-%token <str> ID
-%token <str> VOID
-%token <str> FLOAT 
-%token <str> INT 
-%token <str> CHAR
+%token <str> NUM_INT NUM_FLOAT CARACTERE ID
+%token <str> VOID FLOAT INT CHAR
+%token <str> EQ NEQ LEQ GEQ LT GT
 %token WHILE IF ELSE RETURN 
 %token QUEUE FIRST 
-%token EQ NEQ LEQ GEQ LT GT
 %token ARROW SETLAST RMVFIRST
 
 %type <v> program
@@ -32,12 +25,12 @@ int yylex(void);
 %type <v> valueList
 %type <v> value
 %type <v> type_struct
-//%type <v> type_simple
+%type <v> type_simple
 %type <v> argList
 %type <v> stmtList
 %type <v> stmt
 %type <v> block
-//%type <v> compare_assignment
+%type <v> compare_assignment
 %type <v> assignment_expression
 %type <v> term
 %type <v> factor
@@ -63,7 +56,9 @@ function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    varList[1] = *($4);
                                    varList[2] = *($7);
                                    varList[3] = *($9);
-                                   $$ = new_variable(2, 1, &varList, 0); }
+                                   /*varList[4] = *($2);*/
+                                   $$ = new_variable(2, 1, &varList, 0);
+                                   add_symbol_on_table($2); }
                 ;
                 
 // -----------------------------------------------------------------------------------------------------
@@ -83,8 +78,8 @@ valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2
 value:          NUM_INT { $$ = new_variable(4, 1, NULL, $1); }
                 | NUM_FLOAT { $$ = new_variable(4, 2, NULL, $1); }
                 | CARACTERE { $$ = new_variable(4, 3, NULL, $1); }
-                | ID { $$ = new_variable(4, 3, NULL, $1); }
-                | ID '.' FIRST { $$ = new_variable(4, 4, NULL, $1); }
+                | ID { $$ = new_variable(4, 3, NULL, $1); add_symbol_on_table($1);}
+                | ID '.' FIRST { $$ = new_variable(4, 4, NULL, $1); add_symbol_on_table($1); }
                 ;
 
 // -----------------------------------------------------------------------------------------------------
@@ -107,15 +102,17 @@ type_simple:    VOID { $$ = new_variable(6, 0, NULL, $1); }
                 
 // ----------------------------------------------------------------------------------------------------- 
                 
-argList:        argList ',' type_struct ID { Variable *varList = (Variable *) malloc (3 * sizeof(Variable));
+argList:        argList ',' type_struct ID { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
-                                   varList[2] = *($4);
-                                   $$ = new_variable(7, 1, &varList, 0); }
-                | type_struct ID { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   /*varList[2] = *($4);*/
+                                   $$ = new_variable(7, 1, &varList, 0); 
+                                   add_symbol_on_table($4);}
+                | type_struct ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   varList[1] = *($2);
-                                   $$ = new_variable(7, 2, &varList, 0); }
+                                   /*varList[1] = *($2);*/
+                                   $$ = new_variable(7, 2, &varList, 0);
+                                   add_symbol_on_table($2); }
                 | %empty { $$ = NULL; }
                 ;
 
@@ -131,21 +128,25 @@ stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * siz
 // ----------------------------------------------------------------------------------------------------- 
                 
 stmt:           type_struct ID ';' 
-                                   { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   varList[1] = *($2);
-                                   $$ = new_variable(9, 1, &varList, 0); }
+                                   /*varList[1] = *($2);*/
+                                   $$ = new_variable(9, 1, &varList, 0); 
+                                   add_symbol_on_table($2);}
                 | ID '(' valueList ')' ';' 
-                                  { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   varList[1] = *($3);
-                                   $$ = new_variable(9, 2, &varList, 0); }
+                                  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);*/
+                                   varList[0] = *($3);
+                                   $$ = new_variable(9, 2, &varList, 0); 
+                                   add_symbol_on_table($1); }
                 | ID '=' ID '('  valueList ')' ';' 
-                                   { Variable *varList = (Variable *) malloc (3 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   varList[1] = *($3);
-                                   varList[2] = *($5);
-                                   $$ = new_variable(9, 3, &varList, 0); }
+                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);
+                                   varList[1] = *($3);*/
+                                   varList[0] = *($5);
+                                   $$ = new_variable(9, 3, &varList, 0); 
+                                   add_symbol_on_table($1);
+                                   add_symbol_on_table($3); }
                 | IF '(' value compare_assignment value ')' block
                                   { Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
                                    varList[0] = *($3);
@@ -155,8 +156,8 @@ stmt:           type_struct ID ';'
                                    $$ = new_variable(9, 4, &varList, 0); }
                 | IF '(' value compare_assignment value ')' block ELSE block
                                   { Variable *varList = (Variable *) malloc (5 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   varList[1] = *($3);
+                                   varList[0] = *($3);
+                                   varList[1] = *($4);
                                    varList[2] = *($5);
                                    varList[3] = *($7);
                                    varList[4] = *($9);
@@ -169,10 +170,11 @@ stmt:           type_struct ID ';'
                                    varList[3] = *($7);
                                    $$ = new_variable(9, 6, &varList, 0); }
                 | ID '=' assignment_expression ';'
-                                  { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
-                                   varList[0] = *($1);
+                                  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   /*varList[0] = *($1);*/
                                    varList[1] = *($3);
-                                   $$ = new_variable(9, 7, &varList, 0); }
+                                   $$ = new_variable(9, 7, &varList, 0); 
+                                   add_symbol_on_table($1);}
                 | type_struct_expression ';'
                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
@@ -181,31 +183,68 @@ stmt:           type_struct ID ';'
             
 // ----------------------------------------------------------------------------------------------------- 
             
-block:          stmt
-                | '{' stmtList '}'
+block:          stmt  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(10, 1, &varList, 0); }
+                | '{' stmtList '}'  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($2);
+                                   $$ = new_variable(10, 2, &varList, 0); }
                 ;
 
-compare_assignment:	EQ
-                        | NEQ
-                        | LEQ
-                        | GEQ
-                        | LT
-                        | GT
+// ----------------------------------------------------------------------------------------------------- 
+                
+compare_assignment:	EQ { $$ = new_variable(11, 0, NULL, $1); }
+                        | NEQ { $$ = new_variable(11, 0, NULL, $1); }
+                        | LEQ { $$ = new_variable(11, 0, NULL, $1); }
+                        | GEQ { $$ = new_variable(11, 0, NULL, $1); }
+                        | LT { $$ = new_variable(11, 0, NULL, $1); }
+                        | GT { $$ = new_variable(11, 0, NULL, $1); }
                         ;
 
+// ----------------------------------------------------------------------------------------------------- 
+                        
 assignment_expression:  assignment_expression '+' term
+                                   { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(12, 1, &varList, 0); } // REDUNDANTE, poderia passar só "+"
                         | assignment_expression '-' term
-                        | term
+                                   { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(12, 2, &varList, 0); } // REDUNDANTE, poderia passar só "-'
+                        | term  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(12, 3, &varList, 0); }
                         ;
+                        
+// ----------------------------------------------------------------------------------------------------- 
 
-term:           term '*' factor
-                | term '/' factor
-                | factor
+term:           term '*' factor { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(13, 1, &varList, 0); }  // REDUNDANTE, poderia passar só "*"
+                | term '/' factor { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(13, 2, &varList, 0); }  // REDUNDANTE, poderia passar só "/"
+                | factor { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(13, 3, &varList, 0); }
                 ;
                 
-factor:         value
+// ----------------------------------------------------------------------------------------------------- 
+                
+factor:         value { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(14, 1, &varList, 0); }
                 | '(' assignment_expression ')'
+                                  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($2);
+                                   $$ = new_variable(14, 2, &varList, 0); }
                 ;
+                
+// ----------------------------------------------------------------------------------------------------- 
             
 type_struct_expression:   ID '.' SETLAST ARROW value  //  x.setlast->y (Add fim da fila)
                           | ID '=' ID '.' RMVFIRST // x = y.rmfirst;
@@ -220,7 +259,9 @@ void yyerror(char *s) {
 }
 
 int main(void) {
-  yyparse();
-  return 0;
+    for (int i=0; i<256; i++)
+        tabela_de_simbolos[i] = ".";
+    yyparse();
+    return 0;
 }
 
