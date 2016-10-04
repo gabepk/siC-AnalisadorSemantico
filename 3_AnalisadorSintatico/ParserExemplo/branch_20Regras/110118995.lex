@@ -22,13 +22,16 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 {digito}+{letra}+{digito}*		{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 
-"'"({letra}|{digito})"'"	{   yylval.c = yytext[1];
+"'"({letra}|{digito})"'"	{   yylval.c = yytext[1]; // yytext[0] = ', yytext[1] = char, yytext[2] = '
+                                    //printf("\tCARACTERE %s\n", yytext);
                                     return(CARACTERE);
                                 }
 {digito}+"."{digito}* 		{   yylval.f = atof(yytext);
+                                    //printf("\tNUM_FLOAT %f\n", atof(yytext));
                                     return(NUM_FLOAT);
                                 }
 {digito}+			{   yylval.i = atoi(yytext);
+                                    //printf("\tNUM_INT %d\n", atoi(yytext));
                                     return(NUM_INT);
                                 }
                                 
@@ -42,30 +45,30 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 "<"     return(LT);
 ">"     return(GT);
 
-"."     return('.');
-";"     return(';');
-","     return(',');
-"{"     return('{');
-"}"     return('}');
-"("     return('(');
-")"     return(')');
+"."     return(DOT);
+";"     return(SEMICOLON);
+","     return(COMMA);
+"{"     return(OPEN_BRACES);
+"}"     return(CLOSE_BRACES);
+"("     return(OPEN_PARENT);
+")"     return(CLOSE_PARENT);
 
-"+"     return('+');
-"-"     return('-');
-"*"     return('*');
-"/"     return('/');
-"="	return('=');
-
+"+"     return(PLUS);
 "->"    return(ARROW);
+"-"     return(MINUS);
+"*"     return(MULT);
+"/"     return(DIV);
+
+"="	return(ASSIGN);
 
 (?i:SETLAST)    return(SETLAST);
 (?i:RMVFIRST)   return(RMVFIRST);
 
-(?i:"QUEUE")	return(QUEUE);
 (?i:"VOID")	return(VOID);
 (?i:"FLOAT")	return(FLOAT);
 (?i:"INT")	return(INT);
 (?i:"CHAR")	return(CHAR);
+(?i:"QUEUE")	return(QUEUE);
 (?i:"FIRST")	return(FIRST);
 (?i:"IF")	return(IF);
 (?i:"ELSE")	return(ELSE);
@@ -76,10 +79,9 @@ id [a-zA-Z$][a-zA-Z$0-9]*
             //printf("\tIDENTIFIER %s\n", yytext);
             yylval.str = malloc(strlen(yytext)); // Aloca espaço para string do tamanho de yytext
             strncpy(yylval.str, yytext, strlen(yytext)); // Copia yytext para yylval.s
-            return(ID); // Diz pro bison que o valor lido é IDENTIFIER
+            return(IDENTIFIER); // Diz pro bison que o valor lido é IDENTIFIER
         }
         
 .	{++errors;printf("\t(lex) ERROR on line %d : Unknown token '%s' \n", lines, yytext);}
 
 %% 
-

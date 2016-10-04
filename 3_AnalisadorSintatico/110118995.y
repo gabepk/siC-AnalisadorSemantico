@@ -1,10 +1,8 @@
 %{
 #include "structs.h"
 #define MAXSTR 50
-
 void yyerror(char *s);
 int yylex(void);
-
 %}
 
 %union {
@@ -12,154 +10,206 @@ int yylex(void);
     float f;
     char c;
     char *str;
-    //union rule *r;
-    union program *program;
-    struct function *func;
-    union typeStr *tst;
-    struct typeSimple *tsp;
-    struct arguments *args;
-    struct statements *stmts;
-    union statement *stmt;
-    struct definition *def;
-    struct funcCall *fc;
-    struct values *vals;
-    union value *val;
-    struct ifNoElse *ife;
-    struct ifWithElse *iwe;
-    struct whileOp *wh;
-    union block *bl;
-    struct assExpression *assExp;
-    struct cmpExpression *cmpExp;
-    struct term *term;
-    union factor *factor;
-    //idStructExpression *idsExp;
+    struct Variable *v;
 }
-
 %start program
 
 %token <i> NUM_INT
 %token <f> NUM_FLOAT
 %token <c> CARACTERE
-%token <str> IDENTIFIER
-
-// PRECEDENCIA: http://en.cppreference.com/w/c/language/operator_precedence
+%token <str> ID
+%token <str> VOID
+%token <str> FLOAT 
+%token <str> INT 
+%token <str> CHAR
 %token WHILE IF ELSE RETURN 
-%token QUEUE FIRST VOID FLOAT INT CHAR
-%token DOT SEMICOLON COMMA OPEN_BRACES CLOSE_BRACES OPEN_PARENT CLOSE_PARENT
-%token EQ NEQ LEQ GEQ LT GT ASSIGN PLUS MINUS MULT DIV
+%token QUEUE FIRST 
+%token EQ NEQ LEQ GEQ LT GT
 %token ARROW SETLAST RMVFIRST
 
-%type <program> program
-%type <func> function
-%type <tst> type_struct
-%type <tsp> type_simple
-%type <args> arguments
-%type <stmts> statements
-%type <stmt> statement
-%type <vals> values
-%type <val> value
-%type <bl> block
-%type <assExp> assignment_expression
-%type <cmpExp> compare_assignment
-%type <term> term
-%type <factor> factor
-//%type <idsExp> identifier_struct_expression
-
+%type <v> program
+%type <v> function
+%type <v> valueList
+%type <v> value
+%type <v> type_struct
+//%type <v> type_simple
+%type <v> argList
+%type <v> stmtList
+%type <v> stmt
+%type <v> block
+//%type <v> compare_assignment
+%type <v> assignment_expression
+%type <v> term
+%type <v> factor
+%type <v> type_struct_expression
 %%
 
-program:	program function { rule *r = new_rule(1, new_program(1, $1, $2)); $$ = r->program; 
-                                   printf("Arvore sintatica\n[\n"); show_tree(r, 1); printf("\n]\n "); }
-		| %empty {$$ = NULL; }
-		;
+// -----------------------------------------------------------------------------------------------------
 
-function:	type_struct IDENTIFIER OPEN_PARENT arguments CLOSE_PARENT OPEN_BRACES statements RETURN value SEMICOLON CLOSE_BRACES { 
-                         rule *r = new_rule(2, new_function($1, $2, $4, $7, $9)); $$ = r->func; }
-		;
+program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($2);
+                                   $$ = new_variable(1, 1, &varList, 0); }
+                | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(1, 2, &varList, 0); }
+                ;
+                
+// -----------------------------------------------------------------------------------------------------
 
-values:         values COMMA value { rule *r = new_rule(10, new_values(1, $1, $3)); $$ = r->vals; }
-		| value { rule *r = new_rule(10, new_values(2, 0, $1)); $$ = r->vals; }
-		| %empty { rule *r = new_rule(10, new_values(3, 0, 0)); $$ = r->vals; }
-		;
-
-value:          NUM_INT { rule *r = new_rule(11, new_value(1, $1, 0, 0, 0)); $$ = r->val; }
-                | NUM_FLOAT { rule *r = new_rule(11, new_value(2, 0, $1, 0, 0)); $$ = r->val; }
-                | CARACTERE { rule *r = new_rule(11, new_value(3, 0, 0, $1, 0)); $$ = r->val; }
-                | IDENTIFIER { rule *r = new_rule(11, new_value(4, 0, 0, 0, $1)); $$ = r->val; }
-                //| IDENTIFIER DOT FIRST // FALTA ESSE
+function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' { 
+                                   Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($4);
+                                   varList[2] = *($7);
+                                   varList[3] = *($9);
+                                   $$ = new_variable(2, 1, &varList, 0); }
+                ;
+                
+// -----------------------------------------------------------------------------------------------------
+                
+valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(3, 1, &varList, 0); }
+                | value { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(3, 2, &varList, 0); }
+                | %empty { $$ = NULL; }
                 ;
 
-type_struct:	type_simple { rule *r = new_rule(3, new_typeStr(1, $1, 0)); $$ = r->tst; }
-		| QUEUE LT type_simple GT { rule *r = new_rule(3, new_typeStr(2, 0, new_typeQueue($3))); $$ = r->tst; }
-		;
+// -----------------------------------------------------------------------------------------------------
+                
+value:          NUM_INT { $$ = new_variable(4, 1, NULL, $1); }
+                | NUM_FLOAT { $$ = new_variable(4, 2, NULL, $1); }
+                | CARACTERE { $$ = new_variable(4, 3, NULL, $1); }
+                | ID { $$ = new_variable(4, 3, NULL, $1); }
+                | ID '.' FIRST { $$ = new_variable(4, 4, NULL, $1); }
+                ;
 
-type_simple:	VOID  { rule *r = new_rule(4, new_typeSimple("void")); $$ = r->tsp; }
-                | FLOAT { rule *r = new_rule(4, new_typeSimple("float")); $$ = r->tsp; }
-                | INT { rule *r = new_rule(4, new_typeSimple("int")); $$ = r->tsp; }
-                | CHAR { rule *r = new_rule(4, new_typeSimple("char")); $$ = r->tsp; }
-		;
-		
-arguments:	arguments COMMA type_struct IDENTIFIER { rule *r = new_rule(5, new_arguments(1, $1, $3, $4)); $$ = r->args; }
-		| type_struct IDENTIFIER { rule *r = new_rule(5, new_arguments(2, 0, $1, $2)); $$ = r->args; }
-		| %empty { rule *r = new_rule(5, new_arguments(3, 0, 0, 0)); $$ = r->args; }
-		;
+// -----------------------------------------------------------------------------------------------------
+                
+type_struct:    type_simple { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(5, 1, &varList, 0); }
+                | QUEUE LT type_simple GT  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($3);
+                                   $$ = new_variable(5, 2, &varList, 0); }
+                ;
 
-statements:	statements statement { rule *r = new_rule(6, new_statements($1, $2)); $$ = r->stmts; }
-		| %empty { rule *r = new_rule(6, new_statements(0, 0)); $$ = r->stmts; }
-		;
+// -----------------------------------------------------------------------------------------------------                
+                
+type_simple:    VOID { $$ = new_variable(6, 0, NULL, $1); }
+                | FLOAT { $$ = new_variable(6, 0, NULL, $1); }
+                | INT { $$ = new_variable(6, 0, NULL, $1); }
+                | CHAR { $$ = new_variable(6, 0, NULL, $1); }
+                ;
+                
+// ----------------------------------------------------------------------------------------------------- 
+                
+argList:        argList ',' type_struct ID { Variable *varList = (Variable *) malloc (3 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   varList[2] = *($4);
+                                   $$ = new_variable(7, 1, &varList, 0); }
+                | type_struct ID { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($2);
+                                   $$ = new_variable(7, 2, &varList, 0); }
+                | %empty { $$ = NULL; }
+                ;
 
-// https://www.gnu.org/software/bison/manual/html_node/Non-Operators.html#Non-Operators (RESOLVE COM ASSOCIATIVIDADE)
-statement:	type_struct IDENTIFIER SEMICOLON { 
-                    rule *r = new_rule(7, new_statement(1, new_definition($1, $2), 0,0,0,0,0,0)); 
-                    $$ = r->stmt; }
-		| IDENTIFIER OPEN_PARENT values CLOSE_PARENT SEMICOLON { 
-                    rule *r = new_rule(7, new_statement(2, 0,  new_funcCall($1, $3),0,0,0,0,0)); 
-                    $$ = r->stmt; }
-		//| IDENTIFIER ASSIGN IDENTIFIER OPEN_PARENT  values CLOSE_PARENT SEMICOLON // FALTA ESSE FUNCALL COM RETORNO
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
-                    rule *r = new_rule(7, new_statement(3, 0, 0, new_ifNoElse($3, $4, $5, $7), 0, 0, 0, 0)); 
-                    $$ = r->stmt; }
-		| IF OPEN_PARENT value compare_assignment value CLOSE_PARENT block ELSE block { 
-                    rule *r = new_rule(7, new_statement(4, 0, 0, 0, new_ifWithElse($3, $4, $5, $7, $9), 0, 0, 0)); 
-                    $$ = r->stmt; }
-		| WHILE OPEN_PARENT value compare_assignment value CLOSE_PARENT block { 
-                    rule *r = new_rule(7, new_statement(5, 0, 0, 0, 0, new_whileOp($3, $4, $5, $7), 0, 0)); 
-                    $$ = r->stmt; }
-		| IDENTIFIER ASSIGN assignment_expression SEMICOLON { 
-                    rule *r = new_rule(7, new_statement(6, 0, 0, 0, 0, 0, new_assignment($1, $3), 0)); 
-                    $$ = r->stmt; }
-		//| identifier_struct_expression SEMICOLON { $$ = new_statement(7, 0, 0, 0, 0, 0, 0, $1)); }
-		;
-		
-// Um bloco pode ser apenas um statment ou vários entre chaves. Serve para if, if-else, while
-block:          statement { rule *r = new_rule(15, new_block(1, $1, 0)); $$ = r->bl; }
-		| OPEN_BRACES statements CLOSE_BRACES { rule *r = new_rule(15, new_block(2, 0, $2)); $$ = r->bl; }
-		;
+// ----------------------------------------------------------------------------------------------------- 
+                
+stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($2);
+                                   $$ = new_variable(8, 1, &varList, 0); }
+                | %empty { $$ = NULL; }
+                ;
 
-compare_assignment:	EQ { rule *r = new_rule(16, new_cmpExpression("==")); $$ = r->cmpExp; }
-                        | NEQ { rule *r = new_rule(16, new_cmpExpression("!=")); $$ = r->cmpExp; }
-                        | LEQ { rule *r = new_rule(16, new_cmpExpression("<=")); $$ = r->cmpExp; }
-                        | GEQ { rule *r = new_rule(16, new_cmpExpression(">=")); $$ = r->cmpExp; }
-                        | LT { rule *r = new_rule(16, new_cmpExpression("<")); $$ = r->cmpExp; }
-                        | GT { rule *r = new_rule(16, new_cmpExpression(">")); $$ = r->cmpExp; }
+// ----------------------------------------------------------------------------------------------------- 
+                
+stmt:           type_struct ID ';' 
+                                   { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($2);
+                                   $$ = new_variable(9, 1, &varList, 0); }
+                | ID '(' valueList ')' ';' 
+                                  { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(9, 2, &varList, 0); }
+                | ID '=' ID '('  valueList ')' ';' 
+                                   { Variable *varList = (Variable *) malloc (3 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   varList[2] = *($5);
+                                   $$ = new_variable(9, 3, &varList, 0); }
+                | IF '(' value compare_assignment value ')' block
+                                  { Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
+                                   varList[0] = *($3);
+                                   varList[1] = *($4);
+                                   varList[2] = *($5);
+                                   varList[3] = *($7);
+                                   $$ = new_variable(9, 4, &varList, 0); }
+                | IF '(' value compare_assignment value ')' block ELSE block
+                                  { Variable *varList = (Variable *) malloc (5 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   varList[2] = *($5);
+                                   varList[3] = *($7);
+                                   varList[4] = *($9);
+                                   $$ = new_variable(9, 5, &varList, 0); }
+                | WHILE '(' value compare_assignment value ')' block
+                                  { Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
+                                   varList[0] = *($3);
+                                   varList[1] = *($4);
+                                   varList[2] = *($5);
+                                   varList[3] = *($7);
+                                   $$ = new_variable(9, 6, &varList, 0); }
+                | ID '=' assignment_expression ';'
+                                  { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   varList[1] = *($3);
+                                   $$ = new_variable(9, 7, &varList, 0); }
+                | type_struct_expression ';'
+                                  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($1);
+                                   $$ = new_variable(9, 8, &varList, 0); }
+                ;
+            
+// ----------------------------------------------------------------------------------------------------- 
+            
+block:          stmt
+                | '{' stmtList '}'
+                ;
+
+compare_assignment:	EQ
+                        | NEQ
+                        | LEQ
+                        | GEQ
+                        | LT
+                        | GT
                         ;
 
-assignment_expression:	assignment_expression PLUS term { rule *r = new_rule(17, new_assExpression($1, '+', $3)); $$ = r->assExp; }
-			| assignment_expression MINUS term { rule *r = new_rule(17, new_assExpression($1, '-', $3)); $$ = r->assExp; }
-			| term { rule *r = new_rule(17, new_assExpression(0, 0, $1)); $$ = r->assExp; }
-			;
-			
-term:		term MULT factor { rule *r = new_rule(19, new_term($1, '*', $3));  $$ = r->term; }
-		| term DIV factor { rule *r = new_rule(19, new_term($1, '/', $3)); $$ = r->term; }
-		| factor { rule *r = new_rule(19, new_term(0, 0, $1)); $$ = r->term; }
-		;
-		
-factor:		value { rule *r = new_rule(20, new_factor(1, $1, 0));  $$ = r->factor; }
-		| OPEN_PARENT assignment_expression CLOSE_PARENT { rule *r = new_rule(20, new_factor(2, 0, $2));  $$ = r->factor; }
-		;
-		
-//identifier_struct_expression:	IDENTIFIER DOT SETLAST ARROW value  //  x.setlast->y (Add fim da fila)
-//				| IDENTIFIER ASSIGN IDENTIFIER DOT RMVFIRST // x = y.rmfirst;
-//				;
+assignment_expression:  assignment_expression '+' term
+                        | assignment_expression '-' term
+                        | term
+                        ;
+
+term:           term '*' factor
+                | term '/' factor
+                | factor
+                ;
+                
+factor:         value
+                | '(' assignment_expression ')'
+                ;
+            
+type_struct_expression:   ID '.' SETLAST ARROW value  //  x.setlast->y (Add fim da fila)
+                          | ID '=' ID '.' RMVFIRST // x = y.rmfirst;
+                          ;
 
 %%
 
@@ -173,3 +223,4 @@ int main(void) {
   yyparse();
   return 0;
 }
+

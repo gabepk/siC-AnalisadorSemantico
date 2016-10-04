@@ -29,7 +29,7 @@ typedef union rule {
     struct assignment *assmnt; // 17
     struct assExpression *assExp; // 18
     struct term *term; // 19
-    union factor *factor; // 200
+    union factor *factor; // 20
     int tag;
 } rule;
 
@@ -37,37 +37,37 @@ typedef union rule {
 
     
 typedef struct idStructExpression {
-    union value *value;
+    union rule *value;
 } idStructExpression;
 
 
 typedef union factor {
-    union value *value;
-    struct assExpression *assExp;
+    union rule *value;
+    union rule *assExp;
 } factor;
 
 typedef struct term {
-    struct term *term;
+    union rule *term;
     char op;
-    union factor *factor;
+    union rule *factor;
 } term;
 
 typedef struct assExpression {
-    struct assExpression *assExp;
+    union rule *assExp;
     char op;
-    struct term *term;
+    union rule *term;
 } assExpression;
 
 typedef struct assignment {
     char *var;
-    assExpression *assExp;
+    union rule *assExp;
 } assignment;
 
 // --------------------------------
 
 typedef union block {
-    union statement *stmt;
-    struct statements *stmts;
+    union rule *stmt;
+    union rule *stmts;
 } block;
 
 typedef struct cmpExpression {
@@ -75,25 +75,25 @@ typedef struct cmpExpression {
 } cmpExpression;
 
 typedef struct whileOp {
-    union value *value1;
-    struct cmpExpression *compare;
-    union value *value2;
-    union block *whileBlock;
+    union rule *value1;
+    union rule *compare;
+    union rule *value2;
+    union rule *whileBlock;
 } whileOp;
 
 typedef struct ifWithElse {
-    union value *value1;
-    struct cmpExpression *compare;
-    union value *value2;
-    union block *ifBlock;
-    union block *elseBlock;
+    union rule *value1;
+    union rule *compare;
+    union rule *value2;
+    union rule *ifBlock;
+    union rule *elseBlock;
 } ifWithElse;
 
 typedef struct ifNoElse {
-    union value *value1;
-    struct cmpExpression *compare;
-    union value *value2;
-    union block *ifBlock;
+    union rule *value1;
+    union rule *compare;
+    union rule *value2;
+    union rule *ifBlock;
 } ifNoElse;
 
 // --------------------------------
@@ -107,47 +107,47 @@ typedef union value {
 } value;
 
 typedef struct values {
-    struct values *values;
-    union value *value;
+    union rule *values;
+    union rule *value;
 } values;
 
 // --------------------------------
 
 typedef struct funcCall {
-    struct values *params;
+    union rule *params;
     char *nomeFunc;
 } funcCall;
 
 typedef struct definition {
-    union typeStr *type;
+    union rule *type;
     char *var;
 } definition;
 
 typedef union statement {
-    struct definition *def;
-    struct funcCall *funcCall;
-    struct ifNoElse *ifNoElse;
-    struct ifWithElse *ifWithElse;
-    struct whileOp *whileOp;
-    struct assignment *assmnt;
-    struct idStructExpression *idStrExp;
+    union rule *def;
+    union rule *funcCall;
+    union rule *ifNoElse;
+    union rule *ifWithElse;
+    union rule *whileOp;
+    union rule *assmnt;
+    union rule *idStrExp;
 } statement;
 
 typedef struct statements {
-    struct statements *stmts;
-    union statement *stmt;
+    union rule *stmts;
+    union rule *stmt;
 } statements;
 
 // --------------------------------
 
 typedef struct arguments {
-    struct arguments *arguments;
-    union typeStr *typeArg;
+    union rule *arguments;
+    union rule *typeArg;
     char *argNome;
 } arguments;
 
 typedef struct typeQueue {
-    struct typeSimple *typeS;
+    union rule *typeS;
 } typeQueue;
 
 typedef struct typeSimple {
@@ -156,21 +156,21 @@ typedef struct typeSimple {
 
 
 typedef union typeStr {
-    struct typeSimple *typeS;
-    struct typeQueue *typeQ;
+    union rule *typeS;
+    union rule *typeQ;
 } typeStr;
 
 typedef struct function {
-    union typeStr *typeReturn;
+    union rule *typeReturn;
     char *nomeFunc;
-    struct arguments *args;
-    struct statements *stmts;
-    union value *v;
+    union rule *args;
+    union rule *stmts;
+    union rule *v;
 } function;
 
 typedef union program {
-    union program *prog;
-    struct function *func;
+    union rule *prog;
+    union rule *func;
 } program;
 
 
@@ -278,108 +278,148 @@ idStructExpression *new_idStructExpression() { // STRUCT
     return idStrExp;
 }
 
-factor *new_factor(int tag, value *value, assExpression *assExp) { // UNION
-    factor *f = (factor*) malloc(sizeof(factor));
-    f->value = value;
-    f->assExp = assExp;
-    return f;
+rule *new_factor(int tag_rule, int tag, rule *value, rule *assExp) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
+    factor *f = (factor*) malloc(sizeof(factor)); // Que será do tipo factor
+    f->value = value; // Factor aponta para value, que também é uma regra ...
+    f->assExp = assExp; // ou factor aponta para uma assignment_expression, que também é uma regra
+    
+    r->factor = f;
+    return r; // Retorna regra do tipo factor
 }
 
-term *new_term(term *newTerm, char op, factor *factor) { // STRUCT
+rule *new_term(int tag_rule, rule *newTerm, char op, rule *factor) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     term *t = (term*) malloc(sizeof(term));
     t->term = newTerm;
     t->op = op;
     t->factor = factor;
-    return t;
+    
+    r->term = t;
+    return r; // Retorna regra do tipo term
 }
 
-assExpression *new_assExpression (assExpression *assExp, char op, term *term) { // STRUCT
+rule *new_assExpression (int tag_rule, rule *assExp, char op, rule *term) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     assExpression *ae = (assExpression*) malloc(sizeof(assExpression));
     ae->assExp = assExp;
     ae->op = op;
     ae->term = term;
-    return ae;
+    
+    r->assExp = ae;
+    return r; // Retorna regra do tipo assignment_expression
 }
 
-assignment *new_assignment (char *var, assExpression *assExp) { // STRUCT
+rule *new_assignment (int tag_rule, char *var, rule *assExp) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     assignment *assmnt = (assignment*) malloc(sizeof(assignment));
     assmnt->var = var;
     assmnt->assExp = assExp;
-    return assmnt;
+    
+    r->assmnt = assmnt;
+    return r; // Retorna regra do tipo assignment
 }
 
-cmpExpression *new_cmpExpression(char *cm) { // STRUCT
+rule *new_cmpExpression(int tag_rule, char *cm) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     cmpExpression *compare = (cmpExpression*) malloc(sizeof(cmpExpression));
     compare->comp = cm;
-    return compare;
+    
+    r->cmpExp = compare;
+    return r; // Retorna regra do tipo compare_assignment
 }
 
-block *new_block(int tag, statement *stmt, statements *stmts) { // UNION
+rule *new_block(int tag_rule, int tag, rule *stmt, rule *stmts) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     block *bl = (block*) malloc(sizeof(block));
     bl->stmt = stmt;
     bl->stmts = stmts;
-    return bl;
+    
+    r->bl = bl;
+    return r; // Retorna regra do tipo block
 }
 
-whileOp *new_whileOp(value *value1, cmpExpression *compare, value *value2, block *whileBlock) { // STRUCT
+rule *new_whileOp(int tag_rule, rule *value1, rule *compare, rule *value2, rule *whileBlock) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     whileOp *wh = (whileOp*) malloc(sizeof(whileOp));
     wh->value1 = value1;
     wh->compare = compare;
     wh->value2 = value2;
     wh->whileBlock = whileBlock;
-    return wh;
+    
+    r->wh = wh;
+    return r; // Retorna regra do tipo whileOp
 }
 
-ifWithElse *new_ifWithElse(value *value1, cmpExpression *compare, value *value2, block *ifBlock, block *elseBlock) { // STRUCT
+rule *new_ifWithElse(int tag_rule, rule *value1, rule *compare, rule *value2, rule *ifBlock, rule *elseBlock) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     ifWithElse *ifElse = (ifWithElse*) malloc(sizeof(ifWithElse));
     ifElse->value1 = value1;
     ifElse->compare = compare;
     ifElse->value2 = value2;
     ifElse->ifBlock = ifBlock;
     ifElse->elseBlock = elseBlock;
-    return ifElse;
+    
+    r->iwe = ifElse;
+    return r; // Retorna regra do tipo ifWithElse
 }
 
-ifNoElse *new_ifNoElse(value *value1, cmpExpression *compare, value *value2, block *ifBlock) { // STRUCT
+rule *new_ifNoElse(int tag_rule, rule *value1, rule *compare, rule *value2, rule *ifBlock) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     ifNoElse *ifNElse = (ifNoElse*) malloc(sizeof(ifNoElse));
     ifNElse->value1 = value1;
     ifNElse->compare = compare;
     ifNElse->value2 = value2;
     ifNElse->ifBlock = ifBlock;
-    return ifNElse;
+    
+    r->ife = ifNElse;
+    return r; // Retorna regra do tipo ifNoElse
 }
 
-value *new_value(int tag, int i, float f, char c, char *s) { // UNION - FALTA TIPO FILA !!!!!!!!
+rule *new_value(int tag_rule, int tag, int i, float f, char c, char *s) { // UNION - FALTA TIPO FILA !!!!!!!!
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     value *val = (value*) malloc(sizeof(value));
     val->i = i;
     val->f = f;
     val->c = c;
     val->s = s;
-    return val;
+    
+    r->val = val;
+    return r; // Retorna regra do tipo value
 }
 
-values *new_values(int tag, values *newValues, value *value) { // UNION
+rule *new_values(int tag_rule, int tag, rule *newValues, rule *value) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     values *vals = (values*) malloc(sizeof(values));
     vals->values = newValues;
     vals->value = value;
-    return vals;
+    
+    r->vals = vals;
+    return r; // Retorna regra do tipo values
 }
 
-funcCall *new_funcCall(char *nomeFunc, values *params) { // STRUCT
+rule *new_funcCall(int tag_rule, char *nomeFunc, rule *params) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     funcCall *fc = (funcCall*) malloc(sizeof(funcCall));
     fc->nomeFunc = nomeFunc;
     fc->params = params;
-    return fc;
+    
+    r->fc = fc;
+    return r; // Retorna regra do tipo funcCall
 }
 
-definition *new_definition(typeStr *type, char *var) {
+rule *new_definition(int tag_rule, rule *type, char *var) {
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     definition *def = (definition*) malloc(sizeof(definition));
     def->type = type;
     def->var = var;
-    return def;
+    
+    r->def = def;
+    return r; // Retorna regra do tipo definition
 }
 
-statement *new_statement(int tag, definition *def, funcCall *funcCall, ifNoElse *ifNoElse, ifWithElse *ifWithElse, whileOp *whileOp, assignment *assmnt, idStructExpression *idStrExp) { // UNION
+rule *new_statement(int tag_rule, int tag, rule *def, rule *funcCall, rule *ifNoElse, rule *ifWithElse, rule *whileOp, rule *assmnt, rule *idStrExp) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     statement *stmt = (statement*) malloc(sizeof(statement));
     stmt->def = def;
     stmt->funcCall = funcCall;
@@ -388,58 +428,81 @@ statement *new_statement(int tag, definition *def, funcCall *funcCall, ifNoElse 
     stmt->whileOp = whileOp;
     stmt->assmnt = assmnt;
     stmt->idStrExp = idStrExp;
-    return stmt;
+    
+    r->stmt = stmt;
+    return r; // Retorna regra do tipo statment
 }
 
-statements *new_statements(statements *stmts_left, statement *stmt) { // STRUCT
+rule *new_statements(int tag_rule, rule *stmts_left, rule *stmt) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     statements *stmts = (statements*) malloc(sizeof(statements));
     stmts->stmts = stmts_left;
     stmts->stmt = stmt;
-    return stmts;
+    
+    r->stmts = stmts;
+    return r; // Retorna regra do tipo statements
 }
 
-arguments *new_arguments(int tag, arguments *newArguments, typeStr *typeArg, char *argNome) { // STRUCT
+rule *new_arguments(int tag_rule, int tag, rule *newArguments, rule *typeArg, char *argNome) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     arguments *args = (arguments*) malloc(sizeof(arguments));
     args->arguments = newArguments;
     args->typeArg = typeArg;
     args->argNome = argNome;
-    return args;
+    
+    r->args = args;
+    return r; // Retorna regra do tipo arguments
 }
 
-typeQueue *new_typeQueue(typeSimple *tS) {
+rule *new_typeQueue(int tag_rule, rule *tS) { // ------------------------------------- ACHO QUE NAO PRECISA MAIS DISSO
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     typeQueue *typeQ = (typeQueue*) malloc(sizeof(typeQueue));
     typeQ->typeS = tS;
-    return typeQ;
+    
+   // r->tst = typeQ;
+    return r; // Retorna regra do tipo typeQueue
 }
 
-typeSimple *new_typeSimple(char *type) {
+rule *new_typeSimple(int tag_rule, char *type) {
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     typeSimple *typeSmp = (typeSimple*) malloc(sizeof(typeSimple));
     typeSmp->typeS = type;
-    return typeSmp;
+    
+    r->tsp = typeSmp;
+    return r; // Retorna regra do tipo typeSimple
 }
 
-typeStr *new_typeStr(int tag, typeSimple *tS, typeQueue *tQ) { // UNION
+rule *new_typeStr(int tag_rule, int tag, rule *tS, rule *tQ) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     typeStr *tStr = (typeStr*) malloc(sizeof(typeStr));
     tStr->typeS = tS;
     tStr->typeQ = tQ;
-    return tStr;
+    
+    r->tst = tStr;
+    return r; // Retorna regra do tipo typeStr
 }
 
-function *new_function(typeStr *typeReturn, char *nomeFunc, arguments *args, statements *stmts, value *v) { // STRUCT
+rule *new_function(int tag_rule, rule *typeReturn, char *nomeFunc, rule *args, rule *stmts, rule *v) { // STRUCT
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     function *func = (function*) malloc(sizeof(function));
     func->typeReturn = typeReturn;
     func->nomeFunc = nomeFunc;
     func->args = args;
     func->stmts = stmts;
     func->v = v;
-    return func;
+    
+    r->func = func;
+    return r; // Retorna regra do tipo function
 }
 
-program *new_program(int tag, program *prog, function *func) { // UNION
+rule *new_program(int tag_rule, int tag, rule *prog, rule *func) { // UNION
+    rule *r = (rule *)malloc(sizeof(rule)); // Cria regra nova
     program *p = (program*) malloc(sizeof(program));
     p->prog = prog;
     p->func = func;
-    return p;
+    
+    r->program = p;
+    return r; // Retorna regra do tipo program
 }
 
 
@@ -450,7 +513,7 @@ program *new_program(int tag, program *prog, function *func) { // UNION
 
 void show_tree(rule *r, int tabs) {
 	int i;
-	for (i = 0; i < tabs; ++i) printf("%d", r->tag);
+	for (i = 0; i < tabs; ++i) printf("\t");
 	switch (r->tag) {
             case (1):
                 printf("[program]");
@@ -509,10 +572,10 @@ void show_tree(rule *r, int tabs) {
                 printf("statement\n");
                 if (r->stmt->def) { // regra de declaração não é nula
                     // type_struct
-                    printf("%s\n;\n", r->stmt->def->var);
+                    printf("%s\n;\n", r->stmt->def->def->var);
                 }
                 else if (r->stmt->funcCall) {
-                    printf("%s\n(\n", r->stmt->funcCall->nomeFunc); //----------
+                    printf("%s\n(\n", r->stmt->funcCall->fc->nomeFunc); //----------
                     // values
                     printf(")\n;\n");
                 }
@@ -543,7 +606,7 @@ void show_tree(rule *r, int tabs) {
                     // block
                 }
                 else if (r->stmt->assmnt) {
-                    printf("%s\n=\n", r->stmt->assmnt->var);
+                    printf("%s\n=\n", r->stmt->assmnt->assmnt->var);
                     // assignment_expression
                     printf(";\n");
                 }
@@ -614,7 +677,7 @@ void show_tree(rule *r, int tabs) {
                 printf("[assignment]\n");
                 if(r->assmnt->assExp) {
                     // assExp
-                    printf("%c\n", r->assmnt->assExp->op);
+                    printf("%c\n", r->assmnt->assExp->assExp->op);
                     // term
                 }
                 else {
@@ -628,7 +691,7 @@ void show_tree(rule *r, int tabs) {
                 printf("[term]\n");
                 if(r->term->term) {
                     // term
-                    printf("%c\n", r->term->term->op);
+                    printf("%c\n", r->term->term->term->op);
                     // factor
                 }
                 else {
