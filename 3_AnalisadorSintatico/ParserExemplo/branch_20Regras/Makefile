@@ -1,4 +1,3 @@
-# Makefile
 
 OBJS	= 110118995.tab.o lex.yy.o
 

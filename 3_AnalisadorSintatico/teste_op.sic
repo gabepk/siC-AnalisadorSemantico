@@ -1,5 +1,4 @@
-int main () {
-	A = B + C;
-	D = E * F;
-	return 0;
+int oi (int a, float b, queue<char> c) {
+    
+    return 0;
 }

@@ -3,13 +3,14 @@
 
 #define MAX_CHILD_RULES 5
 #define MAX_SIMBOLS 256
+#define MAX_WORD 64
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-char *tabela_de_simbolos[MAX_SIMBOLS];
+char symbol_table[MAX_SIMBOLS][MAX_WORD];
 
 // ----------------------------------------------------------------
 // -------------------- VARIAVEL ESCOLHIDA ------------------------
@@ -79,33 +80,28 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
     Variable *v = (Variable *) malloc(sizeof(Variable));
     switch (tag_variable) {
             case (1): // Program
-                switch (tag_rule) {
-                    case (1): // program function
-                        v->variable_name = "Program";
-                        v->variable_tag = 1;
-                        *(v->variable_list) = *variable_list;
-                        break;
-                    case (2): // function
-                        break;
-                }
+                v->variable_name = "Program";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 1;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (2): // Function
+                v->variable_name = "Function";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 2;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (3): // ValueList
-                switch (tag_rule) {
-                    case (1): // value ',' value
-                        break;
-                    case (2): // value
-                        break;
-                    case (3): // %empty
-                        break;
-                }
+                v->variable_name = "ValueList";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 3;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (4): // Value - FAZER VARIAVEL COM ESSE NOME
-                switch (tag_rule) {
+                /*switch (tag_rule) {
                     case (1): // NUM_INT
                         //printf("%s\n", terminal);
                         break;
@@ -121,43 +117,36 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                     case (5): // ID '.' FIRST
                         //printf("%s.FIRST\n", terminal);
                         break;
-                }
+                }*/
+                printf("%s\n", terminal);
                 break;
                 
-            case (5): // TypeStruct
-                switch (tag_rule) {
-                    case (1): // type_simple
-                        break;
-                    case (2): // QUEUE LT type_simple GT
-                        break;
-                }
+            case (5):
+                v->variable_name = "TypeStruct";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 5;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (6): // type_simple
                 break;
                 
-            case (7): // ArgList
-                switch (tag_rule) {
-                    case (1): // argList ',' type_struct ID
-                        break;
-                    case (2): // type_struct ID
-                        break;
-                    case (3): // %empty
-                        break;
-                }
+            case (7):
+                v->variable_name = "ArgList";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 7;
+                *(v->variable_list) = *variable_list;
                 break;
                 
-            case (8): // StmtList
-                switch (tag_rule) {
-                    case (1): // StmtList Stmt
-                        break;
-                    case (2): // %empty
-                        break;
-                }
+            case (8):
+                v->variable_name = "StmtList";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 8;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (9): // Stmt
-                switch (tag_rule) {
+                /*switch (tag_rule) {
                     case (1): // declaração de variavel
                         break;
                     case (2): // chamada de função
@@ -174,50 +163,43 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                         break;
                     case (8): // atribuicao com tipo fila
                         break;
-                }
+                }*/
+                printf("tag_rule %d\n", tag_rule);
+                v->variable_name = "Stmt";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 9;
+                *(v->variable_list) = *variable_list;
                 break;
                 
-            case (10): // Block
-                switch (tag_rule) {
-                    case (1): // Stmt
-                        break;
-                    case (2): // '{' StmtList '}'
-                        break;
-                }
+            case (10):
+                v->variable_name = "Block";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 10;
+                *(v->variable_list) = *variable_list;
                 break;
                 
             case (11): // compare_assignemnt
                 break;
                 
-            case (12): // AssignmentExp
-                switch (tag_rule) {
-                    case (1): // AssignmentExp '+' Term
-                        break;
-                    case (2): // AssignmentExp '-' Term
-                        break;
-                    case (3): // Term
-                        break;
-                }
+            case (12):
+                v->variable_name = "AssignmentExp";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 12;
+                *(v->variable_list) = *variable_list;
                 break;
                 
-            case (13): // Term
-                switch (tag_rule) {
-                    case (1): // Term '*' Factor
-                        break;
-                    case (2): // Term '/' Factor
-                        break;
-                    case (3): // Factor
-                        break;
-                }
+            case (13):
+                v->variable_name = "Term";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 13;
+                *(v->variable_list) = *variable_list;
                 break;
                 
-            case (14): // Factor
-                switch (tag_rule) {
-                    case (1): // Value
-                        break;
-                    case (2): // '(' AssignmentExp ')'
-                        break;
-                }
+            case (14):
+                v->variable_name = "Factor";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 12;
+                *(v->variable_list) = *variable_list;
                 break;
     }
     return v;
@@ -233,13 +215,25 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
  */
 int add_symbol_on_table (char *s) {
     int i = 0;
-    while (strcmp(tabela_de_simbolos[i], ".") != 0) {
-        if (strcmp(tabela_de_simbolos[i], s) == 0)
+    while (strcmp(symbol_table[i], ".") != 0) {
+        if (strcmp(symbol_table[i], s) == 0)
             return i;
         i++;
     }
-    tabela_de_simbolos[i] = s;
+    strcpy(symbol_table[i], s);
     return i;
+}
+
+void show_symbol_table() {
+    int i = 0;
+    printf("\n=================================\n");
+    printf("======= TABELA DE SIMBOLOS ======\n");
+    printf("=================================\n");
+    while (strcmp(symbol_table[i], ".") != 0) {
+        printf("\t%d\t%s\n", i+1, symbol_table[i]);
+        i++;
+    }
+    return;
 }
 
 #endif /* structs_h */

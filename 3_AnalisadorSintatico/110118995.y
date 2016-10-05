@@ -50,11 +50,21 @@ program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(
                 
 // -----------------------------------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------------------------------
+                         //      A R R U M A R         A Q U I  !  !  !  !
+// -----------------------------------------------------------------------------------------------------
+                                    //       |
+// -----------------------------------------------------------------------------------------------------
+                                    //       |
+// -----------------------------------------------------------------------------------------------------
+                                    //       v
+// -----------------------------------------------------------------------------------------------------
+
 function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' { 
                                    Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   varList[1] = *($4);
-                                   varList[2] = *($7);
+                                   //varList[0] = *($1);
+                                   //varList[1] = *($4);
+                                   //varList[2] = *($7);
                                    varList[3] = *($9);
                                    /*varList[4] = *($2);*/
                                    $$ = new_variable(2, 1, &varList, 0);
@@ -118,10 +128,10 @@ argList:        argList ',' type_struct ID { Variable *varList = (Variable *) ma
 
 // ----------------------------------------------------------------------------------------------------- 
                 
-stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   varList[1] = *($2);
-                                   $$ = new_variable(8, 1, &varList, 0); }
+stmtList:       stmtList stmt { printf("1");Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                printf("2");   varList[0] = *($1);
+                                printf("3");   varList[1] = *($2);
+                                printf("4");   $$ = new_variable(8, 1, &varList, 0); }
                 | %empty { $$ = NULL; }
                 ;
 
@@ -130,19 +140,15 @@ stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * siz
 stmt:           type_struct ID ';' 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   /*varList[1] = *($2);*/
                                    $$ = new_variable(9, 1, &varList, 0); 
                                    add_symbol_on_table($2);}
                 | ID '(' valueList ')' ';' 
                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
-                                   /*varList[0] = *($1);*/
                                    varList[0] = *($3);
                                    $$ = new_variable(9, 2, &varList, 0); 
                                    add_symbol_on_table($1); }
                 | ID '=' ID '('  valueList ')' ';' 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
-                                   /*varList[0] = *($1);
-                                   varList[1] = *($3);*/
                                    varList[0] = *($5);
                                    $$ = new_variable(9, 3, &varList, 0); 
                                    add_symbol_on_table($1);
@@ -171,8 +177,7 @@ stmt:           type_struct ID ';'
                                    $$ = new_variable(9, 6, &varList, 0); }
                 | ID '=' assignment_expression ';'
                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
-                                   /*varList[0] = *($1);*/
-                                   varList[1] = *($3);
+                                   varList[0] = *($3);
                                    $$ = new_variable(9, 7, &varList, 0); 
                                    add_symbol_on_table($1);}
                 | type_struct_expression ';'
@@ -259,9 +264,11 @@ void yyerror(char *s) {
 }
 
 int main(void) {
-    for (int i=0; i<256; i++)
-        tabela_de_simbolos[i] = ".";
+    for (int i=0; i<256; i++) {
+        strcpy(symbol_table[i], ".\0");
+    }
     yyparse();
+    show_symbol_table();
     return 0;
 }
 
