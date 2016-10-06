@@ -20,6 +20,7 @@ typedef struct Variable {
     // union ChosenVariable *variable;
     char *variable_name;
     int variable_tag;
+    int variable_num_nexts;
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 /*
@@ -76,13 +77,14 @@ typedef union Factor {} Factor;
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
 // ----------------------------------------------------------------
 
-Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[], char *terminal) {
+Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list[], char *terminal) {
     Variable *v = (Variable *) malloc(sizeof(Variable));
     switch (tag_variable) {
             case (1): // Program
                 v->variable_name = "Program";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 1;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -90,6 +92,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "Function";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 2;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -97,6 +100,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "ValueList";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 3;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -121,6 +125,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "Value";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 4;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = NULL;
                 printf("%s\n", terminal);
                 break;
@@ -129,6 +134,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "TypeStruct";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 5;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -136,6 +142,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "TypeSimple";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 6;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = NULL;
                 break;
                 
@@ -143,6 +150,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "ArgList";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 7;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -150,6 +158,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "StmtList";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 8;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -172,10 +181,10 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                     case (8): // atribuicao com tipo fila
                         break;
                 }*/
-                printf("tag_rule %d\n", tag_rule);
                 v->variable_name = "Stmt";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 9;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -183,6 +192,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "Block";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 10;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -190,6 +200,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "CompareAssignment";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 11;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = NULL;
                 break;
                 
@@ -197,6 +208,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "AssignmentExp";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 12;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -204,6 +216,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "Term";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 13;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
                 
@@ -211,6 +224,7 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 v->variable_name = "Factor";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 12;
+                v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
                 break;
     }
@@ -226,23 +240,27 @@ void show_tree(Variable *root, int tabs, int index) {
     int i;
     for (i = 0; i < tabs; ++i) printf("  ");
     if (root) {
-        printf("1: %s{\n", root->variable_name);
-        if (root->variable_list[index+1])
-            show_tree(root->variable_list[index+1], tabs+1, index+1);
+        printf("%s {\n", root->variable_name);
+        
+        // Percorre arvore top-down, left-to-right
+        for (int j = 0; j < root->variable_num_nexts; j++) {
+            show_tree(root->variable_list[j], tabs+1, j);
+        }
         
         for (i = 0; i < tabs; ++i) printf("  ");
         printf("}\n");
-    }
-    else {
-         printf("2: %s{\n", root->variable_name);
     }
     return;
 }
 
 void destroy_tree(Variable *root, int index) {
-	if (root->variable_list[index+1])
-            destroy_tree(root->variable_list[index+1], index+1);
-	free(root);
+    // Percorre arvore top-down, left-to-right
+    for (int j = 0; j < root->variable_num_nexts-1; j++) {
+        destroy_tree(root->variable_list[j], j+1);
+    }
+    printf(":: Destruiu %s\n", root->variable_name);
+    free(root);
+    return;
 }
 
 // ----------------------------------------------------------------
