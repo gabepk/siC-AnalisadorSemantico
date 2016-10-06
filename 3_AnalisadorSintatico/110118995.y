@@ -16,9 +16,9 @@ int id_corrente = 0;
 %token <str> NUM_INT NUM_FLOAT CARACTERE ID
 %token <str> VOID FLOAT INT CHAR
 %token <str> EQ NEQ LEQ GEQ LT GT
-%token WHILE IF ELSE RETURN 
-%token QUEUE FIRST 
-%token ARROW SETLAST RMVFIRST
+%token <str> WHILE IF ELSE RETURN 
+%token <str> QUEUE FIRST 
+%token <str> ARROW SETLAST RMVFIRST
 
 %type <v> program
 %type <v> function
@@ -43,11 +43,10 @@ program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(
                                    varList[0] = *($1);
                                    varList[1] = *($2);
                                    $$ = new_variable(1, 2, &varList, 0, 1); 
-                                   printf("\n\t\t[ Arvore Sintatica: ]\n\n"); show_tree($$, 0, 0); destroy_tree($$, 0); }
+                                   printf("\n\t\t[ Arvore Sintatica: ]\n\n"); show_tree($$, 0, 0); }
                 | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   $$ = new_variable(1, 1, &varList, 0, 2); 
-                                   printf("\n\t[ Arvore Sintatica: ]\n\n"); show_tree($$, 0, 0); destroy_tree($$, 0); }
+                                   $$ = new_variable(1, 1, &varList, 0, 2); }
                 ;
 
 function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' { 
