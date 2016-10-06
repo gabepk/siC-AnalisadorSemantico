@@ -132,8 +132,8 @@ argList:        argList ',' type_struct ID { Variable *varList = (Variable *) ma
 // ----------------------------------------------------------------------------------------------------- 
                 
 stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
-                                    //varList[0] = *($1);
-                                    //varList[1] = *($2);
+                                    varList[0] = *($1);
+                                    varList[1] = *($2);
                                     $$ = new_variable(8, 2, &varList, 0); }
                 | %empty { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     $$ = new_variable(8, 0, &varList, 0); }

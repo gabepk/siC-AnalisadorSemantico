@@ -17,62 +17,12 @@ char symbol_table[MAX_SIMBOLS][MAX_WORD];
 // ----------------------------------------------------------------
 
 typedef struct Variable {
-    // union ChosenVariable *variable;
     char variable_name[MAX_WORD];
     int variable_tag;
     int variable_num_nexts;
     char token[MAX_WORD];
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
-/*
-typedef union ChosenVariable {
-    union Program *program;         // tag 01  2 rules
-    struct Function *function;      // tag 02  1 rule
-    union ValueList *valueList;     // tag 03  3 rules
-    union Value *value;             // tag 04  5 rules
-    union TypeStruct *typeStruct;   // tag 05  2 rules 
-    char *typeSimple;               // tag 06  1 simple type // MUDEI PARA TIPO V
-    union ArgList *argList;         // tag 07  3 rules
-    union StmtList *stmtList;       // tag 08  2 rules
-    union Stmt *stmt;               // tag 09  8 rules
-    union Block *block;             // tag 10  2 rules
-    char *cmpAss;                   // tag 11  1 comparison string // MUDEI PARA TIPO V
-    union AssignmentExp *assExp;    // tag 12  3 rules
-    union Term *term;               // tag 13  3 rules
-    union Factor *factor;           // tag 14  2 rules
-} ChosenVariable;
-
-
-// ----------------------------------------------------------------
-// -------------------------- VARIAVEIS ---------------------------
-// ----------------------------------------------------------------
-
-typedef union Program {
-    int tag;
-} Program;
-
-typedef struct Function {} Function;
-
-typedef union ValueList {} ValueList;
-
-typedef union Value {} Value;
-
-typedef union TypeStruct {} TypeStruct;
-
-typedef union ArgList {} ArgList;
-
-typedef union StmtList {} StmtList;
-
-typedef union Stmt {} Stmt;
-
-typedef union Block {} Block;
-
-typedef union AssignmentExp {} AssignmentExp;
-
-typedef union Term {} Term;
-
-typedef union Factor {} Factor;
-*/
 
 // ----------------------------------------------------------------
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
@@ -82,6 +32,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
     Variable *v = (Variable *) malloc(sizeof(Variable));
     v->variable_num_nexts = num_nexts;
     *(v->variable_list) = *list;
+    strcpy(v->token, "-");
     switch (tag_variable) {
             case (1): // Program
                 strcpy(v->variable_name, "Program");
@@ -204,9 +155,10 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
 void show_tree(Variable *root, int tabs, int index) {
     int i;
     //printf(">> index: %d\n", index);
-    for (i = 0; i < tabs; ++i) printf("  ");
-    if ((*root->variable_list+index)) {
-        printf("%s {\n", root->variable_name);
+    for (i = 0; i < tabs; ++i) printf("|  ");
+    //if ((*root->variable_list+index)) 
+    if (strcmp(root->token, "-") == 0){
+        printf("1:%s {\n", root->variable_name);
         
         // Percorre arvore top-down, left-to-right
         for (int j = 0; j < root->variable_num_nexts; j++) {
@@ -214,15 +166,11 @@ void show_tree(Variable *root, int tabs, int index) {
             show_tree((*root->variable_list+j), tabs+1, j);
         }
         
-        for (i = 0; i < tabs; ++i) printf("  ");
+        for (i = 0; i < tabs; ++i) printf("|  ");
         printf("}\n");
     }
     else {
-        printf("%s {\n", root->variable_name);
-        for (i = 0; i < tabs; ++i) printf("  ");
-        printf("  %s\n", root->token);
-        for (i = 0; i < tabs; ++i) printf("  ");
-        printf("}\n");
+        printf("%s\n", root->token);
     }
     return;
 }
