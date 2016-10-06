@@ -14,8 +14,6 @@ int main () {
     k = condicao(i, j);}
     return o;
 } 
-    
-
 
 int condicao(int CUZIN, int CUZAO) {
     int z;

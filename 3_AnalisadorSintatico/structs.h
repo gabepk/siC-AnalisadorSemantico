@@ -21,6 +21,7 @@ typedef struct Variable {
     int variable_tag;
     int variable_num_nexts;
     char token[MAX_WORD];
+    int rule_num;
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 
@@ -28,11 +29,12 @@ typedef struct Variable {
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
 // ----------------------------------------------------------------
 
-Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char *terminal) {
+Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char *terminal, int rule_num) {
     Variable *v = (Variable *) malloc(sizeof(Variable));
     v->variable_num_nexts = num_nexts;
     *(v->variable_list) = *list;
-    strcpy(v->token, "-");
+    strcpy(v->token, "END");
+    v->rule_num = rule_num;
     switch (tag_variable) {
             case (1): // Program
                 strcpy(v->variable_name, "Program");
@@ -132,16 +134,18 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
             case (12):
                 strcpy(v->variable_name, "AssignmentExp");
                 v->variable_tag = 12;
+                strcpy(v->token, terminal);
                 break;
                 
             case (13):
                 strcpy(v->variable_name, "Term");
                 v->variable_tag = 13;
+                strcpy(v->token, terminal);
                 break;
                 
             case (14):
                 strcpy(v->variable_name, "Factor");
-                v->variable_tag = 12;
+                v->variable_tag = 14;
                 break;
     }
     return v;
@@ -154,33 +158,148 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
 
 void show_tree(Variable *root, int tabs, int index) {
     int i;
-    //printf(">> index: %d\n", index);
     for (i = 0; i < tabs; ++i) printf("|  ");
-    //if ((*root->variable_list+index)) 
-    if (strcmp(root->token, "-") == 0){
-        printf("1:%s {\n", root->variable_name);
+    if (strcmp(root->token, "END") == 0 || 
+        strcmp(root->token, "+") == 0 ||
+        strcmp(root->token, "-") == 0 || 
+        strcmp(root->token, "*") == 0 || 
+        strcmp(root->token, "/") == 0) {
+        
+        printf("%s \n", root->variable_name);
         
         // Percorre arvore top-down, left-to-right
-        for (int j = 0; j < root->variable_num_nexts; j++) {
-            //printf(" . . . %s[%d] = %s {\n", root->variable_name, j, (*root->variable_list+j)->variable_name);
+        /*for (int j = 0; j < root->variable_num_nexts; j++) {
             show_tree((*root->variable_list+j), tabs+1, j);
+        }*/
+        
+        
+        switch (root->variable_tag) {
+            case (2): // Function
+                show_tree((*root->variable_list+0), tabs+1, 0);
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf("ID\n"); // Encontrar ID
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf("(\n");
+                show_tree((*root->variable_list+1), tabs+1, 1);
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf(")\n");
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf("{\n");
+                show_tree((*root->variable_list+2), tabs+1, 2);
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf("RETURN\n");
+                show_tree((*root->variable_list+3), tabs+1, 3);
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf(";\n");
+                for (i = 0; i < tabs; ++i) printf("|  ");
+                printf("}\n");
+                break;
+            case (3): // ValueList
+                if (root->rule_num != 3) { // != empty
+                    show_tree((*root->variable_list+0), tabs+1, 0);
+                    if (root->rule_num == 1) {
+                        for (i = 0; i < tabs; ++i) printf("|  ");
+                        printf(",\n");
+                        show_tree((*root->variable_list+1), tabs+1, 1);
+                    }
+                }
+                break;
+            case (5): // TypeStruct
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("QUEUE\n");
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("<\n");
+                }
+                show_tree((*root->variable_list+0), tabs+1, 0);
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf(">\n");
+                }
+                break;
+            case (7): // ArgList
+                if (root->rule_num != 3) { // != empty
+                    show_tree((*root->variable_list+0), tabs+1, 0);
+                    if (root->rule_num == 1) {
+                        for (i = 0; i < tabs; ++i) printf("|  ");
+                        printf(",\n");
+                        show_tree((*root->variable_list+1), tabs+1, 1);
+                    }
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("ID\n");
+                }
+                break;
+            case (9):// Stmt
+                //break;
+            case (10):
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("{\n");
+                }
+                show_tree((*root->variable_list+0), tabs+1, 0);
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("}\n");
+                }
+                break;
+            case (12):
+            case (13):
+                show_tree((*root->variable_list+0), tabs+1, 0);
+                if (root->rule_num != 3) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("%s\n", root->token);
+                    show_tree((*root->variable_list+1), tabs+1, 1);
+                }
+                break;
+            case (14):
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf("(\n");
+                }
+                show_tree((*root->variable_list+0), tabs+1, 0);
+                if (root->rule_num == 2) {
+                    for (i = 0; i < tabs; ++i) printf("|  ");
+                    printf(")\n");
+                }
+                break;
+            default:
+                for (int j = 0; j < root->variable_num_nexts; j++) {
+                    show_tree((*root->variable_list+j), tabs+1, j);
+                }
+                break;
         }
         
-        for (i = 0; i < tabs; ++i) printf("|  ");
-        printf("}\n");
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //for (i = 0; i < tabs; ++i) printf("|  ");
+        //printf("}\n");
     }
     else {
-        printf("%s\n", root->token);
+        printf("%s: %s\n", root->variable_name, root->token);
     }
     return;
 }
  
 void destroy_tree(Variable *root, int index) {
     // Percorre arvore top-down, left-to-right
+    printf(":: Vai destruir %s\n", root->variable_name);
     for (int j = 0; j < root->variable_num_nexts-1; j++) {
-        destroy_tree((*root->variable_list+j), j+1);
+        destroy_tree((*root->variable_list+j), j); // É pra mandar "j" invés de "j+1"
     }
-    printf(":: Destruiu %s\n", root->variable_name);
+   
     free(root);
     return;
 }
