@@ -18,10 +18,10 @@ char symbol_table[MAX_SIMBOLS][MAX_WORD];
 
 typedef struct Variable {
     // union ChosenVariable *variable;
-    char *variable_name;
+    char variable_name[MAX_WORD];
     int variable_tag;
     int variable_num_nexts;
-    char *token;
+    char token[MAX_WORD];
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 /*
@@ -78,35 +78,37 @@ typedef union Factor {} Factor;
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
 // ----------------------------------------------------------------
 
-Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list[], char *terminal) {
+Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char *terminal) {
     Variable *v = (Variable *) malloc(sizeof(Variable));
     switch (tag_variable) {
             case (1): // Program
-                v->variable_name = "Program";
+                strcpy(v->variable_name, "Program");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 1;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (2): // Function
-                v->variable_name = "Function\n";
+                strcpy(v->variable_name, "Function");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 2;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
-               // for (int i = 0; i < num_nexts; i++) {
-                   // if(v->variable_list[i])
-                        //printf("<<%s>>\n", v->variable_list[i]->variable_name);
-                //}
+                *(v->variable_list) = *(list);
+                
+                printf("<<%s>>\n", (*v->variable_list)->variable_name);
+                printf("<<%s>>\n", (*v->variable_list+1)->variable_name);
+                printf("<<%s>>\n", (*v->variable_list+2)->variable_name);
+                printf("<<%s>>\n", (*v->variable_list+3)->variable_name);
+                
                 break;
                 
             case (3): // ValueList
-                v->variable_name = "ValueList";
+                strcpy(v->variable_name, "ValueList");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 3;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (4): // Value - FAZER VARIAVEL COM ESSE NOME
@@ -127,46 +129,46 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                         //printf("%s.FIRST\n", terminal);
                         break;
                 }*/
-                v->variable_name = "Value";
+                strcpy(v->variable_name, "Value");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 4;
                 v->variable_num_nexts = num_nexts;
-                v->token = terminal;
+                strcpy(v->token, terminal);
                 *(v->variable_list) = NULL;
                 printf("%s\n", terminal);
                 break;
                 
             case (5):
-                v->variable_name = "TypeStruct";
+                strcpy(v->variable_name, "TypeStruct");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 5;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (6): // type_simple
-                v->variable_name = "TypeSimple";
+                strcpy(v->variable_name, "TypeSimple");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 6;
                 v->variable_num_nexts = num_nexts;
-                v->token = terminal;
+                strcpy(v->token, terminal);
                 *(v->variable_list) = NULL;
                 break;
                 
             case (7):
-                v->variable_name = "ArgList";
+                strcpy(v->variable_name, "ArgList");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 7;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (8):
-                v->variable_name = "StmtList";
+                strcpy(v->variable_name, "StmtList");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 8;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (9): // Stmt
@@ -188,52 +190,52 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                     case (8): // atribuicao com tipo fila
                         break;
                 }*/
-                v->variable_name = "Stmt";
+                strcpy(v->variable_name, "Stmt");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 9;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (10):
-                v->variable_name = "Block";
+                strcpy(v->variable_name, "Block");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 10;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (11): // compare_assignemnt
-                v->variable_name = "CompareAssignment";
+                strcpy(v->variable_name, "CompareAssignment");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 11;
                 v->variable_num_nexts = num_nexts;
-                v->token = terminal;
+                strcpy(v->token, terminal);
                 *(v->variable_list) = NULL;
                 break;
                 
             case (12):
-                v->variable_name = "AssignmentExp";
+                strcpy(v->variable_name, "AssignmentExp");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 12;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (13):
-                v->variable_name = "Term";
+                strcpy(v->variable_name, "Term");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 13;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
                 
             case (14):
-                v->variable_name = "Factor";
+                strcpy(v->variable_name, "Factor");
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 12;
                 v->variable_num_nexts = num_nexts;
-                *(v->variable_list) = *variable_list;
+                *(v->variable_list) = *list;
                 break;
     }
     return v;
@@ -248,13 +250,13 @@ void show_tree(Variable *root, int tabs, int index) {
     int i;
     printf(">> index: %d\n", index);
     for (i = 0; i < tabs; ++i) printf("  ");
-    if (root->variable_list[index]) {
+    if ((*root->variable_list+index)) {
         printf("%s {\n", root->variable_name);
         
         // Percorre arvore top-down, left-to-right
         for (int j = 0; j < root->variable_num_nexts; j++) {
-            printf(" . . . %s[%d] = %s {\n", root->variable_name, j, root->variable_list[j]->variable_name);
-            show_tree(root->variable_list[j], tabs+1, j);
+            printf(" . . . %s[%d] = %s {\n", root->variable_name, j, (*root->variable_list+j)->variable_name);
+            show_tree((*root->variable_list+j), tabs+1, j);
         }
         
         for (i = 0; i < tabs; ++i) printf("  ");
@@ -273,7 +275,7 @@ void show_tree(Variable *root, int tabs, int index) {
 void destroy_tree(Variable *root, int index) {
     // Percorre arvore top-down, left-to-right
     for (int j = 0; j < root->variable_num_nexts-1; j++) {
-        destroy_tree(root->variable_list[j], j+1);
+        destroy_tree((*root->variable_list+j), j+1);
     }
     printf(":: Destruiu %s\n", root->variable_name);
     free(root);
