@@ -56,11 +56,6 @@ function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    varList[1] = *($4);
                                    varList[2] = *($7);
                                    varList[3] = *($9);
-                                   
-                                   printf(">> >> %s\n", (&varList[0])->variable_name);
-                                   printf(">> >> %s\n", (&varList[1])->variable_name);
-                                   printf(">> >> %s\n", (&varList[2])->variable_name);
-                                   printf(">> >> %s\n", (&varList[3])->variable_name);
                                    $$ = new_variable(2, 4, &varList, 0);
                                    add_symbol_on_table($2); }
                 ;
