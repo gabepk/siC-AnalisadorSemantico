@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.12)  6 OCT 2016 15:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.12)  6 OCT 2016 15:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -697,37 +697,37 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 346.
  [9]
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 369.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 367.
 
-Underfull \hbox (badness 10000) in paragraph at lines 374--375
+Underfull \hbox (badness 10000) in paragraph at lines 372--373
 
  []
 
-
-Underfull \hbox (badness 4492) in paragraph at lines 409--410
+[10]
+Underfull \hbox (badness 4492) in paragraph at lines 407--408
 []\T1/ptm/m/n/12 ANSI C Yacc gram-mar, $\T1/pcr/m/n/12 http : / / www . quut . 
 com / c / ANSI-[]C-[]grammar-[]y .
  []
 
-[10] [11] (./110118995.aux) ) 
+[11] (./110118995.aux) ) 
 Here is how much of TeX's memory you used:
- 6105 strings out of 493029
- 83583 string characters out of 6136234
- 209628 words of memory out of 5000000
- 9525 multiletter control sequences out of 15000+600000
+ 6104 strings out of 493029
+ 83567 string characters out of 6136234
+ 204628 words of memory out of 5000000
+ 9524 multiletter control sequences out of 15000+600000
  37997 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,9n,49p,1310b,1407s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/bas
-e/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/ti
-mes/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on 110118995.pdf (11 pages, 184590 bytes).
+ 43i,9n,49p,1356b,1647s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.
+enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on 110118995.pdf (11 pages, 187434 bytes).
 PDF statistics:
  80 PDF objects out of 1000 (max. 8388607)
  55 compressed objects within 1 object stream

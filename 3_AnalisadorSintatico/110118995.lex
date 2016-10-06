@@ -17,7 +17,7 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 
 \n 	++lines;
 [ \t]+
-"//"[^\n]*	printf("Comentario na linha %d\n", lines);
+"//"[^\n]*
 
 {digito}+{letra}+{digito}*		{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on integer \"%s\" \n", lines, yytext);}
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}

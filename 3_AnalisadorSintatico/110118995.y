@@ -56,7 +56,8 @@ function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    varList[2] = *($7);
                                    varList[3] = *($9);
                                    $$ = new_variable(2, 4, &varList, 0, 1);
-                                   add_symbol_on_table($2); }
+                                   add_symbol_on_table($2); 
+                                   }
                 ;
                 
 // -----------------------------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2
                                    $$ = new_variable(3, 1, &varList, 0, 2); }
                 | %empty { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     $$ = new_variable(3, 0, &varList, 0, 3); }
+                | error ')' {  yyerrok;  yyerror ("Erro nos paramentros da funcao");}
                 ;
 
 // -----------------------------------------------------------------------------------------------------
@@ -126,6 +128,7 @@ argList:        argList ',' type_struct ID { Variable *varList = (Variable *) ma
                                    add_symbol_on_table($2); }
                 | %empty { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     $$ = new_variable(7, 0, &varList, 0, 3); }
+                | error '{' {  yyerrok;  yyerror ("Erro nos argumentos da funcao");}
                 ;
 
 // ----------------------------------------------------------------------------------------------------- 
@@ -230,6 +233,7 @@ assignment_expression:  assignment_expression '+' term
                         | term  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    $$ = new_variable(12, 1, &varList, "END", 3); }
+                        | error ';' { yyerrok;  yyerror ("Erro na operacao matematica");}
                         ;
                         
 // ----------------------------------------------------------------------------------------------------- 
@@ -245,6 +249,7 @@ term:           term '*' factor { Variable *varList = (Variable *) malloc (2 * s
                 | factor { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    $$ = new_variable(13, 1, &varList, "END", 3); }
+                | error ';' { yyerrok;  yyerror ("Erro na operacao matematica");}
                 ;
                 
 // ----------------------------------------------------------------------------------------------------- 

@@ -11,11 +11,13 @@ int main () {
     e.setlast->x;
     
     if (i >= j) {
-    k = condicao(i, j);}
+        k = condicao(i, j);
+        i = 2 + 2;
+    }
     return o;
 } 
 
-int condicao(int CUZIN, int CUZAO) {
+int condicao(int a, int b) {
     int z;
     if (x < y) {
         z = x + y;
