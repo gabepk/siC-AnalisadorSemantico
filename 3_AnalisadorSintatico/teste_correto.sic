@@ -17,7 +17,7 @@ int main () {
     
 
 
-int condicao(int x, int y) {
+int condicao(int CUZIN, int CUZAO) {
     int z;
     if (x < y) {
         z = x + y;

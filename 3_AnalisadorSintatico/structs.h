@@ -73,7 +73,7 @@ typedef union Factor {} Factor;
 */
 
 // ----------------------------------------------------------------
-// --------------------------- FUNÇÕES ----------------------------
+// ----------------- ADICAO DE NOS NA ARVORE ----------------------
 // ----------------------------------------------------------------
 
 Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[], char *terminal) {
@@ -118,6 +118,10 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                         //printf("%s.FIRST\n", terminal);
                         break;
                 }*/
+                v->variable_name = "Value";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 4;
+                *(v->variable_list) = NULL;
                 printf("%s\n", terminal);
                 break;
                 
@@ -129,6 +133,10 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 break;
                 
             case (6): // type_simple
+                v->variable_name = "TypeSimple";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 6;
+                *(v->variable_list) = NULL;
                 break;
                 
             case (7):
@@ -179,6 +187,10 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 break;
                 
             case (11): // compare_assignemnt
+                v->variable_name = "CompareAssignment";
+                printf("%s\n", v->variable_name);
+                v->variable_tag = 11;
+                *(v->variable_list) = NULL;
                 break;
                 
             case (12):
@@ -203,6 +215,34 @@ Variable *new_variable (int tag_variable, int tag_rule, Variable *variable_list[
                 break;
     }
     return v;
+}
+
+
+// ----------------------------------------------------------------
+// ----------------- OPERAÇÕES COM A ARVORE -----------------------
+// ----------------------------------------------------------------
+
+void show_tree(Variable *root, int tabs, int index) {
+    int i;
+    for (i = 0; i < tabs; ++i) printf("  ");
+    if (root) {
+        printf("1: %s{\n", root->variable_name);
+        if (root->variable_list[index+1])
+            show_tree(root->variable_list[index+1], tabs+1, index+1);
+        
+        for (i = 0; i < tabs; ++i) printf("  ");
+        printf("}\n");
+    }
+    else {
+         printf("2: %s{\n", root->variable_name);
+    }
+    return;
+}
+
+void destroy_tree(Variable *root, int index) {
+	if (root->variable_list[index+1])
+            destroy_tree(root->variable_list[index+1], index+1);
+	free(root);
 }
 
 // ----------------------------------------------------------------
@@ -233,6 +273,8 @@ void show_symbol_table() {
         printf("\t%d\t%s\n", i+1, symbol_table[i]);
         i++;
     }
+    printf("\n=================================\n");
+    printf("=================================\n");
     return;
 }
 

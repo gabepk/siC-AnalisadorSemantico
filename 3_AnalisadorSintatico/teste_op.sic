@@ -1,4 +1,4 @@
-int oi (int a, float b, queue<char> c) {
-    
+int oi () {
+    a=a+a;
     return 0;
 }

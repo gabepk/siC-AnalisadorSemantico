@@ -42,31 +42,20 @@ int id_corrente = 0;
 program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($2);
-                                   $$ = new_variable(1, 1, &varList, 0); }
+                                   $$ = new_variable(1, 1, &varList, 0); 
+                                   printf("\n\n Arvore Sintatica:\n"); show_tree($$, 0, 0); destroy_tree($$, 0); }
                 | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   $$ = new_variable(1, 2, &varList, 0); }
+                                   $$ = new_variable(1, 2, &varList, 0); 
+                                   printf("\n\n Arvore Sintatica:\n"); show_tree($$, 0, 0); destroy_tree($$, 0); }
                 ;
-                
-// -----------------------------------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------------------------------
-                         //      A R R U M A R         A Q U I  !  !  !  !
-// -----------------------------------------------------------------------------------------------------
-                                    //       |
-// -----------------------------------------------------------------------------------------------------
-                                    //       |
-// -----------------------------------------------------------------------------------------------------
-                                    //       v
-// -----------------------------------------------------------------------------------------------------
 
 function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' { 
                                    Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
-                                   //varList[0] = *($1);
+                                   varList[0] = *($1);
                                    //varList[1] = *($4);
-                                   //varList[2] = *($7);
+                                   varList[2] = *($7);
                                    varList[3] = *($9);
-                                   /*varList[4] = *($2);*/
                                    $$ = new_variable(2, 1, &varList, 0);
                                    add_symbol_on_table($2); }
                 ;
@@ -115,12 +104,10 @@ type_simple:    VOID { $$ = new_variable(6, 0, NULL, $1); }
 argList:        argList ',' type_struct ID { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
-                                   /*varList[2] = *($4);*/
                                    $$ = new_variable(7, 1, &varList, 0); 
                                    add_symbol_on_table($4);}
                 | type_struct ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
-                                   /*varList[1] = *($2);*/
                                    $$ = new_variable(7, 2, &varList, 0);
                                    add_symbol_on_table($2); }
                 | %empty { $$ = NULL; }
@@ -128,10 +115,10 @@ argList:        argList ',' type_struct ID { Variable *varList = (Variable *) ma
 
 // ----------------------------------------------------------------------------------------------------- 
                 
-stmtList:       stmtList stmt { printf("1");Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
-                                printf("2");   varList[0] = *($1);
-                                printf("3");   varList[1] = *($2);
-                                printf("4");   $$ = new_variable(8, 1, &varList, 0); }
+stmtList:       stmtList stmt { printf("1\n");Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
+                                printf("2\n");   //varList[0] = *($1);
+                                printf("3\n");   //varList[1] = *($2);
+                                printf("4\n");   $$ = new_variable(8, 1, &varList, 0); }
                 | %empty { $$ = NULL; }
                 ;
 
