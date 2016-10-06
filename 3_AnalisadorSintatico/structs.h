@@ -21,6 +21,7 @@ typedef struct Variable {
     char *variable_name;
     int variable_tag;
     int variable_num_nexts;
+    char *token;
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 /*
@@ -89,11 +90,15 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                 break;
                 
             case (2): // Function
-                v->variable_name = "Function";
+                v->variable_name = "Function\n";
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 2;
                 v->variable_num_nexts = num_nexts;
                 *(v->variable_list) = *variable_list;
+               // for (int i = 0; i < num_nexts; i++) {
+                   // if(v->variable_list[i])
+                        //printf("<<%s>>\n", v->variable_list[i]->variable_name);
+                //}
                 break;
                 
             case (3): // ValueList
@@ -126,6 +131,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 4;
                 v->variable_num_nexts = num_nexts;
+                v->token = terminal;
                 *(v->variable_list) = NULL;
                 printf("%s\n", terminal);
                 break;
@@ -143,6 +149,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 6;
                 v->variable_num_nexts = num_nexts;
+                v->token = terminal;
                 *(v->variable_list) = NULL;
                 break;
                 
@@ -201,6 +208,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
                 printf("%s\n", v->variable_name);
                 v->variable_tag = 11;
                 v->variable_num_nexts = num_nexts;
+                v->token = terminal;
                 *(v->variable_list) = NULL;
                 break;
                 
@@ -238,15 +246,24 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *variable_list
 
 void show_tree(Variable *root, int tabs, int index) {
     int i;
+    printf(">> index: %d\n", index);
     for (i = 0; i < tabs; ++i) printf("  ");
-    if (root) {
+    if (root->variable_list[index]) {
         printf("%s {\n", root->variable_name);
         
         // Percorre arvore top-down, left-to-right
         for (int j = 0; j < root->variable_num_nexts; j++) {
+            printf(" . . . %s[%d] = %s {\n", root->variable_name, j, root->variable_list[j]->variable_name);
             show_tree(root->variable_list[j], tabs+1, j);
         }
         
+        for (i = 0; i < tabs; ++i) printf("  ");
+        printf("}\n");
+    }
+    else {
+        printf("%s {\n", root->variable_name);
+        for (i = 0; i < tabs; ++i) printf("  ");
+        printf("  %s\n", root->token);
         for (i = 0; i < tabs; ++i) printf("  ");
         printf("}\n");
     }
