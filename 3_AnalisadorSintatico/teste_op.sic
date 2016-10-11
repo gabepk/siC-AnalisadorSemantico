@@ -1,4 +1,0 @@
-int oi () {
-    a=(a/a);
-    return 0;
-}

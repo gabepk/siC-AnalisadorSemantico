@@ -26,12 +26,10 @@ id [a-zA-Z$][a-zA-Z$0-9]*
                                     yylval.str[0] = '\0';
                                     return(CARACTERE);
                                 }
-{digito}+"."{digito}* 		{   //yylval.f = atof(yytext);
-                                    yylval.str = yytext;
+{digito}+"."{digito}* 		{   yylval.str = yytext;
                                     return(NUM_FLOAT);
                                 }
-{digito}+			{   //yylval.i = atoi(yytext);
-                                    yylval.str = yytext;
+{digito}+			{   yylval.str = yytext;
                                     return(NUM_INT);
                                 }
                                 

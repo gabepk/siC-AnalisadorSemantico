@@ -91,15 +91,19 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 	\item[5] A variável \textit{statement} à direita das regras de IF, IF-ELSE e WHILE foram substituídas por \textit{block}. Um block representa apenas um \textit{statement} ou uma lista de \textit{statements} entre chaves;
 	\item[6] As operações sobre dados do tipo fila foram substituídas de "+" para "SETLAST" e de "-" para "RMVFIRST" (Ver exemplo na Seção \ref{AnalSem});
 	\item[7] Foram adiciondos os tokens EQ ("=="), NEQ ("!="), LEQ ("<="), GEQ (">="), LT ("<") e GT (">") para facilitar a passagem do lex para o bison.
+	\item[8] Foi criada uma variável nova program\_start, para possibilitar a criação e impressão de programas com uma função ou mais.
 \end{itemize}
 
-Segue abaixo a gramática proposta cuja variável inicial é \textit{program}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
+Segue abaixo a gramática proposta cuja variável inicial é \textit{program\_start}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
 
 
 \begin{alltt}{\footnotesize
 token: WHILE, IF, ELSE, RETURN, {\color{red}SETLAST}, {\color{red}RMVFIRST}
 token: QUEUE, FIRST, VOID, FLOAT, INT, CHAR
 token: {\color{red}EQ, NEQ, LEQ, GEQ, LT, GT}
+
+{\color{red}program_start
+   \(\to\) program}
 
 {\color{red}program
    \(\to\) program function
@@ -329,7 +333,7 @@ type\_struct_expression\
 \subsection{Arquivo y e structs}
 
 \indent A partir do projeto do analisador sintático foi necessário criar um \textit{Makefile} para ligar a biblioteca \textit{structs.h} e conectar os analisadores léxicos e sintáticos, portanto basta dar o comando \textit{make} para criar o executável e \textit{make clean} para limpar a pasta. \\
-\indent Para representar cada variável da gramática, fez-se uma \textit{struct} chamada \textit{Variable} apresentada abaixo, onde o atributo \textit{variable\_name} é o nome da variável, \textit{variable\_tag} é seu identificador, \textit{variable\_num\_nexts} é a quantidade de filhos cuja regra selecionada da variável possui, \textit{token} é o próprio token passado do léxico para o sintático, \textit{rule\_num} é o identificador desta regra selecionada e \textit{variable\_list} é um ponteiro para uma lista de variáveis filhas da regra selecionada. \textit{MAX\_WORD} define um tamanho máximo para o nome de uma variável e o token (elementos não dependentes do usuário da linguagem siC) e \textit{MAX\_CHILD\_RULES} define o número máximo de filhos que uma regra pode possuir. \\
+\indent Para representar cada variável da gramática, fez-se uma \textit{struct} chamada \textit{Variable} apresentada abaixo, onde o atributo (1) \textit{variable\_name} é o nome da variável, (2) \textit{variable\_tag} é seu identificador, (3) \textit{variable\_num\_nexts} é a quantidade de filhos cuja regra selecionada da variável possui, (4) \textit{token} é o próprio token passado do léxico para o sintático, (5) \textit{rule\_num} é o identificador desta regra selecionada, (6) \textit{id\_index} é o índice dos identificadores na tabela de símbolos e  (7) \textit{variable\_list} é um ponteiro para uma lista de variáveis filhas da regra selecionada. \textit{MAX\_WORD} define um tamanho máximo para o nome de uma variável e o token (elementos não dependentes do usuário da linguagem siC) e \textit{MAX\_CHILD\_RULES} define o número máximo de filhos que uma regra pode possuir. \\
 \begin{lstlisting}[language=C]
 #define MAX_WORD 64
 #define MAX_CHILD_RULES 5
@@ -339,38 +343,46 @@ typedef struct Variable {
     int variable_num_nexts;
     char token[MAX_WORD];
     int rule_num;
+    int id_index[5];
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 }
 \end{lstlisting}
-\indent A gramática está localizada no arquivo 110118995.y, agora com ações semânticas sempre ao final de cada regra. As variável foram definidas como sendo do tipo \textit{Variable} e os demais \textit{tokens}, do tipo \textit{string}. Todas as ações semânticas fazer o mesmo: um vetor de x \textit{structs} \textit{varList} é alocado na memória, onde x é o número de filhos que aquela regra possui. O ponteiro para cada filho (representados por \$x). é atribuído para \textit{varList[i] }e, por fim, a função para criar uma nova variável é chamada e seu retorno é atribuído à variável cuja regra está sendo executada (representada por \$\$). Os parâmetros desta função, \textit{new\_variable}, são (1) a tag da variável, (2) número de filhos que a regra possui, (3) a lista de variáveis para as quais ela aponta, (4) um terminal da regra, (5) o identificador da regra para aquela variável. Quando a regra possui algum token, ele é adicionado à tabela de símbolos na ação semântica também (função \textit{add\_symbol\_on\_table} é chamada). A função de criar nova variável está localizada no arquivo structs.h, assim como a \textit{struct Variable} e as funções de mostrar a árvore sintática, adicionar um elemento na tabela de símbolos e mostrar a tabela de símbolos.  \\
+\indent A gramática está localizada no arquivo 110118995.y, agora com ações semânticas sempre ao final de cada regra. As variável foram definidas como sendo do tipo \textit{Variable} e os demais \textit{tokens}, do tipo \textit{string}. Todas as ações semânticas fazer o mesmo: um vetor de x \textit{structs} \textit{varList} é alocado na memória, onde x é o número de filhos que aquela regra possui. O ponteiro para cada filho (representados por \$x). é atribuído para \textit{varList[i] }e, por fim, a função para criar uma nova variável é chamada e seu retorno é atribuído à variável cuja regra está sendo executada (representada por \$\$). Os parâmetros desta função, \textit{new\_variable}, são (1) a tag da variável, (2) número de filhos que a regra possui, (3) a lista de variáveis para as quais ela aponta, (4) um terminal da regra, (5) o identificador da regra para aquela variável e (6) os índices dos identificadores na tabela de símbolos. Quando a regra possui algum token, ele é adicionado à tabela de símbolos na ação semântica também, então a função \textit{add\_symbol\_on\_table} é chamada e seu retorno (índice na tabela de símbolos) é atribuído à \textit{id\_index[i]}. A função de criar nova variável está localizada no arquivo structs.h, assim como a \textit{struct Variable} e as funções de mostrar a árvore sintática, adicionar um elemento na tabela de símbolos e mostrar a tabela de símbolos.  \\
 \indent A função \textit{new\_variable} apenas alloca espaço para uma \textit{struct Variable} e passa os elementos do parâmetro para os atributos da \textit{struct}. Para cada variável, é atribuído dentro de um \textit{switch-case} seu nome, tag e, quando necessário, o \textit{token}. A função \textit{add\_symbol\_on\_table} adiciona um terminal passado por parâmetro à um vetor de strings global, se este terminal ainda não está presente no vetor. A função \textit{show\_symbol\_table} percorre este vetor ao final do programa, imprimindo na tela todos os terminais.
 
 \subsection{Árvore sintática}
-\indent A árvore sintática foi construída ao longo da leitura da entrada, pois cada ação semântica cria novos nós de baixo para cima. Nesse sentido, a impressão da árvore poderia ser feita inversamente nas ações semânticas, porém, por questões de estética, foi feito uma função \textit{show\_tree} para tal. Ela é chamada pela primeira regra da variável inicial da gramática (topo da árvore) e recebe como parâmetro um nó de \textit{Variable}, o número de \textit{tabs} necessárias para a impressão de uma árvore legível e o índice do primeiro filho daquela regra (para facilitar a impressão na função recursiva). A função verifica se o \textit{token} daquele nó é vazio (identificado pela string "END"), ou algum operador matemático, significando que aquele nó é uma \textit{Variable} com filhos. Se ele é, então seu nome é impresso e em seguida os elementos que compõem aquela regra. Se ele possui filhos, a função \textit{show\_tree} é chamada recursivamente. Se ele não é, ou seja, se o nó é uma folha,  seu terminal é impresso.
+\indent A árvore sintática foi construída ao longo da leitura da entrada, pois cada ação semântica cria novos nós de baixo para cima. Nesse sentido, a impressão da árvore poderia ser feita inversamente nas ações semânticas, porém, por questões de estética, foi feito uma função \textit{show\_tree} para tal. Ela é chamada pela primeira regra da variável inicial da gramática (topo da árvore) e recebe como parâmetro um nó de \textit{Variable}, o número de \textit{tabs} necessárias para a impressão de uma árvore legível e o índice do primeiro filho daquela regra (para facilitar a impressão na função recursiva). A função verifica se o \textit{token} daquele nó é vazio (identificado pela string "END"), ou algum operador matemático, significando que aquele nó é uma \textit{Variable} com filhos. Se ele é, então seu nome é impresso e em seguida os elementos que compõem aquela regra, buscando identificadores na tabela de símbolos quando necessário. Se ele possui filhos, a função \textit{show\_tree} é chamada recursivamente. Se ele não é, ou seja, se o nó é uma folha,  seu terminal é impresso.
 
 \subsection{Erros sintáticos}
 
 \indent O tipo de recuperação de erro escolhido foi o Panic Mode: algumas variáveis possuem uma regra cuja ação semântica é \textit{error "x"}, onde x é uma string que representa o estado seguro o qual, a partir dalí, o parser pode prosseguir. \\
 \indent Para testar o código foram utilizados dois arquivos de extensão .sic, um de acordo com as normas especificadas neste projeto (teste\_correto.sic), outro com todos os tipos de erros sintáticos (teste\_errado.sic). Todos os erros léxicos foram removidos do arquivo \textit{teste\_errado}. Três erros sintáticos auto-explicativos podem ser reportados neste último arquivo:
 \begin{itemize}
-  \item[1] \textbf{(sin) ERROR near line 6 : Erro nos argumentos da funcao}
-  \item[2] \textbf{(sin) ERROR near line 8 : syntax error} \\
-	\textbf{(sin) ERROR near line 16 : Erro nos argumentos da funcao}
-  \item[3] \textbf{(sin) ERROR near line 17 : Erro na operacao matematica}
+  \item[1] (sin) ERROR near line 6 : Erro nos argumentos da funcao
+  \item[2] (sin) ERROR near line 8 : syntax error \\ (sin) ERROR near line 16 : Erro nos argumentos da funcao
+  \item[3] (sin) ERROR near line 17 : Erro na operacao matematica
 \end{itemize}
 
 \subsection{Dificuldades enfrentadas}
 
 \indent A principal dificuldade foi a criação da estrutura da árvore sintática. A princípio tentei construir uma \textit{struct} para cada variável, o que funcionou até o momento em que  foi necessário imprimir a árvore. Como não consegui percorrer uma árvore de várias structs diferentes, criei uma \textit{union} cujos atributos eram todas estas \textit{structs}, porém me deparei com um código gigante com vários pequenos erros e então resolvi começar tudo de novo com apenas uma string chamada \textit{Variable} que possui certos atributos desnecessários para algumas regras, porém aumenta a legibilidade do programa. \\
-\indent Além disso, acredito que a impressão da árvore não estega correta da forma que está, pois a ordem com que os identificadores aparecem não está óbvia na função \textit{show\_tree}. As regras de escopo na tabela de símbolos não foram implementadas.
+\indent Além disso, acredito que a impressão da árvore não esteja correta da forma que está, pois a ordem com que os identificadores aparecem não está óbvia na função \textit{show\_tree}. As regras de escopo na tabela de símbolos não foram implementadas.
+\indent Não foi implementada ação semântica para a variável \textit{type\_struct\_expression} devido ao \textit{warning} ainda não resolvido que ocorreu na gramática da Figura \ref{avisoBison}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=1\textwidth]{avisoBison.png}
+  \caption{Este warning não impediu a criação do arquivo executável} \label{avisoBison}
+\end{figure}
+
 
 \section{Analisador Semântico} \label{AnalSem}
 
 \indent A análise semântica utiliza da árvore sintática para checar a consistência da linguagem. Uma de suas obrigações mais importantes é a checagem de tipo. No caso do siC, existem várias restrições a serem consideradas:
 \begin{itemize}
-    \item Para adicionar um elemento A de tipo simples (char, int ou float) no fim da fila de um elemento struct B, a atribuição deve ser do tipo B = B + A, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
-    \item Para remover um elemento A de tipo simples (char, int ou float) do início da fila de um elemento struct B, a atribuição deve ser do tipo B = B - A, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
+    \item Para adicionar um elemento A de tipo simples (char, int ou float) no fim da fila de um elemento struct B, a atribuição deve ser do tipo B = B.SETLAST->A, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
+    \item Para remover um elemento A de tipo simples (char, int ou float) do início da fila de um elemento struct B, a atribuição deve ser do tipo B = B.RMVFIRST, onde A deverá ter tipo compatível com o de B, ou seja, se B for fila de inteiros, A deve ser um inteiro;
     \item Nenhuma operação matemática (\textit{assignment\_expression}) pode conter um identificador B do tipo fila, apenas seu início, ou seja, B.FIRST.
 \end{itemize}
 
@@ -381,15 +393,15 @@ VOID main () {
     QUEUE<INT> q;
     INT sum, INT lixo;
 
-    q = q + 0;
-    q = q + 1;
-    q = q + 2;
-    q = q + 3;    
+    q = q.setlast->0;
+    q = q.setlast->1;
+    q = q.setlast->2;
+    q = q.setlast->3;    
     sum = 0;
     
     WHILE (q.FIRST != 0) {    
         sum = (sum + q.FIRST);
-        q = q - lixo;
+        lixo = q.rmvfirst;
     }
     sum = sum + lixo;
 

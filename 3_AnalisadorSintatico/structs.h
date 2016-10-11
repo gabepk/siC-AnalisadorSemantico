@@ -22,6 +22,7 @@ typedef struct Variable {
     int variable_num_nexts;
     char token[MAX_WORD];
     int rule_num;
+    int id_index[5];
     struct Variable *variable_list[MAX_CHILD_RULES];
 } Variable;
 
@@ -29,13 +30,18 @@ typedef struct Variable {
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
 // ----------------------------------------------------------------
 
-Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char *terminal, int rule_num) {
+Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char *terminal, int rule_num, int id_index[]) {
     Variable *v = (Variable *) malloc(sizeof(Variable));
     v->variable_num_nexts = num_nexts;
     *(v->variable_list) = *list;
     strcpy(v->token, "END");
     v->rule_num = rule_num;
+    *(v->id_index) = *id_index;
     switch (tag_variable) {
+            case (0): // Program_start
+                strcpy(v->variable_name, "ProgramStart");
+                v->variable_tag = 0;
+                break;
             case (1): // Program
                 strcpy(v->variable_name, "Program");
                 v->variable_tag = 1;
@@ -134,7 +140,7 @@ void show_tree(Variable *root, int tabs, int index) {
             case (2): // Function
                 show_tree((*root->variable_list+0), tabs+1, 0);
                 for (i = 0; i < tabs; ++i) printf("|  ");
-                printf("ID\n"); // Encontrar ID
+                printf("%s\n", symbol_table[root->id_index[0]]); // Encontrar ID
                 for (i = 0; i < tabs; ++i) printf("|  ");
                 printf("(\n");
                 show_tree((*root->variable_list+1), tabs+1, 1);
@@ -186,7 +192,7 @@ void show_tree(Variable *root, int tabs, int index) {
                         show_tree((*root->variable_list+1), tabs+1, 1);
                     }
                     for (i = 0; i < tabs; ++i) printf("|  ");
-                    printf("ID\n");
+                    printf("%s\n", symbol_table[root->id_index[0]]);
                 }
                 break;
                 
@@ -195,14 +201,14 @@ void show_tree(Variable *root, int tabs, int index) {
                     case(1):
                         show_tree((*root->variable_list+0), tabs+1, 0);
                         for (i = 0; i < tabs; ++i) printf("|  ");
-                        printf("ID\n");
+                        printf("%s\n", symbol_table[root->id_index[0]]);
                         for (i = 0; i < tabs; ++i) printf("|  ");
                         printf(";\n");
                         break;
                         
                     case(2):
                         for (i = 0; i < tabs; ++i) printf("|  ");
-                        printf("ID\n");
+                        printf("%s\n", symbol_table[root->id_index[0]]);
                         for (i = 0; i < tabs; ++i) printf("|  ");
                         printf("(\n");
                         show_tree((*root->variable_list+0), tabs+1, 0);
@@ -214,11 +220,11 @@ void show_tree(Variable *root, int tabs, int index) {
                         
                     case(3):
                         for (i = 0; i < tabs; ++i) printf("|  ");
-                        printf("ID\n");
+                        printf("%s\n", symbol_table[root->id_index[0]]);
                         for (i = 0; i < tabs; ++i) printf("|  ");
                         printf("=\n");
                         for (i = 0; i < tabs; ++i) printf("|  ");
-                        printf("ID\n");
+                        printf("%s\n", symbol_table[root->id_index[1]]);
                         for (i = 0; i < tabs; ++i) printf("|  ");
                         printf("(\n");
                         show_tree((*root->variable_list+0), tabs+1, 0);
@@ -268,7 +274,7 @@ void show_tree(Variable *root, int tabs, int index) {
                         break;
                     case(7):
                         for (i = 0; i < tabs; ++i) printf("|  ");
-                        printf("ID\n");
+                        printf("%s\n", symbol_table[root->id_index[0]]);
                         for (i = 0; i < tabs; ++i) printf("|  ");
                         printf("=\n");
                         show_tree((*root->variable_list+0), tabs+1, 0);
