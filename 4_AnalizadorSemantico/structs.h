@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern int yylineno;
 char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
 struct symbol_hash_table *symbols = NULL;
 
@@ -38,14 +39,8 @@ typedef struct Variable {
     char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
     struct Variable *variable_list[MAX_CHILD_RULES];
     
-    // Analizador semantico: tipo herdado
-    char type_ihn[MAX_WORD];
     // Analizador semantico: tipo sintetizado
     char type_syn[MAX_WORD];
-    // Analizador semantico: indice do irmao no vetor variable_list (para atributos herdados)
-    int right_sibling;
-    // Analizador semantico: ponteiro para o pai (para atributos sintetizados)
-    struct Variable *parent;
 } Variable;
 
 // ----------------------------------------------------------------
@@ -64,6 +59,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
 
     switch (tag_variable) {
             case (0): // Program_start
+                
                 strcpy(v->variable_name, "ProgramStart");
                 v->variable_tag = 0;
                 break;
@@ -380,29 +376,84 @@ void show_tree(Variable *root, int tabs, int index) {
 // -------------------- TABELA DE SIMBOLOS ------------------------
 // ----------------------------------------------------------------
 
-void add_symbol_on_hash_table (char *s) {
+
+/*
+ VARIAVEL NAO PODE SER VOID
+ FUNCAO PODE SER VOID
+ */
+// if var_or_func == 0 (var), var_or_func == 1 (func)
+void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func) {
     symbol_hash_table *symbol;
     HASH_FIND_STR(symbols, s, symbol);
+    
     if (symbol == NULL) {
+        if (strcmp(type_s, "?") == 0) {
+            printf("(sem) ERROR on line %d : '%s' undeclared\n", yylineno, s);
+            return;
+        }
+        if ((strcmp(type_s, "void") == 0) && (var_or_func == 0)) { // Variavel do tipo void
+            printf("(sem) ERROR on line %d : variable or field '%s' declared void\n", yylineno, s);
+            return;
+        }
+        
         symbol = (symbol_hash_table*)malloc(sizeof(symbol_hash_table));
         strcpy(symbol->str_id, s);
-        // Como atribuir o tipo do type_struct?
+        strcpy(symbol->type, type_s);
         HASH_ADD_STR(symbols, str_id, symbol);
     }
 }
 
+char* get_type_hash_table(char *s) {
+    symbol_hash_table *symbol;
+    HASH_FIND_STR(symbols, s, symbol);
+    if (symbol != NULL)
+        return symbol->type;
+    return "?";
+}
+
+char *decide_type_operation(char *s1, char *s2) {
+
+    if ((strcmp(s1, "void") == 0) || (strcmp(s2, "void") == 0)) { // Serve para qualquer chamada de funcao void
+        printf("(sem) ERROR on line %d : void value not ignored as it ought to be\n", yylineno);
+        return "?";
+    }
+    
+    // EM C EH POSSIVEL FAZER OPERACAO COM INT E VETOR DE INT, MAS EM siC NAO EH. SE ALGUM TIPO FOR QUEUE, JA DAH ERRO
+    if ((s1[0] == 'q') || (s2[0] == 'q')) { // Operacao com dois elementos do tipo fila
+        printf("(sem) ERROR on line %d : invalid operands to binary + (have '%s' and '%s')", yylineno, s1, s2);
+        return "?";
+    }        
+    
+    if (strcmp(s1, s2))
+        return s1;
+    
+    if (((strcmp(s1, "int") == 0) && (strcmp(s2, "float") == 0))  || 
+        ((strcmp(s1, "float") == 0) && (strcmp(s2, "int") == 0))  ||
+        ((strcmp(s1, "char") == 0) && (strcmp(s2, "float") == 0)) || 
+        ((strcmp(s1, "float") == 0) && (strcmp(s2, "char") == 0)))
+        return "float";
+    
+    if (((strcmp(s1, "int") == 0) && (strcmp(s2, "char") == 0)) || 
+        ((strcmp(s1, "char") == 0) && (strcmp(s2, "int") == 0)))
+        return "int";
+        
+    return "?";
+}
+
 void show_symbol_table() {
-    printf("\n=================================\n");
-    printf("======= TABELA DE SIMBOLOS ======\n");
-    printf("=================================\n");
+    printf("\n===============================================\n");
+    printf("============== TABELA DE SIMBOLOS =============\n");
+    printf("===============================================\n");
+    printf("\tScope\tType\t\tID\n");
+    printf("===============================================\n");
     int i = 0;
     symbol_hash_table *s;
 
     for(s = symbols; s != NULL; s = s->hh.next, i++) {
-        printf("%d\t%s\n", i, s->str_id);
+        printf("%d\t%d\t%s\t\t%s\n", i, s->scope, s->type, s->str_id);
     }
-    printf("\n=================================\n");
-    printf("=================================\n");
+    printf("\n===============================================\n");
+    printf("===============================================\n");
     return;
 }
 

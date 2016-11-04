@@ -1,9 +1,22 @@
+int condicao(int a, int b) {
+    int z;
+    int x;
+    if (x < y) {
+        z = x + y;
+    }
+    else {  // Comentario
+        z = 2*x;  // Comentario
+    }  // Comentario
+    z = z.rmvfirst; // Comentario
+    return z; // Comentario
+}
+
 int main () {
     queue<char> q;
-    int i;
+    char i;
     int j;
     int k;
-    i = '1';
+    i = 'a';
     j = 1;
     k = 0;
     
@@ -15,15 +28,3 @@ int main () {
     }
     return o;
 } 
-
-int condicao(int a, int b) {
-    int z;
-    if (x < y) {
-        z = x + y;
-    }
-    else {  // Comentario
-        z = 2*x;  // Comentario
-    }  // Comentario
-    z = z.rmvfirst; // Comentario
-    return z; // Comentario
-}

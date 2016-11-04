@@ -23,7 +23,7 @@ id [a-zA-Z$][a-zA-Z$0-9]*
 {digito}+"."{digito}*{letra}+{digito}*	{++errors;printf("\t(lex) ERROR on line %d : Invalid suffix on floating \"%s\" \n", lines, yytext);}
 
 "'"({letra}|{digito})"'"	{   yylval.str[0] = yytext[1];
-                                    yylval.str[0] = '\0';
+                                    yylval.str[1] = '\0';
                                     return(CARACTERE);
                                 }
 {digito}+"."{digito}* 		{   yylval.str = yytext;
