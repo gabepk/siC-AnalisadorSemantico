@@ -410,6 +410,15 @@ VOID main () {
 
 \end{lstlisting}
 
+\section{MUDANCAS PARA O ANALISADOR SEMANTICO}
+
+\begin{itemize}
+\item Tabela de símbolos não é mais vetor de strings, mas sim tabela hash da biblioteca \textit{uthash}, indexada pelo nome do símbolo e cujo valor é uma struct com nome, tipo e escopo do símbolo
+\item A variavel id\_index que indexava os simbolos na tabela de simbolos foi trocada por symbol\_ids que é um vetor das strings (IDs) contidos em cada regra da gramática (serve mais para imprimir árvore na tela)
+\item Foi adicionado atributo sintetizado na struct das Variáveis para que o tipo dos valores lidos (NUM\_INT, NUM\_FLOAT, NUM\_CHAR, ID) sejam sintetizados na árvore ("subam")
+\item Foi adicionado atributo herdados na struct das Variáveis para que o tipo do ID seja herdado da sua declaração (variáveis e nome de funções)
+\end{itemize}
+
 %\section{Geração de código intermediário}
 
 % \section{Considerações finais}
