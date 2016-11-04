@@ -382,24 +382,25 @@ void show_tree(Variable *root, int tabs, int index) {
 
 void add_symbol_on_hash_table (char *s) {
     symbol_hash_table *symbol;
-    HASH_FIND_INT(symbols, &s, symbol);
+    HASH_FIND_STR(symbols, s, symbol);
     if (symbol == NULL) {
         symbol = (symbol_hash_table*)malloc(sizeof(symbol_hash_table));
         strcpy(symbol->str_id, s);
         // Como atribuir o tipo do type_struct?
-        HASH_ADD_INT(symbols, str_id, symbol);
+        HASH_ADD_STR(symbols, str_id, symbol);
     }
 }
 
 void show_symbol_table() {
-    //int i = 0;
     printf("\n=================================\n");
     printf("======= TABELA DE SIMBOLOS ======\n");
     printf("=================================\n");
-    //while (strcmp(symbol_table[i], ".") != 0) {
-    //    printf("\t%d\t%s\n", i+1, symbol_table[i]);
-    //    i++;
-    //}
+    int i = 0;
+    symbol_hash_table *s;
+
+    for(s = symbols; s != NULL; s = s->hh.next, i++) {
+        printf("%d\t%s\n", i, s->str_id);
+    }
     printf("\n=================================\n");
     printf("=================================\n");
     return;
