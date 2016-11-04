@@ -1,0 +1,29 @@
+int main () {
+    queue<char> q;
+    int i;
+    int j;
+    int k;
+    i = '1';
+    j = 1;
+    k = 0;
+    
+    e.setlast->x;
+    
+    if (i >= j) {
+        k = condicao(i, j);
+        i = 2 + 2;
+    }
+    return o;
+} 
+
+int condicao(int a, int b) {
+    int z;
+    if (x < y) {
+        z = x + y;
+    }
+    else {  // Comentario
+        z = 2*x;  // Comentario
+    }  // Comentario
+    z = z.rmvfirst; // Comentario
+    return z; // Comentario
+}
