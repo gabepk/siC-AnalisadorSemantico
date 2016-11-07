@@ -1,37 +1,42 @@
 int condicao(int a, int b) {
-    int z;
-    if (n < y) {
-        int x;
-        z = x + y;
-    }
-    if (1==1)  // Comentario
-        int w;
-    if (1==1)  // Comentario
-        int r;
-    if (1==1)  // Comentario
+    int c;
+    if (d < e) {
         int f;
-    z = z.rmvfirst; // Comentario
-    return z; // Comentario
+        if (1==1) {
+            int g;
+            h = h;
+            while (1==1) {
+                int i;
+            }
+        }
+            j = j;
+    }
+    k = l + m;
+    
+    if (1==1)  // Comentario
+        int n;
+    if (1==1)  // Comentario
+        int o;
+    if (1==1)  // Comentario
+        int p;
+    q = r.rmvfirst; // Comentario
+    return s; // Comentario
 }
 
 int main () {
-    queue<char> q;
-    char i;
-    int j;
-    i = 'a';
-    j = 1;
+    queue<char> t;
+    char u;
+    int w;
+    u = 'a';
+    w = 1;
     
-    e.setlast->x;
+    x.setlast->y;
     
-    if (i >= j) {
-        int k;
-        k = condicao(i, j);
-        i = 2 + 2;
+    if (u >= w) {
+        int z;
+        z = condicao(u, w);
+        u = 2 + 2;
     }
-    if (i >= j) {
-        int h;
-        k = condicao(i, j);
-        i = 2 + 2;
-    }
-    return o;
+    
+    return z;
 } 

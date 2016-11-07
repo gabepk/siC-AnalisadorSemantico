@@ -1,7 +1,8 @@
 #ifndef structs_h
 #define structs_h
 
-#define MAX_SCOPES 10
+#define HIGHEST_SCOPE 0
+#define MAX_SCOPES 20
 #define MAX_SYMBOLS_FOR_RULE 3
 #define MAX_CHILD_RULES 5
 #define MAX_WORD 64
@@ -25,6 +26,7 @@ typedef struct symbol_hash_table {
     char str_id[MAX_WORD];
     char type[MAX_WORD];
     int scope;
+    int higher_scope;
     UT_hash_handle hh;
 } symbol_hash_table;
 
@@ -384,7 +386,7 @@ void show_tree(Variable *root, int tabs, int index) {
  FUNCAO PODE SER VOID
  */
 // if var_or_func == 0 (var), var_or_func == 1 (func)
-void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scope) {
+void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scope, int higher_scope) {
     symbol_hash_table *symbol;
     HASH_FIND_STR(symbols, s, symbol);
     
@@ -402,6 +404,8 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scop
         strcpy(symbol->str_id, s);
         strcpy(symbol->type, type_s);
         symbol->scope = scope;
+        symbol->higher_scope = higher_scope;
+        
         HASH_ADD_STR(symbols, str_id, symbol);
     }
 }
@@ -453,7 +457,7 @@ void show_symbol_table() {
     symbol_hash_table *s;
 
     for(s = symbols; s != NULL; s = s->hh.next, i++) {
-        printf("%d\t%d\t%s\t\t%s\n", i, s->scope, s->type, s->str_id);
+        printf("%d\t%d\t%d\t%s\t\t%s\n", i, s->higher_scope, s->scope, s->type, s->str_id);
     }
     printf("\n===============================================\n");
     printf("===============================================\n");
