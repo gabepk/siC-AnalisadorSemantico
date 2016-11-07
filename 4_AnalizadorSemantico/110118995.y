@@ -2,9 +2,6 @@
 #include "structs.h"
 void yyerror(char *s);
 int yylex(void);
-int scope = 1; // Soh incrementa
-int last_scope = 0;
-int higher_scope = 0; // incrementa e decrementa
 %}
 
 %union {
@@ -54,6 +51,7 @@ program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(
                 | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    scope++;
+                                   func_scope++;
                                    $$ = new_variable(1, 1, &varList, 0, 2, symbol_ids); }
                 ;
 
@@ -328,6 +326,7 @@ int main(void) {
     
     yyparse();
     show_symbol_table();
+    show_scope_matrix();
     return 0;
 }
 

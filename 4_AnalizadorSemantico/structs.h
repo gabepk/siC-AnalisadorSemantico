@@ -16,7 +16,11 @@
 extern int yylineno;
 char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
 struct symbol_hash_table *symbols = NULL;
+
 int scope_matrix[MAX_SCOPES][MAX_SCOPES];
+int scope = 1; // Soh incrementa
+int func_scope = 0;
+int higher_scope = 0; // incrementa e decrementa
 
 // ----------------------------------------------------------------
 // -------------------- TABELA DE SIMBOLOS ------------------------
@@ -27,6 +31,7 @@ typedef struct symbol_hash_table {
     char type[MAX_WORD];
     int scope;
     int higher_scope;
+    int func_scope;
     UT_hash_handle hh;
 } symbol_hash_table;
 
@@ -377,6 +382,45 @@ void show_tree(Variable *root, int tabs, int index) {
 }
 
 // ----------------------------------------------------------------
+// --------------------- MATRIZ DE ESCOPO -------------------------
+// ----------------------------------------------------------------
+
+void include_higher_scopes(int line_matrix, int this_higher_scope, int this_scope) {
+    int j;
+    scope_matrix[this_scope][this_scope] = 1;
+    scope_matrix[this_scope][this_higher_scope] = 1;
+    
+    /*if (line_matrix == 0) return;
+    
+    for (j = scope-1; j >= 0; j--) {       
+        if (scope_matrix[line_matrix][j] == 1)
+            include_higher_scopes(j, this_higher_scope, this_scope);
+    }*/
+}
+
+void show_scope_matrix() {
+    printf("\n\n=============================================================\n");
+    printf("===================== MATRIZ DE ESCOPO ======================\n");
+    printf("=============================================================\n");
+    int i, j;
+    
+    printf("Escopos: \t");
+    for(i=0; i<scope; i++) {
+        printf("%d  ", i);
+    }
+    printf("\n\n");
+    for(i=0; i<scope; i++) {
+        printf("Escopo %d:\t", i);
+        for(j=0; j<scope; j++)
+            printf("%d  ", scope_matrix[i][j]);
+        printf("\n");
+    }
+    printf("\n=============================================================\n");
+    printf("=============================================================\n");
+    return;    
+}
+
+// ----------------------------------------------------------------
 // -------------------- TABELA DE SIMBOLOS ------------------------
 // ----------------------------------------------------------------
 
@@ -405,6 +449,9 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scop
         strcpy(symbol->type, type_s);
         symbol->scope = scope;
         symbol->higher_scope = higher_scope;
+        symbol->func_scope = func_scope;
+        
+        include_higher_scopes(scope, higher_scope, scope);
         
         HASH_ADD_STR(symbols, str_id, symbol);
     }
@@ -448,19 +495,17 @@ char *decide_type_operation(char *s1, char *s2) {
 }
 
 void show_symbol_table() {
-    printf("\n===============================================\n");
-    printf("============== TABELA DE SIMBOLOS =============\n");
-    printf("===============================================\n");
-    printf("\tScope\tType\t\tID\n");
-    printf("===============================================\n");
+    printf("\n=============================================================\n");
+    printf("===================== TABELA DE SIMBOLOS ====================\n");
+    printf("=============================================================\n");
+    printf("\tFunc\tHiScope\tScope\tType\t\tID\n");
+    printf("=============================================================\n");
     int i = 0;
     symbol_hash_table *s;
 
     for(s = symbols; s != NULL; s = s->hh.next, i++) {
-        printf("%d\t%d\t%d\t%s\t\t%s\n", i, s->higher_scope, s->scope, s->type, s->str_id);
+        printf("%d\t%d\t%d\t%d\t%s\t\t%s\n", i, s->func_scope, s->higher_scope, s->scope, s->type, s->str_id);
     }
-    printf("\n===============================================\n");
-    printf("===============================================\n");
     return;
 }
 

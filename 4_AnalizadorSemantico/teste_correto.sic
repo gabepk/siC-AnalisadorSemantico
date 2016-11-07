@@ -8,8 +8,20 @@ int condicao(int a, int b) {
             while (1==1) {
                 int i;
             }
+            while (1==1) {
+                int ii;
+                while (1==1) {
+                    int iii;
+                    while (1==1) {
+                        int iiii;
+                    }
+                }
+            }
         }
-            j = j;
+        if (5==5) {
+            char yy;
+        }
+        j = j;
     }
     k = l + m;
     
