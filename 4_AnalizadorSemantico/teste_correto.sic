@@ -1,12 +1,15 @@
 int condicao(int a, int b) {
     int z;
-    int x;
-    if (x < y) {
+    if (n < y) {
+        int x;
         z = x + y;
     }
-    else {  // Comentario
-        z = 2*x;  // Comentario
-    }  // Comentario
+    if (1==1)  // Comentario
+        int w;
+    if (1==1)  // Comentario
+        int r;
+    if (1==1)  // Comentario
+        int f;
     z = z.rmvfirst; // Comentario
     return z; // Comentario
 }
@@ -15,14 +18,18 @@ int main () {
     queue<char> q;
     char i;
     int j;
-    int k;
     i = 'a';
     j = 1;
-    k = 0;
     
     e.setlast->x;
     
     if (i >= j) {
+        int k;
+        k = condicao(i, j);
+        i = 2 + 2;
+    }
+    if (i >= j) {
+        int h;
         k = condicao(i, j);
         i = 2 + 2;
     }

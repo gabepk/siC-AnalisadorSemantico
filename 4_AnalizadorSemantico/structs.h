@@ -1,6 +1,7 @@
 #ifndef structs_h
 #define structs_h
 
+#define MAX_SCOPES 10
 #define MAX_SYMBOLS_FOR_RULE 3
 #define MAX_CHILD_RULES 5
 #define MAX_WORD 64
@@ -14,6 +15,7 @@
 extern int yylineno;
 char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
 struct symbol_hash_table *symbols = NULL;
+int scope_matrix[MAX_SCOPES][MAX_SCOPES];
 
 // ----------------------------------------------------------------
 // -------------------- TABELA DE SIMBOLOS ------------------------
@@ -382,7 +384,7 @@ void show_tree(Variable *root, int tabs, int index) {
  FUNCAO PODE SER VOID
  */
 // if var_or_func == 0 (var), var_or_func == 1 (func)
-void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func) {
+void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scope) {
     symbol_hash_table *symbol;
     HASH_FIND_STR(symbols, s, symbol);
     
@@ -399,6 +401,7 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func) {
         symbol = (symbol_hash_table*)malloc(sizeof(symbol_hash_table));
         strcpy(symbol->str_id, s);
         strcpy(symbol->type, type_s);
+        symbol->scope = scope;
         HASH_ADD_STR(symbols, str_id, symbol);
     }
 }

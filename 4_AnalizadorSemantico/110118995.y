@@ -1,8 +1,8 @@
 %{
 #include "structs.h"
-#define MAXSTR 50
 void yyerror(char *s);
 int yylex(void);
+int scope = 1;
 %}
 
 %union {
@@ -51,12 +51,13 @@ program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(
                                    $$ = new_variable(1, 2, &varList, 0, 1, symbol_ids);  }
                 | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
+                                   scope++;
                                    $$ = new_variable(1, 1, &varList, 0, 2, symbol_ids); }
                 ;
 
 function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    strcpy(symbol_ids[0], $2);
-                                   add_symbol_on_hash_table($2, ($1)->type_syn, 1); // ID recebe tipo herdado de type_struct
+                                   add_symbol_on_hash_table($2, ($1)->type_syn, 1, 0); // ID recebe tipo herdado de type_struct, escopo de função é sempre 0
                                    Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($4);
@@ -84,27 +85,27 @@ valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2
                 
 value:          NUM_INT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "int", 0);
+                                    add_symbol_on_hash_table($1, "int", 0, 0); // escopo desconhecido
                                     strcpy(varList->type_syn, "int");
                                     $$ = new_variable(4, 1, &varList, $1, 1, symbol_ids); }
                 | NUM_FLOAT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "float", 0);
+                                    add_symbol_on_hash_table($1, "float", 0, 0); // escopo desconhecido
                                     strcpy(varList->type_syn, "float");
                                     $$ = new_variable(4, 1, &varList, $1, 2, symbol_ids);}
                 | CARACTERE { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "char", 0);
+                                    add_symbol_on_hash_table($1, "char", 0, 0); // escopo desconhecido
                                     strcpy(varList->type_syn, "char");
                                     $$ = new_variable(4, 1, &varList, $1, 3, symbol_ids);}
                 | ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "?", 0);
+                                    add_symbol_on_hash_table($1, "?", 0, 0); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1));
                                     $$ = new_variable(4, 1, &varList, $1, 4, symbol_ids);}
                 | ID '.' FIRST { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "?", 0);
+                                    add_symbol_on_hash_table($1, "?", 0, 0); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1));
                                     $$ = new_variable(4, 1, &varList, $1, 5, symbol_ids);}
                 ;
@@ -139,13 +140,13 @@ type_simple:    VOID { Variable *varList = (Variable *) malloc (1 * sizeof(Varia
                 
 argList:        argList ',' type_struct ID { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $4);
-                                   add_symbol_on_hash_table($4, ($3)->type_syn, 0); // ID recebe tipo herdado de type_struct
+                                   add_symbol_on_hash_table($4, ($3)->type_syn, 0, scope); // ID recebe tipo herdado de type_struct
                                    varList[0] = *($1);
                                    varList[1] = *($3);
                                    $$ = new_variable(7, 2, &varList, 0, 1, symbol_ids); }
                 | type_struct ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $2);
-                                   add_symbol_on_hash_table($2, ($1)->type_syn, 0); // ID recebe tipo herdado de type_struct
+                                   add_symbol_on_hash_table($2, ($1)->type_syn, 0, scope); // ID recebe tipo herdado de type_struct
                                    varList[0] = *($1);
                                    $$ = new_variable(7, 1, &varList, 0, 2, symbol_ids);}
                 | %empty { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
@@ -158,7 +159,7 @@ argList:        argList ',' type_struct ID { Variable *varList = (Variable *) ma
 stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                     varList[0] = *($1);
                                     varList[1] = *($2);
-                                    $$ = new_variable(8, 2, &varList, 0, 1, symbol_ids); }
+                                    $$ = new_variable(8, 2, &varList, 0, 1, symbol_ids);}
                 | %empty { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     $$ = new_variable(8, 0, &varList, 0, 2, symbol_ids); }
                 ;
@@ -168,21 +169,21 @@ stmtList:       stmtList stmt { Variable *varList = (Variable *) malloc (2 * siz
 stmt:           type_struct ID ';' 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $2);
-                                   add_symbol_on_hash_table($2, ($1)->type_syn, 0); // ID recebe tipo herdado de type_struct
+                                   add_symbol_on_hash_table($2, ($1)->type_syn, 0, scope); // ID recebe tipo herdado de type_struct
                                    varList[0] = *($1);
                                    $$ = new_variable(9, 1, &varList, 0, 1, symbol_ids);}
                 | ID '(' valueList ')' ';' 
                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $1);
-                                   add_symbol_on_hash_table($1, "?", 1);
+                                   add_symbol_on_hash_table($1, "?", 1, 0); // escopo desconhecido
                                    varList[0] = *($3);
                                    $$ = new_variable(9, 1, &varList, 0, 2, symbol_ids); }
                 | ID '=' ID '('  valueList ')' ';' 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $1);
                                    strcpy(symbol_ids[1], $3);
-                                   add_symbol_on_hash_table($1, "?", 0);
-                                   add_symbol_on_hash_table($3, "?", 1);
+                                   add_symbol_on_hash_table($1, "?", 0, 0); // escopo desconhecido
+                                   add_symbol_on_hash_table($3, "?", 1, 0); // escopo desconhecido
                                    varList[0] = *($5);
                                    $$ = new_variable(9, 1, &varList, 0, 3, symbol_ids); }
                 | IF '(' value compare_assignment value ')' block
@@ -210,7 +211,7 @@ stmt:           type_struct ID ';'
                 | ID '=' assignment_expression ';'
                                   { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $1);
-                                   add_symbol_on_hash_table($1, "?", 0);
+                                   add_symbol_on_hash_table($1, "?", 0, 0);
                                    varList[0] = *($3);
                                    $$ = new_variable(9, 1, &varList, 0, 7, symbol_ids); }
                 | type_struct_expression ';'
@@ -221,11 +222,13 @@ stmt:           type_struct ID ';'
             
 // ----------------------------------------------------------------------------------------------------- 
             
-block:          stmt  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
-                                   varList[0] = *($1);
-                                   $$ = new_variable(10, 1, &varList, 0, 1, symbol_ids); }
-                | '{' stmtList '}'  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+block:          {scope++;} stmt  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($2);
+                                   printf("Escopo: stmt %d\n", scope);
+                                   $$ = new_variable(10, 1, &varList, 0, 1, symbol_ids); }
+                | '{'  {scope++;} stmtList '}'  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
+                                   varList[0] = *($3);
+                                   printf("Escopo: { stmtList } %d\n", scope);
                                    $$ = new_variable(10, 1, &varList, 0, 2, symbol_ids); }
                 ;
 
@@ -311,10 +314,14 @@ void yyerror(char *s) {
 }
 
 int main(void) {
-    int i;
-    for (i=0; i<MAX_SYMBOLS_FOR_RULE; i++) {
+    int i, j;
+    for (i=0; i<MAX_SYMBOLS_FOR_RULE; i++)
         strcpy(symbol_ids[i], ".");
-    }
+   
+    for (i=0; i<MAX_SCOPES; i++)
+        for (j=0; j<MAX_SCOPES; j++)
+            scope_matrix[i][j] = 0;
+    
     yyparse();
     show_symbol_table();
     return 0;
