@@ -1,26 +1,37 @@
 
-int var () {
-    return q;
+//  Escopo 0
+
+int condicao(int a, int b) { // Escopo 1
+    int c;
+    if (c < a) { // Escopo 2
+        int d;
+        if (1==1) { // Escopo 3
+            char e;
+        }
+        if (5==5) { // Escopo 6
+            char f;
+        }
+        f = a; // f FORA DE ESCOPO
+    }
+    e = c + d; // e E d FORA DE ESCOPO
+    
+    return c;
 }
 
-int main (int int) {
-
-    x = var(); // Substituir por "x = var(a b c);" para gerar erro 2
-    queue<char> q;
-    int i0;
-    int j1;
-    float k;
-    i = 10;
-    j = 1;
+int main () { //  Escopo 7
+    queue<char> t;
+    char u;
+    int w;
+    u = 'a';
+    w = 1;
     
-    if (i >= j) {
-	k = i + 0.5; // Substituir por "k = i + 0.5 +;" para gerar erro 3
+    x.setlast->y; // FORA DE ESCOPO - NAO DECLARADAS
+    
+    if (u >= w) { //  Escopo 8
+        int z;
+        z = condicao(u, w);
+        u = 2 + 2;
     }
     
-    while (i != 0) {
-	q = q + 'a';
-	i = i - 1;
-    }
-    
-    return a;
-}
+    return z; // FORA DE ESCOPO
+} 

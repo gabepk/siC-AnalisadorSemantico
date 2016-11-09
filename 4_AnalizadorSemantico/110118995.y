@@ -225,12 +225,10 @@ stmt:           type_struct ID ';'
 block:          {higher_scope++; scope++;}  stmt  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($2);
                                    higher_scope--;
-                                   printf("Escopo: stmt %d\n", scope);
                                    $$ = new_variable(10, 1, &varList, 0, 1, symbol_ids); }
                 | '{'  {higher_scope++; scope++; } stmtList '}'  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($3);
                                    higher_scope--;
-                                   printf("Escopo: { stmtList } %d\n", scope);
                                    $$ = new_variable(10, 1, &varList, 0, 2, symbol_ids); }
                 ;
 

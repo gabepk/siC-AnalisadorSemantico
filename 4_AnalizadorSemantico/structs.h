@@ -432,11 +432,10 @@ symbol_hash_table* on_reachable_escope(char *s, int scope) {
             
             key[strlen(s) + 1] = (char) i + '0';
             key[strlen(s) + 2] = '\0';
-            printf("Procurando : %s\n", key);
+            //printf("Procurando : %s\n", key);
             
             HASH_FIND_STR(symbols, key, symbol);
             if (symbol != NULL) {
-                printf("ALCANCOL: %s, func %d, scope %d\n", symbol->str_id, func_scope, symbol->scope);
                 return symbol;
             }
         }
@@ -446,7 +445,7 @@ symbol_hash_table* on_reachable_escope(char *s, int scope) {
 
 // var_func_num = (0 eh var, 1 eh func, 2 e num)
 void add_symbol_on_hash_table (char *s, char type_s[], int var_func_num, int scope, int higher_scope) {
-    symbol_hash_table *symbol, *symbol_next_escope;
+    symbol_hash_table *symbol;
     char key[MAX_WORD+2];
     
     strcpy(key, s);
@@ -455,14 +454,6 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_func_num, int sco
     key[strlen(s) + 2] = '\0';
     
     HASH_FIND_STR(symbols, key, symbol);
-    
-    
-        printf("\n\n");
-        printf("key: %s\n", key);
-        printf("s: %s\n", s);
-        printf("type_s: %s\n", type_s);
-        printf("scope: %d\n", scope);
-        printf("\n\n");
     
     if (symbol != NULL) {
         // O nome desta variavel ja existe e ela foi declarada naquele escopo e naquela funcao
@@ -479,7 +470,6 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_func_num, int sco
         
         // Se ela tem tipo == "?", ela nao esta sendo declarada
         if (strcmp(type_s, "?") == 0) {
-            printf("Estou aqui e type_s : %s\n", type_s);
             // E se ela nao foi declarada nos escopos acessiveis anteriores, ela nao existe para este escopo
             if (on_reachable_escope(s, scope) == NULL) {
                 printf("(sem) ERROR on line %d : '%s' undeclared\n", yylineno, s);
@@ -524,7 +514,6 @@ char* get_type_hash_table(char *s, int scope, int func_scope) {
     
     HASH_FIND_STR(symbols, key, symbol);
     if (symbol != NULL) {
-        printf("TIPO: %s : %s\n", symbol->str_id, symbol->type);
         return symbol->type;
     }
     return "?";

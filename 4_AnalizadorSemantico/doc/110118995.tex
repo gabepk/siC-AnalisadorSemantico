@@ -81,7 +81,7 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 
 \indent A seguir será apresentada a gramática da linguagem siC, baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagem são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers}, que por sua vez é uma expressão regular, e a única diferença entre este e \textit{identifier\_struct} é que o segundo tem acesso ao início da fila caso este seja o tipo do \textit{identifier}. 
 
-\indent Antes de apresentá-la, segue abaixo algumas alterações e correções da versão passada deste arquivo:
+\indent Antes de apresentá-la, segue abaixo algumas alterações e correções do analisador léxico para o analisador sintático. \textbf{Nenhuma alteração foi feita na gramática do analisador sintático para o semântico}.
 
 \begin{itemize}
 	\item[1] As variáveis \textit{argument}, \textit{compare\_expression} e \textit{type\_queue} foram removidas para aumentar a simplicidade da gramática, uma vez que elas possuiam apenas uma regra;
@@ -94,50 +94,50 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 	\item[8] Foi criada uma variável nova program\_start, para possibilitar a criação e impressão de programas com uma função ou mais.
 \end{itemize}
 
-Segue abaixo a gramática proposta cuja variável inicial é \textit{program\_start}, com as alterações acima em vermelho e as características diferenciais da linguagem siC em negrito.
+\indent Segue abaixo a gramática proposta cuja variável inicial é \textit{program\_start}, com as características diferenciais da linguagem siC em negrito.
 
 
 \begin{alltt}{\footnotesize
-token: WHILE, IF, ELSE, RETURN, {\color{red}SETLAST}, {\color{red}RMVFIRST}
-token: QUEUE, FIRST, VOID, FLOAT, INT, CHAR
-token: {\color{red}EQ, NEQ, LEQ, GEQ, LT, GT}
+token: WHILE, IF, ELSE, RETURN, \textbf{SETLAST, RMVFIRST}
+token: \textbf{QUEUE, FIRST}, VOID, FLOAT, INT, CHAR
+token: EQ, NEQ, LEQ, GEQ, LT, GT
 
-{\color{red}program_start
-   \(\to\) program}
+program_start
+   \(\to\) program
 
-{\color{red}program
+program
    \(\to\) program function
-   | function}
+   | function
 
 function
-   \(\to\) {\color{red}type\_struct ID} ( argList ) \{ stmtList RETURN identifier ; \}
+   \(\to\) type\_struct ID ( argList ) \{ stmtList RETURN identifier ; \}
     
-{\color{red}valueList
+valueList
 	\(\to\) valueList , value
 	| value
-	| \(\varepsilon\)}
+	| \(\varepsilon\)
 	
 }\end{alltt}
 \indent Existe um novo tipo de dado, \textit{QUEUE}, que será composto por tipos simples de dados apenas (ou seja, não será possível criar uma variável do tipo fila em que seus elementos também são filas). Caso a variável seja do tipo fila, ela poderá obter o primeiro elemento através do comando "ID.FIRST".
 \begin{alltt}{\footnotesize    	
 	
-{\color{red}value
+value
 	\(\to\) NUM\_INT
 	| NUM\_FLOAT
 	| CARACTERE
 	| ID
-	| ID . FIRST}
+	| ID . FIRST
 	
 type\_struct
    \(\to\) type\_simple
-    | \color{red}{QUEUE GT type\_simple LT}
+    | QUEUE GT type\_simple LT
     
 type\_simple
    \(\to\) VOID | FLOAT | INT | CHAR  
 
 argList
-   \(\to\) argList , {\color{red}type\_struct ID}
-   | {\color{red}type\_struct ID}
+   \(\to\) argList , type\_struct ID
+   | type\_struct ID
    | \(\varepsilon\)
 
    
@@ -150,21 +150,21 @@ stmtList
    | \(\varepsilon\)
 
 stmt
-   \(\to\) {\color{red}type\_struct ID ;}
-    | ID ( {\color{red}valueList} ) ;
-    | ID = ID ( {\color{red}valueList} ) ;
-    | IF ( {\color{red}value compare\_assignment value} ) {\color{red}block}
-    | IF ( {\color{red}value compare\_assignment value} ) {\color{red}block} ELSE {\color{red}block}
-    | WHILE ( {\color{red}value compare\_assignment value} ) {\color{red}block}
+   \(\to\) type\_struct ID ;
+    | ID ( valueList ) ;
+    | ID = ID ( valueList ) ;
+    | IF ( value compare\_assignment value ) block
+    | IF ( value compare\_assignment value ) block ELSE block
+    | WHILE ( value compare\_assignment value ) block
     | ID = assignment\_expression ;
     | \textbf{type_struct_expression}
     
-{\color{red}block
+block
 	 \(\to\) stmt
-    | \{ stmtList \} }
+    | \{ stmtList \}
     
 compare\_assignment
-   \(\to\) {\color{red}EQ | NEQ | LEQ | GEQ | LT | GT}
+   \(\to\) EQ | NEQ | LEQ | GEQ | LT | GT
 
 assignment\_expression
    \(\to\) assignment\_expression + term
@@ -177,13 +177,13 @@ term
     | factor
     
 factor
-   \(\to\) {\color{red}value}
+   \(\to\) value
     | ( assignment\_expression )
     
 \textbf{
 type\_struct_expression\
-   \(\to\) ID = ID {\color{red}. SETLAST ARROW value} ;
-    | ID = ID {\color{red}. RMVFIRST} ;
+   \(\to\) ID = ID . SETLAST ARROW value ;
+    | ID = ID . RMVFIRST ;
 }		
 }\end{alltt}
 
@@ -328,7 +328,7 @@ type\_struct_expression\
 
 \subsection{GNU Bison: Parser Generator}
 
-\indent O Bison é um gerador de Parser do tipo \textit{top-down} LALR(1) (\textit{Left-to-Right scanning, Rightmost derivation with Looahead}), escrito por Robert Corbett e Richard Stallman. A versão utilizada foi a 3.0.4. O Bison é uma implementação do YACC ("\textit{Yet another compiler-compiler}"), gerador de parser LALR com \textit{lookahead} também.
+\indent O Bison é um gerador de Parser do tipo \textit{top-down} LALR(1) (\textit{Left-to-Right scanning, Rightmost derivation with Lookahead}), escrito por Robert Corbett e Richard Stallman. A versão utilizada foi a 3.0.4. O Bison é uma implementação do YACC ("\textit{Yet another compiler-compiler}"), gerador de parser LALR com \textit{lookahead} também.
 
 \subsection{Arquivo y e structs}
 
@@ -348,8 +348,8 @@ typedef struct Variable {
 } Variable;
 }
 \end{lstlisting}
-\indent A gramática está localizada no arquivo 110118995.y, agora com ações semânticas sempre ao final de cada regra. As variável foram definidas como sendo do tipo \textit{Variable} e os demais \textit{tokens}, do tipo \textit{string}. Todas as ações semânticas fazer o mesmo: um vetor de x \textit{structs} \textit{varList} é alocado na memória, onde x é o número de filhos que aquela regra possui. O ponteiro para cada filho (representados por \$x). é atribuído para \textit{varList[i] }e, por fim, a função para criar uma nova variável é chamada e seu retorno é atribuído à variável cuja regra está sendo executada (representada por \$\$). Os parâmetros desta função, \textit{new\_variable}, são (1) a tag da variável, (2) número de filhos que a regra possui, (3) a lista de variáveis para as quais ela aponta, (4) um terminal da regra, (5) o identificador da regra para aquela variável e (6) os índices dos identificadores na tabela de símbolos. Quando a regra possui algum token, ele é adicionado à tabela de símbolos na ação semântica também, então a função \textit{add\_symbol\_on\_table} é chamada e seu retorno (índice na tabela de símbolos) é atribuído à \textit{id\_index[i]}. A função de criar nova variável está localizada no arquivo structs.h, assim como a \textit{struct Variable} e as funções de mostrar a árvore sintática, adicionar um elemento na tabela de símbolos e mostrar a tabela de símbolos.  \\
-\indent A função \textit{new\_variable} apenas alloca espaço para uma \textit{struct Variable} e passa os elementos do parâmetro para os atributos da \textit{struct}. Para cada variável, é atribuído dentro de um \textit{switch-case} seu nome, tag e, quando necessário, o \textit{token}. A função \textit{add\_symbol\_on\_table} adiciona um terminal passado por parâmetro à um vetor de strings global, se este terminal ainda não está presente no vetor. A função \textit{show\_symbol\_table} percorre este vetor ao final do programa, imprimindo na tela todos os terminais.
+\indent A gramática está localizada no arquivo 110118995.y, agora com ações semânticas sempre ao final de cada regra. As variável foram definidas como sendo do tipo \textit{Variable} e os demais \textit{tokens}, do tipo \textit{string}. Todas as ações semânticas fazem o mesmo: um vetor de x \textit{structs} \textit{varList} é alocado na memória, onde x é o número de filhos que aquela regra possui. O ponteiro para cada filho (representados por \$x). é atribuído para \textit{varList[i] }e, por fim, a função para criar uma nova variável é chamada e seu retorno é atribuído à variável cuja regra está sendo executada (representada por \$\$). Os parâmetros desta função, \textit{new\_variable}, são (1) a tag da variável, (2) número de filhos que a regra possui, (3) a lista de variáveis para as quais ela aponta, (4) um terminal da regra, (5) o identificador da regra para aquela variável e (6) os índices dos identificadores na tabela de símbolos. Quando a regra possui algum token, ele é adicionado à tabela de símbolos na ação semântica também, então a função \textit{add\_symbol\_on\_table} é chamada e seu retorno (índice na tabela de símbolos) é atribuído à \textit{id\_index[i]}. A função de criar nova variável está localizada no arquivo structs.h, assim como a \textit{struct Variable} e as funções de mostrar a árvore sintática, adicionar um elemento na tabela de símbolos e mostrar a tabela de símbolos.  \\
+\indent A função \textit{new\_variable} apenas aloca espaço para uma \textit{struct Variable} e passa os elementos do parâmetro para os atributos da \textit{struct}. Para cada variável, é atribuído dentro de um \textit{switch-case} seu nome, tag e, quando necessário, o \textit{token}. A função \textit{add\_symbol\_on\_table} adiciona um terminal passado por parâmetro à um vetor de strings global, se este terminal ainda não está presente no vetor. A função \textit{show\_symbol\_table} percorre este vetor ao final do programa, imprimindo na tela todos os terminais.
 
 \subsection{Árvore sintática}
 \indent A árvore sintática foi construída ao longo da leitura da entrada, pois cada ação semântica cria novos nós de baixo para cima. Nesse sentido, a impressão da árvore poderia ser feita inversamente nas ações semânticas, porém, por questões de estética, foi feito uma função \textit{show\_tree} para tal. Ela é chamada pela primeira regra da variável inicial da gramática (topo da árvore) e recebe como parâmetro um nó de \textit{Variable}, o número de \textit{tabs} necessárias para a impressão de uma árvore legível e o índice do primeiro filho daquela regra (para facilitar a impressão na função recursiva). A função verifica se o \textit{token} daquele nó é vazio (identificado pela string "END"), ou algum operador matemático, significando que aquele nó é uma \textit{Variable} com filhos. Se ele é, então seu nome é impresso e em seguida os elementos que compõem aquela regra, buscando identificadores na tabela de símbolos quando necessário. Se ele possui filhos, a função \textit{show\_tree} é chamada recursivamente. Se ele não é, ou seja, se o nó é uma folha,  seu terminal é impresso.
@@ -386,38 +386,96 @@ typedef struct Variable {
     \item Nenhuma operação matemática (\textit{assignment\_expression}) pode conter um identificador B do tipo fila, apenas seu início, ou seja, B.FIRST.
 \end{itemize}
 
-\indent Um exemplo de código em siC é aprensentado a seguir. O programa adiciona três elementos numa fila de inteiros e depois eles são somados um a um e armazenados na variável \textit{sum}. Ao final, a variável \textit{lixo}, recém retirada da fila, é adicionada à \textit{sum}. Nesse sentido, o resultado final de sum deve ser 7. \\
+\indent Apesar de não ter sido feitas mudanças na gramática do analisador sintático para o semântico, várias alterações foram feitas no código. Nesta etapa do projeto, o objetivo foi delimitar os escopos das variáveis, identificar seus tipos, diferenciar na tabela de símbolos variável de função e de número ou caractere. Para isso foi feito:
 
+\begin{itemize}
+\item A tabela de símbolos não é mais um vetor de strings. Agora ela é uma tabela hash da biblioteca \textit{uthash}, indexada pelo nome do símbolo concatenado com o identificador da função e com o identificador dos escopos, e a seguinte struct:
+
+\begin{lstlisting}[language=C]
+typedef struct symbol_hash_table {
+    char key[MAX_WORD+4]; // Chave da tabela hash
+    char str_id[MAX_WORD]; // Nome do ID, num ou caractere
+    char type[MAX_WORD]; // Seu tipo 
+    int scope; // Seu escopo
+    int higher_scope; // Seu escopo alcancavel anterior
+    int func_scope; // Seu escopo de funcao
+    UT_hash_handle hh; // Handle da hash
+} symbol_hash_table;
+\end{lstlisting}
+
+\item O numero máximo de escopos é 10 (MAX\_SCOPES) e ele é contabilizado do mais global (HIGHEST\_SCOPE = 0) para o mais específico;
+
+\item A variável id\_index que indexava os símbolos na tabela de símbolos foi trocada por symbol\_ids que é um vetor das strings (IDs) contidos em cada regra da gramática (utilizado para imprimir árvore na tela);
+
+\item Foram adicionados alguns atributos a mais na struct Variáveis, para reconhecimento os tipos dos elementos lidos (NUM\_INT, NUM\_FLOAT, CARACTERE, ID). A struct final ficou:
+\begin{lstlisting}[language=C]
+typedef struct Variable {
+    char variable_name[MAX_WORD]; // Nome da variavel
+    int variable_tag; // Identificador da variavel
+    int variable_num_nexts; // Numero de filhos da variavel
+    char token[MAX_WORD]; // Identificador operandos e operadores
+    int rule_num; // Identificador da regra da variavel
+    
+    // Numero de simbolos na regra escolhida da variavel
+    char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
+    
+    // Filhos da variavel
+    struct Variable *variable_list[MAX_CHILD_RULES];
+    
+    // Analisador semantico: Tipo sintetizado do noh
+    char type_syn[MAX_WORD];
+} Variable;
+\end{lstlisting}
+\end{itemize}
+
+\indent Um exemplo de código em siC é apresentado a seguir. O programa adiciona três elementos numa fila de inteiros e depois eles são somados um a um e armazenados na variável \textit{sum}. Ao final, a variável \textit{lixo}, recém retirada da fila, é adicionada à \textit{sum}. Nesse sentido, o resultado final de sum deve ser 6. \\
 \begin{lstlisting}[language=C]
 VOID main () {
     QUEUE<INT> q;
     INT sum, INT lixo;
 
-    q = q.setlast->0;
+    q = q.setlast->0; // Primeiro da fila
     q = q.setlast->1;
     q = q.setlast->2;
-    q = q.setlast->3;    
+    q = q.setlast->3; // Ultimo da fila
     sum = 0;
     
-    WHILE (q.FIRST != 0) {    
-        sum = (sum + q.FIRST);
+    WHILE (q.FIRST != 3) {    
+        sum = (sum + q.FIRST); // Soma 0 + 1 + 2 nas interacoes
         lixo = q.rmvfirst;
     }
-    sum = sum + lixo;
+    sum = sum + lixo; // Soma = Soma passada + 3
 
     RETURN 0;
 }
 
 \end{lstlisting}
 
-\section{MUDANCAS PARA O ANALISADOR SEMANTICO}
+\subsection{Erros sintáticos}
 
+\indent Foram reconhecidos 5 erros semânticos em siC. Em ordem de aparição no arquivo de erro:
 \begin{itemize}
-\item Tabela de símbolos não é mais vetor de strings, mas sim tabela hash da biblioteca \textit{uthash}, indexada pelo nome do símbolo e cujo valor é uma struct com nome, tipo e escopo do símbolo
-\item A variavel id\_index que indexava os simbolos na tabela de simbolos foi trocada por symbol\_ids que é um vetor das strings (IDs) contidos em cada regra da gramática (serve mais para imprimir árvore na tela)
-\item Foi adicionado atributo sintetizado na struct das Variáveis para que o tipo dos valores lidos (NUM\_INT, NUM\_FLOAT, NUM\_CHAR, ID) sejam sintetizados na árvore ("subam")
-\item Foi adicionado atributo herdados na struct das Variáveis para que o tipo do ID seja herdado da sua declaração (variáveis e nome de funções)
+\item[1] \textbf{(sem) ERROR on line x : 'x' redeclared as different kind of symbol:} Erro ocorre quando variável está sendo declarada pela segunda vez (ou mais);
+\item[2] \textbf{(sem) ERROR on line x : 'x' undeclared:} Erro ocorre quando variável está sendo utilizada, porém não foi declarada nem no escopo corrente, nem nos escopos alcançáveis pelo escopo corrente;
+\item[3] \textbf{(sem) ERROR on line x : variable or field 'x' declared void:} Erro ocorre quando variável é declarada como \textbf{void};
+\item[4] \textbf{(sem) ERROR on line x : void value not ignored as it ought to be:} Erro ocorre quando algum ID tenta receber valor de retorno de uma função do tipo \textit{void}, ou quando existe alguma operação matemática envolvendo algum operando do tipo \textit{void};
+\item[5] \textbf{(sem) ERROR on line x : invalid operands to binary + (have 'x' and 'x'):} Erro ocorre quando existe alguma operação matemática envolvendo algum operando do tipo fila.
 \end{itemize}
+
+\subsection{Dificuldades enfrentadas}
+
+\indent A tarefa mais difícil desta etapa foi a definição dos escopos das variáveis, uma vez que levei bastante tempo para manipular bem as ações semânticas. Para contabilizar o escopo corretamente dentro dos blocos, foi necessário aplicar uma ação chamada \textit{Mid-Rule Actions} \cite{gnuMidRule}. Abaixo está a seção do código em que foi usado este tipo de ação, na variável \textit{block}, que é utilizado sempre ao final das regras IF, IF-ELSE e WHILE, que sempre terminam ou com uma lista de \textit{statments} delimitada por chaves ou por apenas um \textit{statment} sem delimitação por chaves. O escopo, porém, deve ser contabilizado nas regras entre o ')' e block (como é feito em C), ou dentro das regras IF, IF-ELSE e WHILE, entre '(' e block (como é feito em java onde é possível fazer \textit{for(\textbf{int} i = 0; i < n; i++)}). Então a maneira mais fácil que encontrei para isto foi alicar a \textit{Mid-Rule }antes dos statments, na regra do bloco.
+
+\begin{lstlisting}[language=C]
+// ...
+stmt:	IF '(' value compare_assignment value ')' block
+
+// ...
+
+block:  {higher_scope++; scope++;}  stmt { // ...
+				| '{'  {higher_scope++; scope++; } stmtList '}'  { // ...
+// ...
+\end{lstlisting}
 
 %\section{Geração de código intermediário}
 
@@ -434,6 +492,11 @@ ANSI C Yacc grammar, \url{http://www.quut.com/c/ANSI-C-grammar-y.html}, 18 12 20
 
 \bibitem{flex}
 Flex: The Fast Lexical Analyser, \url{http://flex.sourceforge.net/}, The Flex Project, 2008
+
+\bibitem{gnuMidRule}
+ Using Mid-Rule Actions, \url{https://www.gnu.org/software/bison/manual/html_node/Using-Mid_002dRule-Actions.html}
+ \hskip 1em plus
+	0.5em minus 0.4em\relax  visitado em 04-11-2016
 \end{thebibliography}
 %------------------------------------------------
 \end{document}
