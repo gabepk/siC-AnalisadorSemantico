@@ -5,11 +5,11 @@
                             int c;
                             if (c < a) { // Escopo 2
                                 int d;
-                                if (1==1) { // Escopo 3
+                                if (1==1) { // Escopo 3 e03
                                     int e;
                                     d = c;
-                                    if (1==1) { // Escopo 4
-                                        b = c;
+                                    if (1==1) { // Escopo 4 e04
+                                        b = e;
                                     }
                                     while (a > b) { // Escopo 5
                                         b = b + 1;
@@ -18,34 +18,28 @@
                                 if (5==5) { // Escopo 6
                                     char f;
                                 }
-                                c = b;
+                                f = a; // FORA DE ESCOPO
                             }
-                            k = l + m;
-                            
-                            if (1==1)  // Escopo 7
-                                int a;
-                            if (1==1)  //  Escopo 8
-                                int b;
-                            if (1==1)  //  Escopo 9
-                                int c;
+                            e = c + d; // E e D FORA DE ESCOPO
                             a = b.rmvfirst;
                             return c;
                         }
 
-                        int main () { //  Escopo 10
+                        int main () { //  Escopo 7
                             queue<char> t;
                             char u;
                             int w;
                             u = 'a';
                             w = 1;
                             
-                            x.setlast->y;
+                            x.setlast->y; // FORA DE ESCOPO - NAO DECLARADAS
                             
-                            if (u >= w) { //  Escopo 11
+                            if (u >= w) { //  Escopo 8
                                 int z;
                                 z = condicao(u, w);
                                 u = 2 + 2;
                             }
                             
-                            return z;
+                            return z; // FORA DE ESCOPO
                         } 
+

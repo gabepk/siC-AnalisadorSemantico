@@ -2,7 +2,7 @@
 #define structs_h
 
 #define HIGHEST_SCOPE 0
-#define MAX_SCOPES 20
+#define MAX_SCOPES 10
 #define MAX_SYMBOLS_FOR_RULE 3
 #define MAX_CHILD_RULES 5
 #define MAX_WORD 64
@@ -17,7 +17,7 @@ extern int yylineno;
 char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
 struct symbol_hash_table *symbols = NULL;
 
-int scope_matrix[MAX_SCOPES][MAX_SCOPES];
+int scope_matrix[MAX_SCOPES][MAX_SCOPES]; // Matriz de onde a variavel foi declarada
 int scope = 1; // Soh incrementa
 int func_scope = 0;
 int higher_scope = 0; // incrementa e decrementa
@@ -30,7 +30,7 @@ typedef struct symbol_hash_table {
     char key[MAX_WORD+4];
     char str_id[MAX_WORD];
     char type[MAX_WORD];
-    int scope;
+    int scope; // Diz onde variavel esta sendo acessada
     int higher_scope;
     int func_scope;
     UT_hash_handle hh;
@@ -63,7 +63,6 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
     *(v->variable_list) = *list;
     strcpy(v->token, "END");
     v->rule_num = rule_num;
-    //v->symbol_ids = sym_ids;
     
     memcpy(v->symbol_ids, sym_ids, sizeof(symbol_ids));
 
@@ -386,7 +385,7 @@ void show_tree(Variable *root, int tabs, int index) {
 // --------------------- MATRIZ DE ESCOPO -------------------------
 // ----------------------------------------------------------------
 
-void include_higher_scopes(int line_matrix, int this_higher_scope, int this_scope) {
+void include_higher_scopes(int this_higher_scope, int this_scope) {
     int j;
     scope_matrix[this_scope][this_scope] = 1;
     for (j = this_higher_scope; j >= 0; j--)
@@ -421,87 +420,94 @@ void show_scope_matrix() {
 // ----------------------------------------------------------------
 
 
-int on_reachable_escope(char *s, int scope) {
+symbol_hash_table* on_reachable_escope(char *s, int scope) {
     symbol_hash_table *symbol;
     int i;
-    
-    char key[MAX_WORD+4];
-    char str_scope[2];
-    char str_func_scope[2];
-    
-    sprintf(str_func_scope, "%d", func_scope);
+    char key[MAX_WORD+2];
+    strcpy(key, s);
+    key[strlen(s)] = (char) func_scope + '0';
     
     for (i=0; i<MAX_SCOPES; i++) {
         if (scope_matrix[scope][i] == 1) {
-            strcpy(key, s);
-            sprintf(str_scope, "%d", i);
-            strcat(key, str_scope);
-            strcat(key, str_func_scope);
+            
+            key[strlen(s) + 1] = (char) i + '0';
+            key[strlen(s) + 2] = '\0';
+            printf("Procurando : %s\n", key);
             
             HASH_FIND_STR(symbols, key, symbol);
-            if (symbol != NULL) return 1;
+            if (symbol != NULL) {
+                printf("ALCANCOL: %s, func %d, scope %d\n", symbol->str_id, func_scope, symbol->scope);
+                return symbol;
+            }
         }
     }
-    return 0;
+    return NULL;
 }
 
-/*
- VARIAVEL NAO PODE SER VOID
- FUNCAO PODE SER VOID
- */
-// if var_or_func == 0 (var), var_or_func == 1 (func)
-void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scope, int higher_scope) {
-    symbol_hash_table *symbol;
-    
-    char key[MAX_WORD+4];
-    char str_scope[2];
-    char str_func_scope[2];
+// var_func_num = (0 eh var, 1 eh func, 2 e num)
+void add_symbol_on_hash_table (char *s, char type_s[], int var_func_num, int scope, int higher_scope) {
+    symbol_hash_table *symbol, *symbol_next_escope;
+    char key[MAX_WORD+2];
     
     strcpy(key, s);
-    sprintf(str_scope, "%d", scope);
-    strcat(key, str_scope);
-    
-    sprintf(str_func_scope, "%d", func_scope);
-    strcat(key, str_func_scope);
-    
+    key[strlen(s)] = (char) func_scope + '0';
+    key[strlen(s) + 1] = (char) scope + '0';
+    key[strlen(s) + 2] = '\0';
     
     HASH_FIND_STR(symbols, key, symbol);
-    printf("\n\n");
-    printf("key: %s\n", key);
-    printf("s: %s\n", s);
-    printf("type_s: %s\n", type_s);
-    printf("var_or_func: %d\n", var_or_func);
-    printf("scope: %d\n", scope);
-    printf("higher_scope: %d\n", higher_scope);
-    printf("\n\n");
     
     
-    if (symbol != NULL) {} // eSTA NA TABELA DE SIMBOLOS. VERIFICAR ESCOPO
-    /*
-     Problema: eu quero o mesmo nome de variavel em dois escopos diferentes.
-     ID da hash tabel não pode ser o nome da variavel, entao
-     Tem que ser nome+scopo+funcao
-     
-     */
+        printf("\n\n");
+        printf("key: %s\n", key);
+        printf("s: %s\n", s);
+        printf("type_s: %s\n", type_s);
+        printf("scope: %d\n", scope);
+        printf("\n\n");
     
-    else {
-        if ((strcmp(type_s, "?") == 0) && (on_reachable_escope(s, scope) == 0)) {
-            printf("(sem) ERROR on line %d : '%s' undeclared\n", yylineno, s);
+    if (symbol != NULL) {
+        // O nome desta variavel ja existe e ela foi declarada naquele escopo e naquela funcao
+        
+         // Declaracao 2x no mesmo escopo: TODO ARRUMAR
+        if ((strcmp(type_s, "?") != 0) && (var_func_num != 2)) /* && (on_reachable_escope(s, scope) != NULL))*/ {
+            printf("(sem) ERROR on line %d : '%s' redeclared as different kind of symbol\n", yylineno, s);
             return;
         }
-        if ((strcmp(type_s, "void") == 0) && (var_or_func == 0)) { // Variavel do tipo void
+        
+    }
+    
+    else { // Variavel nao encontrada 
+        
+        // Se ela tem tipo == "?", ela nao esta sendo declarada
+        if (strcmp(type_s, "?") == 0) {
+            printf("Estou aqui e type_s : %s\n", type_s);
+            // E se ela nao foi declarada nos escopos acessiveis anteriores, ela nao existe para este escopo
+            if (on_reachable_escope(s, scope) == NULL) {
+                printf("(sem) ERROR on line %d : '%s' undeclared\n", yylineno, s);
+                return;
+            }
+            else {
+                // Ela ja existe e ja esta na tabela
+                return;
+            }
+        }
+        // Erro ocorre se uma variavel (var_func_num == 0) eh declarada como void
+        if ((strcmp(type_s, "void") == 0) && (var_func_num == 0)) { // Variavel do tipo void
             printf("(sem) ERROR on line %d : variable or field '%s' declared void\n", yylineno, s);
             return;
         }
         
-        symbol = (symbol_hash_table*)malloc(sizeof(symbol_hash_table));
-        strcpy(symbol->str_id, s);
-        strcpy(symbol->type, type_s);
-        symbol->scope = scope;
-        symbol->higher_scope = higher_scope;
-        symbol->func_scope = func_scope;
         
-        include_higher_scopes(scope, higher_scope, scope);
+            
+        // Declaracao de variavel
+        symbol = (symbol_hash_table*)malloc(sizeof(symbol_hash_table));
+        strcpy(symbol->key, key); // Copia chave: nome + funcao + escopo
+        strcpy(symbol->str_id, s); // Copia nome
+        strcpy(symbol->type, type_s); // Copia tipo
+        symbol->scope = scope; // Copia escopo
+        symbol->higher_scope = higher_scope; // Copia escopo anterior
+        symbol->func_scope = func_scope; // Copia funcao
+        
+        include_higher_scopes(higher_scope, scope); // Inclui na lista de seus escopos todos os escopos do anterior
         
         HASH_ADD_STR(symbols, key, symbol);
     }
@@ -509,21 +515,18 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scop
 
 char* get_type_hash_table(char *s, int scope, int func_scope) {
     symbol_hash_table *symbol;
-    
-    char key[MAX_WORD+4];
-    char str_scope[2];
-    char str_func_scope[2];
+    char key[MAX_WORD+2];
     
     strcpy(key, s);
-    sprintf(str_scope, "%d", scope);
-    strcat(key, str_scope);
-    
-    sprintf(str_func_scope, "%d", func_scope);
-    strcat(key, str_func_scope);
+    key[strlen(s)] = (char) func_scope + '0';
+    key[strlen(s) + 1] = (char) scope + '0';
+    key[strlen(s) + 2] = '\0';  
     
     HASH_FIND_STR(symbols, key, symbol);
-    if (symbol != NULL)
+    if (symbol != NULL) {
+        printf("TIPO: %s : %s\n", symbol->str_id, symbol->type);
         return symbol->type;
+    }
     return "?";
 }
 

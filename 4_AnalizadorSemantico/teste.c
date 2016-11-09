@@ -1,4 +1,5 @@
 void olar (int x) {
+	int x;
     x = x + x;
     return;
 }

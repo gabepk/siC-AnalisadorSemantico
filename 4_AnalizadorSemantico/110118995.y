@@ -41,7 +41,7 @@ int yylex(void);
 program_start:  program { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    $$ = new_variable(0, 1, &varList, 0, 1, symbol_ids); 
-                                   printf("\n\t\t[ Arvore Sintatica: ]\n\n"); show_tree($$, 0, 0);}
+                                   printf("\n\t\t[ Arvore Sintatica: ]\n\n"); /*show_tree($$, 0, 0);*/}
                 ;
 
 program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
@@ -57,7 +57,7 @@ program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(
 
 function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    strcpy(symbol_ids[0], $2);
-                                   add_symbol_on_hash_table($2, ($1)->type_syn, 1, HIGHEST_SCOPE, HIGHEST_SCOPE); // ID recebe tipo herdado de type_struct
+                                   add_symbol_on_hash_table($2, ($1)->type_syn, 1, scope, HIGHEST_SCOPE); // ID recebe tipo herdado de type_struct
                                    Variable *varList = (Variable *) malloc (4 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($4);
@@ -85,27 +85,27 @@ valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2
                 
 value:          NUM_INT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "int", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
+                                    add_symbol_on_hash_table($1, "int", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "int");
                                     $$ = new_variable(4, 1, &varList, $1, 1, symbol_ids); }
                 | NUM_FLOAT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "float", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
+                                    add_symbol_on_hash_table($1, "float", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "float");
                                     $$ = new_variable(4, 1, &varList, $1, 2, symbol_ids);}
                 | CARACTERE { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "char", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
+                                    add_symbol_on_hash_table($1, "char", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "char");
                                     $$ = new_variable(4, 1, &varList, $1, 3, symbol_ids);}
                 | ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "?", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
+                                    add_symbol_on_hash_table($1, "?", 0, scope, HIGHEST_SCOPE); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
                                     $$ = new_variable(4, 1, &varList, $1, 4, symbol_ids);}
                 | ID '.' FIRST { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
-                                    add_symbol_on_hash_table($1, "?", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
+                                    add_symbol_on_hash_table($1, "?", 0, scope, HIGHEST_SCOPE); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
                                     $$ = new_variable(4, 1, &varList, $1, 5, symbol_ids);}
                 ;
@@ -329,4 +329,5 @@ int main(void) {
     show_scope_matrix();
     return 0;
 }
+
 
