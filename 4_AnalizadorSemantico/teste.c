@@ -4,6 +4,7 @@ void olar (int x) {
 }
 
 int main () {
+    int c = 0;
     int x = 2;
     char y = '3';
     
@@ -13,7 +14,7 @@ int main () {
     x = f + x;
     
     for (x=0; x <5; x++) {
-        int c = 0;
+        char c = 0;
         c++;
     }
     

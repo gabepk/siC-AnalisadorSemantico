@@ -1,54 +1,51 @@
-int condicao(int a, int b) {
-    int c;
-    if (d < e) {
-        int f;
-        if (1==1) {
-            int g;
-            h = h;
-            while (1==1) {
-                int i;
-            }
-            while (1==1) {
-                int ii;
-                while (1==1) {
-                    int iii;
-                    while (1==1) {
-                        int iiii;
-                    }
-                }
-            }
-        }
-        if (5==5) {
-            char yy;
-        }
-        j = j;
-    }
-    k = l + m;
-    
-    if (1==1)  // Comentario
-        int n;
-    if (1==1)  // Comentario
-        int o;
-    if (1==1)  // Comentario
-        int p;
-    q = r.rmvfirst; // Comentario
-    return s; // Comentario
-}
 
-int main () {
-    queue<char> t;
-    char u;
-    int w;
-    u = 'a';
-    w = 1;
-    
-    x.setlast->y;
-    
-    if (u >= w) {
-        int z;
-        z = condicao(u, w);
-        u = 2 + 2;
-    }
-    
-    return z;
-} 
+                        //  Escopo 0
+
+                        int condicao(int a, int b) { // Escopo 1
+                            int c;
+                            if (c < a) { // Escopo 2
+                                int d;
+                                if (1==1) { // Escopo 3
+                                    int e;
+                                    d = c;
+                                    if (1==1) { // Escopo 4
+                                        b = c;
+                                    }
+                                    while (a > b) { // Escopo 5
+                                        b = b + 1;
+                                    }
+                                }
+                                if (5==5) { // Escopo 6
+                                    char f;
+                                }
+                                c = b;
+                            }
+                            k = l + m;
+                            
+                            if (1==1)  // Escopo 7
+                                int a;
+                            if (1==1)  //  Escopo 8
+                                int b;
+                            if (1==1)  //  Escopo 9
+                                int c;
+                            a = b.rmvfirst;
+                            return c;
+                        }
+
+                        int main () { //  Escopo 10
+                            queue<char> t;
+                            char u;
+                            int w;
+                            u = 'a';
+                            w = 1;
+                            
+                            x.setlast->y;
+                            
+                            if (u >= w) { //  Escopo 11
+                                int z;
+                                z = condicao(u, w);
+                                u = 2 + 2;
+                            }
+                            
+                            return z;
+                        } 

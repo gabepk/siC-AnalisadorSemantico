@@ -27,6 +27,7 @@ int higher_scope = 0; // incrementa e decrementa
 // ----------------------------------------------------------------
 
 typedef struct symbol_hash_table {
+    char key[MAX_WORD+4];
     char str_id[MAX_WORD];
     char type[MAX_WORD];
     int scope;
@@ -388,14 +389,9 @@ void show_tree(Variable *root, int tabs, int index) {
 void include_higher_scopes(int line_matrix, int this_higher_scope, int this_scope) {
     int j;
     scope_matrix[this_scope][this_scope] = 1;
-    scope_matrix[this_scope][this_higher_scope] = 1;
-    
-    /*if (line_matrix == 0) return;
-    
-    for (j = scope-1; j >= 0; j--) {       
-        if (scope_matrix[line_matrix][j] == 1)
-            include_higher_scopes(j, this_higher_scope, this_scope);
-    }*/
+    for (j = this_higher_scope; j >= 0; j--)
+        scope_matrix[this_scope][j] = 1;
+    return;
 }
 
 void show_scope_matrix() {
@@ -405,13 +401,13 @@ void show_scope_matrix() {
     int i, j;
     
     printf("Escopos: \t");
-    for(i=0; i<scope; i++) {
+    for(i=0; i<=scope; i++) {
         printf("%d  ", i);
     }
     printf("\n\n");
-    for(i=0; i<scope; i++) {
+    for(i=0; i<=scope; i++) {
         printf("Escopo %d:\t", i);
-        for(j=0; j<scope; j++)
+        for(j=0; j<=scope; j++)
             printf("%d  ", scope_matrix[i][j]);
         printf("\n");
     }
@@ -421,9 +417,33 @@ void show_scope_matrix() {
 }
 
 // ----------------------------------------------------------------
-// -------------------- TABELA DE SIMBOLOS ------------------------
+// ---------------------- TABELA DE SIMBOLOS ----------------------
 // ----------------------------------------------------------------
 
+
+int on_reachable_escope(char *s, int scope) {
+    symbol_hash_table *symbol;
+    int i;
+    
+    char key[MAX_WORD+4];
+    char str_scope[2];
+    char str_func_scope[2];
+    
+    sprintf(str_func_scope, "%d", func_scope);
+    
+    for (i=0; i<MAX_SCOPES; i++) {
+        if (scope_matrix[scope][i] == 1) {
+            strcpy(key, s);
+            sprintf(str_scope, "%d", i);
+            strcat(key, str_scope);
+            strcat(key, str_func_scope);
+            
+            HASH_FIND_STR(symbols, key, symbol);
+            if (symbol != NULL) return 1;
+        }
+    }
+    return 0;
+}
 
 /*
  VARIAVEL NAO PODE SER VOID
@@ -432,10 +452,40 @@ void show_scope_matrix() {
 // if var_or_func == 0 (var), var_or_func == 1 (func)
 void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scope, int higher_scope) {
     symbol_hash_table *symbol;
-    HASH_FIND_STR(symbols, s, symbol);
     
-    if (symbol == NULL) {
-        if (strcmp(type_s, "?") == 0) {
+    char key[MAX_WORD+4];
+    char str_scope[2];
+    char str_func_scope[2];
+    
+    strcpy(key, s);
+    sprintf(str_scope, "%d", scope);
+    strcat(key, str_scope);
+    
+    sprintf(str_func_scope, "%d", func_scope);
+    strcat(key, str_func_scope);
+    
+    
+    HASH_FIND_STR(symbols, key, symbol);
+    printf("\n\n");
+    printf("key: %s\n", key);
+    printf("s: %s\n", s);
+    printf("type_s: %s\n", type_s);
+    printf("var_or_func: %d\n", var_or_func);
+    printf("scope: %d\n", scope);
+    printf("higher_scope: %d\n", higher_scope);
+    printf("\n\n");
+    
+    
+    if (symbol != NULL) {} // eSTA NA TABELA DE SIMBOLOS. VERIFICAR ESCOPO
+    /*
+     Problema: eu quero o mesmo nome de variavel em dois escopos diferentes.
+     ID da hash tabel não pode ser o nome da variavel, entao
+     Tem que ser nome+scopo+funcao
+     
+     */
+    
+    else {
+        if ((strcmp(type_s, "?") == 0) && (on_reachable_escope(s, scope) == 0)) {
             printf("(sem) ERROR on line %d : '%s' undeclared\n", yylineno, s);
             return;
         }
@@ -453,13 +503,25 @@ void add_symbol_on_hash_table (char *s, char type_s[], int var_or_func, int scop
         
         include_higher_scopes(scope, higher_scope, scope);
         
-        HASH_ADD_STR(symbols, str_id, symbol);
+        HASH_ADD_STR(symbols, key, symbol);
     }
 }
 
-char* get_type_hash_table(char *s) {
+char* get_type_hash_table(char *s, int scope, int func_scope) {
     symbol_hash_table *symbol;
-    HASH_FIND_STR(symbols, s, symbol);
+    
+    char key[MAX_WORD+4];
+    char str_scope[2];
+    char str_func_scope[2];
+    
+    strcpy(key, s);
+    sprintf(str_scope, "%d", scope);
+    strcat(key, str_scope);
+    
+    sprintf(str_func_scope, "%d", func_scope);
+    strcat(key, str_func_scope);
+    
+    HASH_FIND_STR(symbols, key, symbol);
     if (symbol != NULL)
         return symbol->type;
     return "?";

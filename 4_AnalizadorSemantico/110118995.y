@@ -101,12 +101,12 @@ value:          NUM_INT { Variable *varList = (Variable *) malloc (1 * sizeof(Va
                 | ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "?", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
-                                    strcpy(varList->type_syn, get_type_hash_table($1));
+                                    strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
                                     $$ = new_variable(4, 1, &varList, $1, 4, symbol_ids);}
                 | ID '.' FIRST { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "?", 0, HIGHEST_SCOPE, HIGHEST_SCOPE); // escopo desconhecido
-                                    strcpy(varList->type_syn, get_type_hash_table($1));
+                                    strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
                                     $$ = new_variable(4, 1, &varList, $1, 5, symbol_ids);}
                 ;
 
