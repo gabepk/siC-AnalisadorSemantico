@@ -81,7 +81,7 @@ Este trabalho visa projetar e construir uma nova linguagem chamada de siC - Stru
 
 \indent A seguir será apresentada a gramática da linguagem siC, baseada em C \cite{yacc}. Alguns comentários são feitos ao longo da gramática para facilitar o entendimento das variáveis e nomenclatura utilizada. As palavras reservadas da linguagem são representadas aqui como \textit{tokens}. As variáveis e constantes são representadas como \textit{identifiers}, que por sua vez é uma expressão regular, e a única diferença entre este e \textit{identifier\_struct} é que o segundo tem acesso ao início da fila caso este seja o tipo do \textit{identifier}. 
 
-\indent Antes de apresentá-la, segue abaixo algumas alterações e correções do analisador léxico para o analisador sintático. \textbf{Nenhuma alteração foi feita na gramática do analisador sintático para o semântico}.
+\indent Antes de apresentá-la, segue abaixo algumas alterações e correções do analisador léxico para o analisador sintático. \textbf{Nenhuma alteração foi feita na gramática do analisador sintático para o semântico, nem do semântico para a geração de código intermediário}.
 
 \begin{itemize}
 	\item[1] As variáveis \textit{argument}, \textit{compare\_expression} e \textit{type\_queue} foram removidas para aumentar a simplicidade da gramática, uma vez que elas possuiam apenas uma regra;
@@ -492,9 +492,50 @@ block:  {higher_scope++; scope++;}  stmt { // ...
 // ...
 \end{lstlisting}
 
-%\section{Geração de código intermediário}
 
-% \section{Considerações finais}
+\section{Geração de código intermediário}
+
+
+\indent A fase de geração de código tem por objetivo diminuir o esforço de tradução de um código na linguagem escolhida para \textit{assembly} e, em seguida, código de máquina. A partir da árvore sintática anotada obtida após a análise semântica, é possível criar um código de três endereços, próximo ao \textit{assembly}. É possível, também, otimizar a representação dos dados em expressões utilizando grafo (grafo acíclico direcionado) ao invés de árvore, onde os nós internos são os operadores e as folhas são os operandos. Caso um operando seja utilizado duas vezes na expressão, haverão duas setas apontando para ele. Assim, a economia de espaço além gerar um código mais sucinto, também o faz mais eficiente.
+
+\indent O grafo descrito acima gera código de três endereços utilizando variáveis temporárias. Para o armazenamento dessas instruções, existem três estruturas (\textit{records}) que realizam esta tarefa \cite{book}: quadrupla, tripla e tripla indireta. A quadrupla é uma matriz de 4 colunas, operação, argumento 1, argumento 2 e resultado. Observe na Figura \ref{fig:quadruple} que cada linha do código gerado é representado facilmente por uma linha na tabela. Essa estrutura, porém, deixa a desejar na questão de economia de espaço uma vez que instruções com menos de três endereços não utilizando o segundo argumento. Além disso, a coluna de resultados poderia ser facilmente eliminada.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{quadruple.png}
+  \caption{Criação de \textit{record} quadrupla.} \label{fig:quadruple}
+\end{figure}
+
+\indent A estrutura tripla resolve estes problemas de otimização utilizando ponteiros para as linhas da tabela, que representam os próprios resultados. Observe na Figura \ref{fig:triple} que cada linha do código de três endereços representa uma tripla. Isto é bom no sentido de economia de espaço, porém pode não gerar um código tão eficiente, uma vez que algumas instruções seriam mais apropriadas se mudassem de lugar no código. Isto não é possível nas triplas devido às referencias diretas às linhas com ponteiros. Por exemplo, pode ser mais apropriado a declaração de todas as variáveis antes do programa de fato começar. 
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{triple.png}
+  \caption{Criação de \textit{record} tripla.} \label{fig:triple}
+\end{figure}
+
+\indent A estrutura tripla indireta resolve este problema ao utilizar uma outra tabela separadamente para referenciar as linhas na ordem de execução, deixam a outra tabela (tripla) como estava originalmente, conforme a Figura \ref{fig:indirectTriple} apresenta. 
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{indirectTriple.png}
+  \caption{Criação de \textit{record} tripla indireta.} \label{fig:indirectTriple}
+\end{figure}
+
+\indent Para a representação dos tipos das variáveis, são usados estruturas chamadas \textbf{expressões de tipos}. Essas são árvores construídas dentro das ações semânticas da gramática com o objetivo de estabelecer checagem de tipo no código. Duas expressões de tipos somente são equivalentes se possuem o mesmo tipo básico, são construídas aplicando-se a mesma estrutura e se um denota o outro a partir de do nome do seu tipo.
+
+\subsection{Arquivo codigo\_gerado.inter}
+
+\indent Nesta fase foi implementada após certas regras da gramática algumas funções para impressão do código intermediário em um arquivo chamado \textit{codigo\_gerado.inter}. Foi feito esforço para que ele apresentasse o mesmo código dos programas em ".sic" em três endereços, entretanto, o código não foi gerado corretamente. Devido à falhas de compreensão das tarefas nesta etapa, não foi possível definir ações fortes o suficiente para geração eficiente e completa de código de três endereços.
+
+\indent Para gerar o código executável, é necessário apenas executar \textit{make}.
+
+\indent Já para gerar o código intermediário, é necessário executar:\\
+\indent ./sic\_compiler < teste\_correto.sic
+
+\section{Trabalhos Futuros}
+
+\indent Para completar este trabalho, é necessário implementar operações com variáveis do tipo fila; implementar expressões de tipo para o tipo fila, uma vez que além deste tipo só existe tipo simples (void, float, int e char); Criação de estrutura quadrupla, tripla ou tripla indireta, para o armazenamento de código de três endereços. De preferência, tripla indireta, uma vez que o código gerado pode ser otimizado mais facilmente. Por fim, é necessário criar um arquivo intermediário de qualidade que se assemelhe com \textit{assembly} para a implementação da tradução do programa sic.
 
 \begin{thebibliography}{1}
 \bibitem{book}

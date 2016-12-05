@@ -1,0 +1,22 @@
+
+int main () {
+    queue<char> q;
+    int 0i0;
+    int j1;
+    float k;
+    i = 10;
+    j = 1;
+    k = 0.0a0;
+    
+    if (i >= j) {
+	k = i + 0.5;
+    }
+    
+    // Aqui, o valor de i será igual ao número de elementos da pilha "q"
+    while (i ! 0) {
+	q = q + '';
+	i = i - 1;
+    }
+    
+    return @;
+}

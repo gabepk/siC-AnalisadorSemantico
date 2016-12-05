@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+FILE *fp;
+
 extern int yylineno;
 char symbol_ids[MAX_SYMBOLS_FOR_RULE][MAX_WORD];
 struct symbol_hash_table *symbols = NULL;
@@ -53,6 +55,25 @@ typedef struct Variable {
     // Analizador semantico: tipo sintetizado
     char type_syn[MAX_WORD];
 } Variable;
+
+// ----------------------------------------------------------------
+// ------------------------- QUADRUPLA ----------------------------
+// ----------------------------------------------------------------
+
+typedef struct Quadruple_Stack {
+    struct Quadruple *top;
+} Quadruple_Stack;
+
+typedef struct Quadruple {
+    char op; // + (0), - (1), * (2), / (3)
+    Variable *arg1;
+    Variable *arg2;
+    Variable *result;
+    struct Quadruple_Stack *next;
+} Quadruple;
+
+// Variavle global
+struct Quadruple_Stack *qs;
 
 // ----------------------------------------------------------------
 // ----------------- ADICAO DE NOS NA ARVORE ----------------------
@@ -163,7 +184,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
                 v->variable_tag = 14;
                 break;
                 
-            case (14):
+            case (15):
                 strcpy(v->variable_name, "TypeStructExpression");
                 v->variable_tag = 15;
                 
@@ -398,6 +419,7 @@ void show_tree(Variable *root, int tabs, int index) {
     return;
 }
 
+
 // ----------------------------------------------------------------
 // --------------------- MATRIZ DE ESCOPO -------------------------
 // ----------------------------------------------------------------
@@ -603,5 +625,85 @@ void show_symbol_table() {
     }
     return;
 }
+
+
+
+// ----------------------------------------------------------------
+// ------------------------- QUADRUPLA ----------------------------
+// ----------------------------------------------------------------
+
+void create_quadruple_stack() {
+    qs = (Quadruple_Stack *) malloc(sizeof(Quadruple_Stack));
+    qs->top = NULL;
+    return;
+}
+
+void push_quadruple(Quadruple *q) {
+    q->next = qs;
+    qs->top = q;
+    return;
+}
+
+Quadruple *pop_quadruple() {
+    Quadruple *q = (Quadruple *) malloc(sizeof(Quadruple));
+    q = qs->top;
+    
+    qs = q->next;
+    if (q->next != NULL)
+        qs->top = (q->next)->top;
+    
+    return q;
+}
+
+void add_in_quadruple (char op, Variable *arg1, Variable *arg2) {
+    Quadruple *q = (Quadruple *) malloc(sizeof(Quadruple));
+    Variable *result = (Variable *) malloc(sizeof(Variable));
+    
+    q->op = op;
+    q->arg1 = arg1;
+    q->arg2 = arg2;
+    q->result = result;
+
+    push_quadruple(q);
+    return;
+}
+
+// ----------------------------------------------------------------
+// ------------------- CODIGO INTERMEDIARIO -----------------------
+// ----------------------------------------------------------------
+
+void create_intermediary_code() {
+    Quadruple *q;
+    char a[2], b[2], c[2];
+    strcpy(a, "1"); strcpy(b, "2"); strcpy(c, "3");
+    
+    q = pop_quadruple();
+    while (q) {
+        switch (q->op) {
+            case '+':
+                fprintf(fp, "%s = add %s %s;\n", a,b,c); // result = arg1 + arg2
+                break;
+            case '-':
+                fprintf(fp, "%s = sub %s %s;\n", a,b,c); // result = arg1 - arg2
+                break;
+            case '*':
+                fprintf(fp, "%s = mult %s %s;\n", a,b,c); // result = arg1 * arg2
+                break;
+            case '/':
+                fprintf(fp, "%s = div %s %s;\n", a,b,c); // result = arg1 / arg2
+                break;
+            case ' ':
+                fprintf(fp, "%s = %s;\n", a,b); // result = arg1
+                break;
+            default:
+                printf("Error on quadruple stack");
+                exit(1);
+                break;
+        }
+        q = pop_quadruple();
+    }
+    return;
+}
+
 
 #endif /* structs_h */

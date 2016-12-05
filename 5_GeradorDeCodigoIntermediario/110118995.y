@@ -47,7 +47,7 @@ program_start:  program { Variable *varList = (Variable *) malloc (2 * sizeof(Va
 program:	program function { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($2);
-                                   $$ = new_variable(1, 2, &varList, 0, 1, symbol_ids);  }
+                                   $$ = new_variable(1, 2, &varList, 0, 1, symbol_ids);}
                 | function { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    scope++;
@@ -64,6 +64,7 @@ function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
                                    varList[2] = *($7);
                                    varList[3] = *($9);
                                    $$ = new_variable(2, 4, &varList, 0, 1, symbol_ids);
+                                   //fprintf(fp, "%s %s ( s ) {\n\ts\nreturn s;\n}\n\n", $$->type_syn, $2);
                                    }
                 ;
                 
@@ -72,7 +73,8 @@ function:	type_struct ID '(' argList ')' '{' stmtList RETURN value ';' '}' {
 valueList:      valueList ',' value { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
-                                   $$ = new_variable(3, 2, &varList, 0, 1, symbol_ids); }
+                                   $$ = new_variable(3, 2, &varList, 0, 1, symbol_ids);
+                                   }//fprintf(fp, ",");}
                 | value { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    $$ = new_variable(3, 1, &varList, 0, 2, symbol_ids); }
@@ -87,27 +89,36 @@ value:          NUM_INT { Variable *varList = (Variable *) malloc (1 * sizeof(Va
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "int", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "int");
-                                    $$ = new_variable(4, 1, &varList, $1, 1, symbol_ids); }
+                                    $$ = new_variable(4, 1, &varList, $1, 1, symbol_ids);
+                                    }//fprintf(fp, " %s", $1); }
+                                    
                 | NUM_FLOAT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "float", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "float");
-                                    $$ = new_variable(4, 1, &varList, $1, 2, symbol_ids);}
+                                    $$ = new_variable(4, 1, &varList, $1, 2, symbol_ids);
+                                    }//fprintf(fp, " %s", $1); }
+                                    
                 | CARACTERE { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "char", 2, HIGHEST_SCOPE, MAX_SCOPES); // escopo desconhecido
                                     strcpy(varList->type_syn, "char");
-                                    $$ = new_variable(4, 1, &varList, $1, 3, symbol_ids);}
+                                    $$ = new_variable(4, 1, &varList, $1, 3, symbol_ids);
+                                    }//fprintf(fp, " %s", $1); }
+                                    
                 | ID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "?", 0, scope, HIGHEST_SCOPE); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
-                                    $$ = new_variable(4, 1, &varList, $1, 4, symbol_ids);}
+                                    $$ = new_variable(4, 1, &varList, $1, 4, symbol_ids);
+                                    }//fprintf(fp, " %s", $1); }
+                                    
                 | ID '.' FIRST { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(symbol_ids[0], $1);
                                     add_symbol_on_hash_table($1, "?", 0, scope, HIGHEST_SCOPE); // escopo desconhecido
                                     strcpy(varList->type_syn, get_type_hash_table($1, scope, func_scope));
-                                    $$ = new_variable(4, 1, &varList, $1, 5, symbol_ids);}
+                                    $$ = new_variable(4, 1, &varList, $1, 5, symbol_ids);
+                                    }//fprintf(fp, " %s.first", $1); }
                 ;
 
 // -----------------------------------------------------------------------------------------------------
@@ -124,16 +135,20 @@ type_struct:    type_simple { Variable *varList = (Variable *) malloc (1 * sizeo
                 
 type_simple:    VOID { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(varList->type_syn, "void");
-                                    $$ = new_variable(6, 0, &varList, "void", 1, symbol_ids); }
+                                    $$ = new_variable(6, 0, &varList, "void", 1, symbol_ids); 
+                                    }//fprintf(fp, " void"); }
                 | FLOAT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(varList->type_syn, "float");
-                                    $$ = new_variable(6, 0, &varList, "float", 2, symbol_ids); }
+                                    $$ = new_variable(6, 0, &varList, "float", 2, symbol_ids); 
+                                    }//fprintf(fp, " float"); }
                 | INT { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(varList->type_syn, "int");
-                                    $$ = new_variable(6, 0, &varList, "int", 3, symbol_ids); }
+                                    $$ = new_variable(6, 0, &varList, "int", 3, symbol_ids); 
+                                    }//fprintf(fp, " int"); }
                 | CHAR { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                     strcpy(varList->type_syn, "char");
-                                    $$ = new_variable(6, 0, &varList, "char", 4, symbol_ids); }
+                                    $$ = new_variable(6, 0, &varList, "char", 4, symbol_ids); 
+                                    }//fprintf(fp, " char"); }
                 ;
                 
 // ----------------------------------------------------------------------------------------------------- 
@@ -255,16 +270,19 @@ assignment_expression:  assignment_expression '+' term
                                    varList[0] = *($1);
                                    varList[1] = *($3);
                                    strcpy(varList->type_syn, decide_type_operation(($1)->type_syn, ($3)->type_syn));
+                                   add_in_quadruple('+', $1, $3);
                                    $$ = new_variable(12, 2, &varList, "+", 1, symbol_ids); } // REDUNDANTE, poderia passar só "+"
                         | assignment_expression '-' term
                                    { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
                                    strcpy(varList->type_syn, decide_type_operation(($1)->type_syn, ($3)->type_syn));
+                                   add_in_quadruple('+', $1, $3);
                                    $$ = new_variable(12, 2, &varList, "-", 2, symbol_ids); } // REDUNDANTE, poderia passar só "-'
                         | term  { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    strcpy(varList->type_syn, ($1)->type_syn);
+                                   add_in_quadruple(' ', $1, NULL);
                                    $$ = new_variable(12, 1, &varList, "END", 3, symbol_ids); }
                         | error ';' { yyerrok;  yyerror ("Erro na operacao matematica");}
                         ;
@@ -274,17 +292,19 @@ assignment_expression:  assignment_expression '+' term
 term:           term '*' factor { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
-                                   //printf("TIPO 1: _%c_\n TIPO 2: _%c_\n", ($1)->type_syn[0], ($3)->type_syn[0]);
                                    strcpy(varList->type_syn, decide_type_operation(($1)->type_syn, ($3)->type_syn));
+                                   add_in_quadruple('*', $1, $3);
                                    $$ = new_variable(13, 2, &varList, "*", 1, symbol_ids); }  // REDUNDANTE, poderia passar só "*"
                 | term '/' factor { Variable *varList = (Variable *) malloc (2 * sizeof(Variable));
                                    varList[0] = *($1);
                                    varList[1] = *($3);
                                    strcpy(varList->type_syn, decide_type_operation(($1)->type_syn, ($3)->type_syn));
+                                   add_in_quadruple('*', $1, $3);
                                    $$ = new_variable(13, 2, &varList, "/", 2, symbol_ids); }  // REDUNDANTE, poderia passar só "/"
                 | factor { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    varList[0] = *($1);
                                    strcpy(varList->type_syn, ($1)->type_syn);
+                                   add_in_quadruple(' ', $1, NULL);
                                    $$ = new_variable(13, 1, &varList, "END", 3, symbol_ids); }
                 | error ';' { yyerrok;  yyerror ("Erro na operacao matematica");}
                 ;
@@ -308,7 +328,7 @@ type_struct_expression:   ID '.' SETLAST ARROW value
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $1);
                                    add_symbol_on_hash_table($1, "?", 0, 0, higher_scope); // ID deve ser FILA
-                                   varList[0] = *($3);
+                                   varList[0] = *($5);
                                    $$ = new_variable(15, 1, &varList, 0, 1, symbol_ids); }
                           | ID '=' ID '.' RMVFIRST 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
@@ -327,16 +347,24 @@ void yyerror(char *s) {
 
 int main(void) {
     int i, j;
+    
+    fp = fopen("codigo_gerado.inter", "w+");
+    
     for (i=0; i<MAX_SYMBOLS_FOR_RULE; i++)
         strcpy(symbol_ids[i], ".");
    
     for (i=0; i<MAX_SCOPES; i++)
         for (j=0; j<MAX_SCOPES; j++)
             scope_matrix[i][j] = 0;
+            
+    create_quadruple_stack();
     
     yyparse();
     show_symbol_table();
     show_scope_matrix();
+    
+    //create_intermediary_code();
+    
     return 0;
 }
 
