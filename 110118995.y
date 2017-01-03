@@ -308,7 +308,7 @@ type_struct_expression:   ID '.' SETLAST ARROW value
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));
                                    strcpy(symbol_ids[0], $1);
                                    add_symbol_on_hash_table($1, "?", 0, 0, higher_scope); // ID deve ser FILA
-                                   varList[0] = *($3);
+                                   varList[0] = *($5);
                                    $$ = new_variable(15, 1, &varList, 0, 1, symbol_ids); }
                           | ID '=' ID '.' RMVFIRST 
                                    { Variable *varList = (Variable *) malloc (1 * sizeof(Variable));

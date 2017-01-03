@@ -163,7 +163,7 @@ Variable *new_variable (int tag_variable, int num_nexts, Variable *list[], char 
                 v->variable_tag = 14;
                 break;
                 
-            case (14):
+            case (15):
                 strcpy(v->variable_name, "TypeStructExpression");
                 v->variable_tag = 15;
                 
